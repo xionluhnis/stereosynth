@@ -336,7 +336,7 @@ namespace pm {
             return data.get();
         }
         inline const T *ptr() const {
-            
+            return data.get();
         }
         
         inline T &at(int y, int x) {
