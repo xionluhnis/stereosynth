@@ -23,7 +23,7 @@ fi
 OPTI_FLAGS="-O6 $OPENMP_FLAG"
 BASE_FLAGS="$PARAMS -DNDEBUG -DUNIX_MODE -DMEXMODE $OPENMP_FLAG"
 LIBS_FLAGS="-Wl,-e,mexFunction $OPENMP_LIBS"
-LAST_FLAGS="-I./include/ -I/usr/include/"
+LAST_FLAGS="-I./include/ -I./src -I/usr/include/"
 
 function mex_call {
   echo mex "CXXOPTIM_FLAGS='$OPTI_FLAGS'" "CXXFLAGS='$BASE_FLAGS'" "CXXLIBS='\${CXXLIBS} $LIBS_FLAGS'" $LAST_FLAGS $@
@@ -55,30 +55,10 @@ esac
 
 # Optimized (slow to build)
 if [[ -z "$TARGET" || "$TARGET" -eq 1 ]]; then 
-  $MEX_CALL src/nnfMex.cpp -output nnmex -output nnmex &
+  $MEX_CALL src/nnf.cpp -output nnf -output nnf &
 fi
 if [[ -z "$TARGET" || "$TARGET" -eq 2 ]]; then
-  $MEX_CALL src/voteMex.cpp -output votemex -output votemex &
-fi
-
-if [[ -z "$TARGET" || "$TARGET" -eq 3 ]]; then
-  $MEX_CALL src/segmentMex.cpp -output segmentmex -output segmentmex &
-fi
-
-if [[ -z "$TARGET" || "$TARGET" -eq 4 ]]; then
-  $MEX_CALL src/ggdtMex.cpp -output ggdtmex -output ggdtmex &
-fi
-
-if [[ -z "$TARGET" || "$TARGET" -eq 5 ]]; then
-  $MEX_CALL src/latticeMex.cpp -output latticemex -output latticemex &
-fi
-
-if [[ -z "$TARGET" || "$TARGET" -eq 6 ]]; then
-  $MEX_CALL src/colorHistMex.cpp -output colorhistmex -output colorhistmex &
-fi
-
-if [[ "$TARGET" -eq 7 ]]; then # not officially compiled
-  $MEX_CALL src/jigsawMex.cpp -output jigsawmex -output jigsawmex &
+  $MEX_CALL src/vote.cpp -output vote -output vote &
 fi
 
 wait
