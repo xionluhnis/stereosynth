@@ -371,6 +371,21 @@ namespace pm {
 			int cols;
 			int width;
 		};
+        
+        class Index {
+        public:
+
+            Index(int a, int b, int inner_size) : i_in(a), i_out(b) {}
+
+            Index &operator++() {
+
+            }
+
+        private:
+            int c, r;
+            friend class Mat;
+        };
+        
 		//! returns the type of the matrix elements
 		inline int type() const {
 			return flags;

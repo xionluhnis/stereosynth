@@ -115,26 +115,6 @@ namespace pm {
 			NearestNeighborField<Patch, Scalar> *prev = NULL,
 			typename NearestNeighborField<Patch, Scalar>::Extension *ext = NULL, 
 			NNSettings &settings = NNSettings());
-	
-	struct PatchSegment{
-		int size;
-		Point2i offset;
-		std::set<unsigned int> neighbors;
-		bool valid;
-		PatchSegment *parent;
-		
-		PatchSegment() : size(0), neighbors(), valid(true), parent(NULL) {
-		}
-		
-		bool isRoot() const {
-			return parent == NULL;
-		}
-		
-		PatchSegment *root(){
-			if(isRoot()) return this;
-			return parent = parent->root();
-		}
-	};
 
 	/**
 	 * \brief Compute the NNF for a fixed-N-channel source and target

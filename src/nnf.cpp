@@ -29,7 +29,7 @@ void typedMexFunction(int nout, mxArray *out[], int nin, const mxArray *in[],
 /**
  * Usage:
  * 
- * [newNNF, dist, conv] = nnfmex( source, target, prevNNF, mask, options )
+ * [newNNF, dist, conv] = nnf( source, target, prevNNF, mask, options )
  * 
  */
 void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
