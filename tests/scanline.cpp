@@ -6,8 +6,9 @@ using namespace pm;
 template < typename T >
 struct Increment {
 	Grid2D<T> *grid;
-	void operator ()(const Point2i &i, bool) {
+	bool operator ()(const Point2i &i, bool) {
 		grid->at(i.y, i.x) += 1;
+        return true;
 	}
 	
 	Increment(Grid2D<T> *g) : grid(g){}
@@ -17,12 +18,13 @@ template < typename T >
 struct IncrementID {
 	Grid2D<T> *grid;
 	int id;
-	void operator ()(const Point2i &i, bool rev) {
+	bool operator ()(const Point2i &i, bool rev) {
 		if(!rev){
 			grid->at(i.y, i.x) += id++;
 		} else {
 			grid->at(i.y, i.x) -= --id;
 		}
+        return true;
 	}
 	
 	IncrementID(Grid2D<T> *g) : grid(g), id(0){}

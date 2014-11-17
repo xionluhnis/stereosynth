@@ -1,3 +1,6 @@
+INCL := -I./include/ -I./src -I/usr/include/
+RESULT := echo "[Passed] target" || echo "[Failed] target"
+TEST := -o bin/test_target tests/target.cpp && bin/test_target && $(RESULT)
 
 mex:
 	bash build.sh
@@ -10,4 +13,4 @@ all: mex
 
 test:
 	mkdir bin 2>/dev/null
-	g++ -std=c++11 -I./include/ -I./src -I/usr/include/ -o bin/test_scanline tests/scanline.cpp && bin/test_scanline
+	g++ -std=c++11 $(INCL) $(subst target,scanline,$(TEST))

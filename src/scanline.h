@@ -24,12 +24,7 @@ template <
     typename IterationFilter = NoOp<typename Grid::index>,
     typename IterationEnd = NoOp<unsigned int>
 >
-void scanline(
-	Grid &grid, unsigned int numIters,
-	Algorithm &algo,
-	IterationFilter &filter,
-	IterationEnd &iterEnd
-){
+void scanline(Grid &grid, unsigned int numIters, Algorithm &algo, IterationFilter &filter, IterationEnd &iterEnd){
 	bool rev = false;
 	for(unsigned int iter = 0; iter < numIters; ++iter){
 		bool done = true;
@@ -45,14 +40,14 @@ void scanline(
 		for(; !(it == end); ++it){
 			const typename Grid::index i = *it; // we don't want it to change in between!
 			// filter index
-			if(filter(i)) continue;
+			if(filter(i, rev)) continue;
 			// execute improvement
 			if(algo(i, rev)){
 			   done = false; // the update was successful => more to do
 			}
 		}
-		rev = !rev; // reverse scanline order
-		iterEnd(iter);
+		iterEnd(iter, rev);
+        rev = !rev; // reverse scanline order
 		// potential shortcut
 		if(done){
 			break;
@@ -66,11 +61,7 @@ template <
     typename Algorithm = NoOp<typename Grid::index>,
     typename IterationFilter = NoOp<typename Grid::index>
 >
-void scanline(
-	Grid &grid, unsigned int numIters,
-	Algorithm &algo,
-	IterationFilter &filter
-){
+void scanline(Grid &grid, unsigned int numIters, Algorithm &algo, IterationFilter &filter){
     NoOp<unsigned int> defaultIterEnd;
     scanline(grid, numIters, algo, filter, defaultIterEnd);
 }
@@ -80,7 +71,7 @@ template <
 	typename Grid,
     typename Algorithm = NoOp<typename Grid::index>
 >
-void scanline(Grid &grid, unsigned int numIters, Algorithm &algo){
+void scanline(Grid &grid, unsigned int numIters, Algorithm &&algo){
     NoOp<typename Grid::index> noFilter;
     NoOp<unsigned int> defaultIterEnd;
     scanline(grid, numIters, algo, noFilter, defaultIterEnd);
