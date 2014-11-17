@@ -1,19 +1,19 @@
 /* 
- * File:   mexwrap.h
- * Author: xion
+ * File:   wrapper.h
+ * Author: akaspar
  *
- * Created on April 28, 2014, 12:31 AM
+ * Created on November 17, 2014, 5:17 PM
  */
 
-#ifndef MEXWRAP_H
-#define	MEXWRAP_H
+#ifndef WRAPPER_H
+#define	WRAPPER_H
 
-#include "mexutil.h"
-#include "algebra.h"
+#include "defs.h"
+#include "../math/point.h"
 
 namespace pm {
-
-	/**
+    
+    /**
 	* Image matrix wrapper around MxN matlab matrices
 	*/
 	struct MatWrapper {
@@ -191,8 +191,8 @@ namespace pm {
 	};
 	
 	typedef MatWrapper MatXD;
-
+    
 }
 
-#endif	/* MEXWRAP_H */
+#endif	/* WRAPPER_H */
 

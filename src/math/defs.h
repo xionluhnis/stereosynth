@@ -5,8 +5,8 @@
  * Created on November 15, 2014, 9:17 PM
  */
 
-#ifndef DEFS_H
-#define	DEFS_H
+#ifndef MATH_DEFS_H
+#define	MATH_DEFS_H
 
 #include <algorithm>
 #include <cmath>
@@ -90,5 +90,5 @@ namespace pm {
     
 }
 
-#endif	/* DEFS_H */
+#endif	/* MATH_DEFS_H */
 

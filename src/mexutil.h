@@ -27,54 +27,6 @@
 using pm::Image;
 using pm::DataDepth;
 
-template <typename Scalar>
-mxClassID classID();
-
-inline mxClassID classOf(int dataType) {
-	int depth = IM_MAT_DEPTH(dataType);
-	switch (depth) {
-		case IM_8U: return mxUINT8_CLASS;
-		case IM_8S: return mxINT8_CLASS;
-		case IM_32S: return mxINT32_CLASS;
-		case IM_32F: return mxSINGLE_CLASS;
-		case IM_64F: return mxDOUBLE_CLASS;
-		default:
-			mexErrMsgIdAndTxt("MATLAB:mex:classOf", "Unsupported class!");
-			return mxUNKNOWN_CLASS;
-	}
-}
-inline mxClassID classOf(const Image &img) {
-	return classOf(img.depth());
-}
-
-inline int depthOf(mxClassID c) {
-	switch(c) {
-		case mxUINT8_CLASS: return IM_8U;
-		case mxINT8_CLASS: return IM_8S;
-		case mxINT32_CLASS: return IM_32S;
-		case mxSINGLE_CLASS: return IM_32F;
-		case mxDOUBLE_CLASS: return IM_64F;
-		case mxLOGICAL_CLASS: return IM_8U;
-		default:
-			mexErrMsgIdAndTxt("MATLAB:mex:depthOf", "Unsupported depth!");
-			return -1;
-	}
-}
-inline int depthOf(const mxArray *arr) {
-	return depthOf(mxGetClassID(arr));
-}
-
-inline bool mxStringEquals(const mxArray *A, const char *s) {
-	char buf[256];
-	if (!mxIsChar(A)) {
-		return false;
-	}
-	if (mxGetString(A, buf, 255)) {
-		return false;
-	}
-	return strcmp(s, buf) == 0;
-}
-
 inline mxArray *mxCreateMatrix(int rows, int cols, mxClassID type = mxSINGLE_CLASS) {
 	mwSize sz[2] = {rows, cols};
 	return mxCreateNumericArray(2, sz, type, mxREAL);
@@ -468,26 +420,6 @@ inline void mxLoadNNF(pm::NearestNeighborField<Patch, Scalar> &nnf, const mxArra
 }
 
 // boring implementations
-
-template <>
-mxClassID classID<float>() {
-	return mxSINGLE_CLASS;
-}
-
-template <>
-mxClassID classID<double>() {
-	return mxDOUBLE_CLASS;
-}
-
-template <>
-mxClassID classID<unsigned char>() {
-	return mxUINT8_CLASS;
-}
-
-template <>
-mxClassID classID<char>() {
-	return mxINT8_CLASS;
-}
 
 #endif	/* MEXUTIL_H */
 

@@ -4,8 +4,8 @@
  * Add license here...
  *******************************/
 
-#ifndef FILTER_H
-#define	FILTER_H
+#ifndef MATH_FILTER_H
+#define	MATH_FILTER_H
 
 #include <cmath>
 #include <vector>
@@ -77,5 +77,5 @@ namespace pm {
 	}
 }
 
-#endif	/* FILTER_H */
+#endif	/* MATH_FILTER_H */
 
