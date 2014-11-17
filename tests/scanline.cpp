@@ -4,9 +4,9 @@
 using namespace pm;
 
 template < typename T >
-struct Increment{
+struct Increment {
 	Grid2D<T> *grid;
-	void operator ()(const Point2i &i, bool) const {
+	void operator ()(const Point2i &i, bool) {
 		grid->at(i.y, i.x) += 1;
 	}
 	
@@ -14,10 +14,10 @@ struct Increment{
 };
 
 template < typename T >
-struct IncrementID{
+struct IncrementID {
 	Grid2D<T> *grid;
 	int id;
-	void operator ()(const Point2i &i, bool rev) const {
+	void operator ()(const Point2i &i, bool rev) {
 		if(!rev){
 			grid->at(i.y, i.x) += id++;
 		} else {
@@ -43,7 +43,7 @@ int main(){
 	}
 	
 	// 1: go over all pixels, they should be zero
-	scanline(g, 7, Increment(&g));
+	scanline(g, 7, Increment<int>(&g));
 	for(int y = 0; y < 100; ++y) {
 		for(int x = 0; x < 100; ++x) {
 			assert(g.at(y, x) == 7 || "Increment did not work!");
@@ -58,7 +58,7 @@ int main(){
 	}
 	
 	// 2: go over all pixels, assign up / down id (even iterations)
-	scanline(g, 8, IncrementID(&g));
+	scanline(g, 8, IncrementID<int>(&g));
 	for(int y = 0; y < 100; ++y) {
 		for(int x = 0; x < 100; ++x) {
 			assert(g.at(y, x) == 0 || "IncrementID failed!");
@@ -67,7 +67,7 @@ int main(){
 	g.clear();
 	
 	// 3: simple linear id
-	scanline(g, 1, IncrementID(&g));
+	scanline(g, 1, IncrementID<int>(&g));
 	for(int y = 0, id = 0; y < 100; ++y) {
 		for(int x = 0; x < 100; ++x, ++id) {
 			assert(g.at(y, x) == id || "IncrementID failed!");

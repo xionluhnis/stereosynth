@@ -20,8 +20,8 @@ namespace pm {
 	 * 
 	 * @see Mat for dynamic types (specified only by bit size)
 	 */
-	template <typename T>
-    class Grid2D {
+	template <typename T, typename Index = Point2i, bool RowMajor = true>
+    class Grid2D : public Iterable2D<Index, RowMajor>{
     public:
         union {
             int rows;
@@ -32,8 +32,11 @@ namespace pm {
             int width;
         };
         
-        Grid() : height(0), width(0), data(){}
-        Grid(int h, int w, bool init = false) : height(h), width(w), data() {
+        static const bool ROW_MAJOR = true;
+        static const bool COL_MAJOR = false;
+        
+        Grid2D() : height(0), width(0), data(){}
+        Grid2D(int h, int w, bool init = false) : height(h), width(w), data() {
             T *ptr = NULL;
             if(init){
                 ptr = new T[h * w]();
@@ -58,16 +61,27 @@ namespace pm {
             return data.get();
         }
         
+        inline int idx(int y, int x) const {
+            if(RowMajor)
+                return y * width + x;
+            else
+                return x * height + y;
+        }
+        
         inline T &at(int y, int x) {
-            return ptr()[y * width + x];
+            return ptr()[idx(y, x)];
         }
         inline const T &at(int y, int x) const {
-            return ptr()[y * width + x];
+            return ptr()[idx(y, x)];
         }
 		
-		operator Iterable2D<Point2i>() const {
-			return Iterable2D<Point2i>(width, height);
-		}
+        // iterable implementation
+		virtual int size0() const {
+            return width;
+        }
+        virtual int size1() const {
+            return height;
+        }
         
     private:
         boost::shared_ptr<T> data;

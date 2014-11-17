@@ -8,6 +8,8 @@
 #ifndef DEFS_H
 #define	DEFS_H
 
+#include <algorithm>
+#include <cmath>
 
 // bit boundaries
 #define IM_CN_MAX     512
@@ -85,7 +87,7 @@ namespace pm {
 	template<typename Scalar> struct DataDepth<Scalar*> { enum { value = IM_USRTYPE, fmt=(int)'r', exact = 1 }; };
 	
 	template<int flag> struct DataSize {};
-	
+    
 }
 
 #endif	/* DEFS_H */
