@@ -61,7 +61,7 @@ template <
     typename Algorithm = NoOp<typename Grid::index>,
     typename IterationFilter = NoOp<typename Grid::index>
 >
-void scanline(Grid &grid, unsigned int numIters, Algorithm &algo, IterationFilter &filter){
+void scanline(Grid &grid, unsigned int numIters, Algorithm &&algo, IterationFilter &&filter){
     NoOp<unsigned int> defaultIterEnd;
     scanline(grid, numIters, algo, filter, defaultIterEnd);
 }

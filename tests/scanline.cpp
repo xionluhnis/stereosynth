@@ -40,7 +40,7 @@ int main(){
 	// 0: the grid should be null
 	for(int y = 0; y < 100; ++y) {
 		for(int x = 0; x < 100; ++x) {
-			assert(g.at(y, x) == 0 || "Invalid initial grid. Not zero!");
+			assert(g.at(y, x) == 0 && "Invalid initial grid. Not zero!");
 		}
 	}
 	
@@ -48,14 +48,14 @@ int main(){
 	scanline(g, 7, Increment<int>(&g));
 	for(int y = 0; y < 100; ++y) {
 		for(int x = 0; x < 100; ++x) {
-			assert(g.at(y, x) == 7 || "Increment did not work!");
+			assert(g.at(y, x) == 7 && "Increment did not work!");
 		}
 	}
 	g.clear();
 	// 1b: Grid2D.clear() should reset everything to 0
 	for(int y = 0; y < 100; ++y) {
 		for(int x = 0; x < 100; ++x) {
-			assert(g.at(y, x) == 0 || "Clear did not work. Not zero!");
+			assert(g.at(y, x) == 0 && "Clear did not work. Not zero!");
 		}
 	}
 	
@@ -63,7 +63,7 @@ int main(){
 	scanline(g, 8, IncrementID<int>(&g));
 	for(int y = 0; y < 100; ++y) {
 		for(int x = 0; x < 100; ++x) {
-			assert(g.at(y, x) == 0 || "IncrementID failed!");
+			assert(g.at(y, x) == 0 && "IncrementID failed!");
 		}
 	}
 	g.clear();
@@ -72,7 +72,7 @@ int main(){
 	scanline(g, 1, IncrementID<int>(&g));
 	for(int y = 0, id = 0; y < 100; ++y) {
 		for(int x = 0; x < 100; ++x, ++id) {
-			assert(g.at(y, x) == id || "IncrementID failed!");
+			assert(g.at(y, x) == id && "IncrementID failed!");
 		}
 	}
 	g.clear();

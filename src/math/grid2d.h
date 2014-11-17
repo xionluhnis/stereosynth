@@ -10,6 +10,7 @@
 
 #include "iterator2d.h"
 #include "point.h"
+#include "cassert"
 
 #include <boost/shared_ptr.hpp>
 
@@ -62,6 +63,10 @@ namespace pm {
         }
         
         inline int idx(int y, int x) const {
+#ifdef DEBUG_STRICT_TEST
+            assert(x >= 0 && x < width  && "X out of bounds");
+            assert(y >= 0 && y < height && "Y out of bounds");
+#endif
             if(RowMajor)
                 return y * width + x;
             else
