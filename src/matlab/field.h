@@ -17,15 +17,39 @@ namespace pm {
     template <int RowMajor>
     void mxLoadField(Field2D<RowMajor> *field, const mxArray *arr, const char *errMsg) {
         MatXD data(arr);
+        
         for(Mat &m : field->layers()){
             
         }
     }
     
-    template <int RowMajor>
-    mxArraz *mxSaveField(const Field2D<RowMajor> *field, const char *errMsg) {
+    template <typename T = float, int RowMajor = true>
+    mxArray *mxSaveField(const Field2D<RowMajor> *field, const char *errMsg) {
+        int channels = field->totalChannels<T>();
+        // create matrix data
+        mxArray *m = mxCreateMatrix<T>(field->rows, field->cols, channels);
         
-        return NULL;
+        // fill matrix data using a wrapper
+        MatXD mat(m);
+        int ch = 0;
+        for(const auto &layer : field->layers()){
+            auto layout = field->layout<T>(layer);
+            layout
+            channels = layer.elemSize() / bytesPerChannel;
+            int extraBytes = layer.elemSize() % bytesPerChannel;
+            // temporary storage
+            std::vector<T> storage(channels);
+            T extra[sizeof(T)] = { 0 };
+            // copy data
+            for(const Point2i &p : layer){
+                // load
+                layer
+                // save
+                mat.update(p.y, p.x, )
+            }
+        }
+        
+        return m;
     }
     
 }

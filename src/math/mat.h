@@ -59,7 +59,7 @@ namespace pm {
 			create(IM_SIZEOF(dataType));
 		}
         
-        Mat(int h, int w, size_t elemSize, int dataType) : height(h), width(w), flags(dataType){
+        Mat(int h, int w, size_t elemSize, int channels) : height(h), width(w), flags(IM_MAKETYPE(IM_USRTYPE, channels)){
 			create(elemSize);
 		}
         

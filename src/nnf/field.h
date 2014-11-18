@@ -19,6 +19,10 @@
 
 namespace pm {
     
+    class DataProvider {
+        virtual void load()
+    };
+    
     template <int RowMajor = true>
     class Field2D : public Iterable2D<Point2i, RowMajor> {
     public:
@@ -65,7 +69,7 @@ namespace pm {
             }
 
         protected:
-            Entry(int h, int w) : Mat(h, w, sizeof(T), IM_UNKNOWN) {}
+            Entry(int h, int w, int ch = 1) : Mat(h, w, sizeof(T), ch) {}
         };
 
         template < typename T >
@@ -94,6 +98,51 @@ namespace pm {
             }
             return list;
         }
+        
+        std::vector<const Mat> layers() const {
+            std::vector<const Mat> list;
+            list.resize(entries.size());
+            for(auto k : entries){
+                list.push_back(k->second);
+            }
+            return list;
+        }
+        
+        template < typename T >
+        struct EntryLayout {
+            
+            enum {
+                bytesPerChannel = sizeof(T)
+            };
+            
+            int fullChannels;
+            int extraBytes;
+            
+            int totalChannels() const {
+                return fullChannels + extraBytes > 0 ? 1 : 0;
+            }
+            
+            EntryLayout(int ch, int eb) : fullChannels(ch), extraBytes(eb){}
+        };
+        
+        template < typename T >
+        static EntryLayout<T> layout(const Mat &m) const {
+            int bytesPerChannel = sizeof(T);
+            int fullChannels = m.elemSize() / bytesPerChannel;
+            int extraBytes = m.elemSize() % bytesPerChannel;
+            return EntryLayout<T>(fullChannels, extraBytes);
+        }
+        
+        template <typename T>
+        int totalChannels() const {
+            int channels = 0;
+            for(auto it : entries) {
+                channels += layout(it->second).totalChannels();
+            }
+            return channels;
+        }
+        
+        void 
         
     private:
         std::map<std::string, Mat> entries;

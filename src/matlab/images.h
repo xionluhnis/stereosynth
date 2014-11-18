@@ -22,6 +22,11 @@ namespace pm {
         mwSize sz[3] = {rows, cols, channels};
         return mxCreateNumericArray(3, sz, type, mxREAL);
     }
+    
+    template< typename T >
+    inline mxArray *mxCreateMatrix(int rows, int cols, int channels){
+        return mxCreateMatrix(rows, cols, channels, classID<T>());
+    }
 
     template <typename Scalar>
     inline mxArray *mxCreateMatrix(const Image &img) {
