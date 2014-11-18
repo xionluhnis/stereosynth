@@ -7,30 +7,13 @@
 #ifndef TEXTURE_H
 #define	TEXTURE_H
 
-#include <algebra.h>
+#include "../math/mat.h"
+
 #include <boost/shared_array.hpp>
 #include <iostream>
-#include <mex.h>
 #include <new>
 
 namespace pm {
-	
-	// round implementation (this is not perfect!)
-	inline int round(float f) {
-		int i = std::floor(f + 0.5f);
-		if (i - f > 0.5f) std::cerr << "Invalid floor of " << f << " = " << i << "\n";
-		return i;
-	}
-	template <typename T>
-	inline T roundOrNot(float f);
-	template <>
-	inline float roundOrNot<float>(float f){
-		return f;
-	}
-	template <>
-	inline int roundOrNot<int>(float f){
-		return round(f);
-	}
 
 	/**
 	 * Type of texture boundary model
@@ -55,11 +38,11 @@ namespace pm {
 	};
 
 	template< typename T>
-	struct MultiDepthPoint : public Point<T> {
+	struct IndexedPoint : public Point<T> {
 		typedef T scalar;
 		typedef Vec<T, 3> vec;
 		typedef Point<T> base;
-		typedef MultiDepthPoint<T> point;
+		typedef IndexedPoint<T> point;
 
 		enum {
 			typeDepth = DataDepth<scalar>::value,
@@ -67,9 +50,9 @@ namespace pm {
 			type = IM_MAKETYPE(typeDepth, channels)
 		};
 
-		MultiDepthPoint() : Point<T>(), depth(0) {}
-		MultiDepthPoint(T a, T b, int d) : Point<T>(a, b), depth(d) {}
-		MultiDepthPoint(base p, int d) : Point<T>(p.x, p.y), depth(d) {}
+		IndexedPoint() : Point<T>(), depth(0) {}
+		IndexedPoint(T a, T b, int d) : Point<T>(a, b), depth(d) {}
+		IndexedPoint(base p, int d) : Point<T>(p.x, p.y), depth(d) {}
 		
 		inline point operator +(const point &p) const {
 			return point(base::x + p.x, base::y + p.y, depth);
@@ -86,8 +69,15 @@ namespace pm {
 		inline operator base() const {
 			return base(base::x, base::y);
 		}
+        
+        inline operator vec() const {
+            return vec(x, y, depth);
+        }
 		
-		int depth;
+        union {
+            int depth;
+            int index;
+        };
 	};
 
 	struct Texture : public Mat {
@@ -105,9 +95,7 @@ namespace pm {
 		inline void project(int &y, int &x) const {
 			switch (model) {
 				case Checked:
-					if (x < 0 || x >= width || y < 0 || y >= height) {
-						mexErrMsgIdAndTxt("MATLAB:tex:outofbound", "Tried to access out of bounds!");
-					}
+                    assert(x >= 0 && x < width && y >= 0 && y < height && "Texture out of bound access");
 					break;
 				case Same:
 					x = std::max(0, std::min(width - 1, x));
@@ -126,14 +114,16 @@ namespace pm {
 		}
 
 		//! Element access
-		template <typename T> inline const T & at(int y, int x, int depth = 0) const {
+		template <typename T>
+        inline const T & at(int y, int x, int depth = 0) const {
 			project(y, x);
 			if(depth == 0)
                 return Mat::at<T>(y, x);
             else
                 return stack[depth - 1].at<T>(y, x);
 		}
-		template <typename T> inline T & at(int y, int x, int depth = 0) {
+		template <typename T>
+        inline T & at(int y, int x, int depth = 0) {
 			project(y, x);
 			if(depth == 0)
                 return Mat::at<T>(y, x);
@@ -197,4 +187,3 @@ namespace pm {
 }
 
 #endif	/* TEXTURE_H */
-

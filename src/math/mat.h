@@ -28,7 +28,7 @@ namespace pm {
 	/**
 	 * Image matrix representation
 	 */
-	struct Mat {
+	struct Mat : public Iterable2D<Point2i, true> {
 		union {
 			int rows;
 			int height;
@@ -71,6 +71,13 @@ namespace pm {
 		inline bool empty() const {
 			return !data;
 		}
+        
+        virtual int size0() const {
+            return width;
+        }
+        virtual int size1() const {
+            return height;
+        }
 		
 		inline static Mat zeros(int rows, int cols, int type) {
 			Mat m(rows, cols, type);
@@ -118,10 +125,6 @@ namespace pm {
 		template <typename T>
 		inline T &at(int y, int x) {
 			return *ptr<T>(y, x);
-		}
-		
-		operator Iterable2D<Point2i>() const {
-			return Iterable2D<Point2i>(width, height);
 		}
 		
 	private:

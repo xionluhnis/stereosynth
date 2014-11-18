@@ -8,9 +8,10 @@
 #define	ALGEBRA_H
 
 #include "math/defs.h"
-#include "math/point.h"
+#include "math/filter.h"
 #include "math/grid2d.h"
-#include "math/vec.h"
+#include "math/mat.h"
+#include "math/point.h"
 
 #endif	/* ALGEBRA_H */
 

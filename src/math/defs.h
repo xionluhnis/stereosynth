@@ -88,6 +88,31 @@ namespace pm {
 	
 	template<int flag> struct DataSize {};
     
+    ////////////////////////////////////////////////////////////////////////////
+    ///// Rounding implementation //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    // round implementation (this is not perfect!)
+	inline int round(float f) {
+		int i = std::floor(f + 0.5f);
+		// if (i - f > 0.5f) std::cerr << "Invalid floor of " << f << " = " << i << "\n";
+		return i;
+	}
+	template <typename T>
+	inline T roundOrNot(float f);
+	template <>
+	inline float roundOrNot<float>(float f){
+		return f;
+	}
+    template <>
+	inline double roundOrNot<double>(float f){
+		return f;
+	}
+	template <>
+	inline int roundOrNot<int>(float f){
+		return round(f);
+	}
+    
 }
 
 #endif	/* MATH_DEFS_H */
