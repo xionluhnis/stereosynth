@@ -5,8 +5,8 @@
  * Created on November 15, 2014, 9:18 PM
  */
 
-#ifndef MAT_H
-#define	MAT_H
+#ifndef MATH_MAT_H
+#define	MATH_MAT_H
 
 #include "defs.h"
 #include "iterator2d.h"
@@ -28,6 +28,7 @@ namespace pm {
 	/**
 	 * Image matrix representation
 	 */
+    template < typename D >
 	struct Mat : public Iterable2D<Point2i, true> {
 		union {
 			int rows;
@@ -55,18 +56,33 @@ namespace pm {
 		}
 		
 		Mat(int h, int w, int dataType) : height(h), width(w), flags(dataType){
-			int elemSize = IM_SIZEOF(dataType);
-			int byteCount = elemSize * h * w;
+			create(IM_SIZEOF(dataType));
+		}
+        
+        Mat(int h, int w, size_t elemSize, int dataType) : height(h), width(w), flags(dataType){
+			create(elemSize);
+		}
+        
+    protected:
+        
+        void create(size_t elemSize){
+            size_t byteCount = elemSize * height * width;
 			if(byteCount > 0){
 				byte *content = new byte[byteCount];
 				data.reset(content);
 				step[0] = elemSize;
-				step[1] = w * elemSize;
+				step[1] = width * elemSize;
 			} else {
-				std::cerr << "No byte for dataType=" << dataType << " with size=" << elemSize << "\n";
+				std::cerr << "Matrix with datasize=" << elemSize << ", datatype=" << flags << "\n";
 				step[0] = step[1] = 0;
 			}
-		}
+        }
+        
+    public:
+        
+        inline int elemSize() const {
+            return step[0];
+        } 
 		
 		inline bool empty() const {
 			return !data;
@@ -141,5 +157,5 @@ namespace pm {
 
 }
 
-#endif	/* MAT_H */
+#endif	/* MATH_MAT_H */
 

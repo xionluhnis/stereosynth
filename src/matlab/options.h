@@ -58,20 +58,23 @@ namespace pm {
     }
 
     template <typename S, typename T>
-    inline void mxLoadVector(std::vector<T> &v, const mxArray *arr, const char *s) {
+    inline void mxLoadVector(std::vector<T> *v_ptr, const mxArray *arr, const char *s) {
         if (!mxIsNumeric(arr)) {
             mexErrMsgIdAndTxt("MATLAB:mex:invalidInput", s);
         }
         const S *data = reinterpret_cast<const S *> (mxGetData(arr));
         int N = mxGetNumberOfElements(arr);
         if(N == 0) mexErrMsgIdAndTxt("MATLAB:mex:mxLoadVector", s);
+        
+        // vector reference
+        std::vector<T> &v = *v_ptr;
         // resize the vector and fill it
         v.resize(N);
         for(int i = 0; i < N; ++i) v[i] = T(data[i]);
     }
 
     template <typename T>
-    inline void mxLoadVector(std::vector<T> &v, const mxArray *arr, const char *s) {
+    inline void mxLoadVector(std::vector<T> *v, const mxArray *arr, const char *s) {
         switch (mxGetClassID(arr)) {
             case mxINT8_CLASS: mxLoadVector<char, T>(v, arr, s); break;
             case mxUINT8_CLASS: mxLoadVector<unsigned char, T>(v, arr, s); break;
