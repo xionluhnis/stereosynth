@@ -8,7 +8,6 @@
 #ifndef BOUNDS_H
 #define	BOUNDS_H
 
-#include "rng.h"
 #include "vec.h"
 
 namespace pm {
@@ -60,10 +59,6 @@ namespace pm {
         
         inline vec range() const {
             return max - min;
-        }
-        
-        vec sample(RNG r) const {
-            
         }
     };
     

@@ -29,9 +29,31 @@ namespace pm {
     };
     
     template <typename T>
-    struct AffineTransform : public T, public Transform<T> {
+    struct AffineTransform : public Transform<T> {
         
+        typedef typename T::scalar scalar;
+        
+        Translation<T> t;
+        scalar angle;
+        scalar scaleX;
+        scalar scaleY;
+        
+        virtual T transform(const T &p) const;
     };
+    
+    template<typename S>
+    Point<S> AffineTransform< Point<S> >::transform(const Point<S> &p) const {
+        Point<S> q = p;
+        q.x *= scaleX;
+        q.y *= scaleY;
+        
+        scalar cosA = std::cos(angle);
+        scalar sinA = std::sin(angle);
+        
+        scalar tx = cosA * px - sinA * py;
+        scalar ty = sinA * px + cosA * py;
+        return Point<S>(tx, ty) + t;
+    }
     
 }
 
