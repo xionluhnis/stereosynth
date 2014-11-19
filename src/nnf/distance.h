@@ -24,7 +24,7 @@ namespace pm {
 		 * \brief Simple sum of squared differences
 		 */
         template <typename TargetPatch, typename Scalar, int numChannels>
-		Scalar SumSquaredDiff(const Texture *source, const Texture *target,
+		Scalar SumSquaredDiff(const Image &source, const Image &target,
 				const typename Patch::SourcePatch &p1, const TargetPatch &p2) {
             typedef Vec<Scalar, numChannels> Pixel;
 			const int width = SourcePatch::width();

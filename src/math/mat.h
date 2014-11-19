@@ -141,6 +141,15 @@ namespace pm {
 		inline T &at(int y, int x) {
 			return *ptr<T>(y, x);
 		}
+        
+        template <typename T>
+        inline const T &at(const Point2i &p) const {
+            return at<T>(p.y, p.x);
+        }
+        template <typename T>
+        inline T &at(const Point2i &p) {
+            return at<T>(p.y, p.x);
+        }
 		
 	private:
 		int flags;
