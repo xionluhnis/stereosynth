@@ -9,6 +9,7 @@
 #define	OPTIONS_H
 
 #include "defs.h"
+#include "images.h"
 
 #include <string>
 #include <vector>
@@ -33,28 +34,6 @@ namespace pm {
             mexErrMsgIdAndTxt("MATLAB:mex:invalidInput", s);
         }
         return mxGetScalar(a);
-    }
-
-    template <typename Scalar>
-    inline void mxLoadScalars(Scalar *ptr, int n, const mxArray *arr, const char *s) {
-        if (!mxIsNumeric(arr)) {
-            mexErrMsgIdAndTxt("MATLAB:mex:invalidInput", s);
-        }
-        if (mxGetClassID(arr) != classID<Scalar>()) {
-            mexErrMsgIdAndTxt("MATLAB:mex:invalidInput", s);
-        }
-        const Scalar *data = reinterpret_cast<const Scalar *> (mxGetData(arr));
-        switch (mxGetNumberOfElements(arr)) {
-            case 1:
-                std::fill(ptr, ptr + n, Scalar(mxGetScalar(arr)));
-                break;
-            case 5:
-                for (int i = 0; i < 5; ++i) ptr[i] = data[i];
-                break;
-            default:
-                mexErrMsgIdAndTxt("MATLAB:mex:invalidInput", s);
-                break;
-        }
     }
 
     template <typename S, typename T>
@@ -132,31 +111,65 @@ namespace pm {
     ///// Option data-structure ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
-    template <typename T>
-    class Parameter {
+    class mxOptions {
     public:
-        explicit Parameter(const std::string &name)
-        : label(name), valid(false) {
-        }
-        explicit Parameter(const std::string &name, T def)
-        : label(name), value(def), defaultValue(def), valid(true) {
-        }
         
-        bool load(const mxArray *options) {
-            if(mxHasField(options, label.c_str())){
-                
+        typedef char* FieldName;
+        
+        mxOptions(const mxArray *arr) : options(arr){
+            if(!mxIsStruct(arr) & mxGetNumberOfElements(arr) > 0){
+                mexErrMsgIdAndTxt("MATLAB:mex:options", "Invalid mxOptions on non-struct data.");
             }
         }
         
-        bool empty() const {
-            return !valid;
+        template <typename S = double>
+        S scalar(const FieldName name, S defaultValue) const {
+            if(const mxArray *field = mxGetField(options, 0, name)){
+                return mxCheckedScalar(field, name);
+            }
+            return defaultValue;
+        }
+        
+        int integer(const FieldName name, int defaultValue) const {
+            return scalar<int>(name, defaultValue);
+        }
+        
+        bool boolean(const FieldName name, bool defaultValue) const {
+            return scalar<bool>(name, defaultValue);
+        }
+        
+        template <typename S = double>
+        std::vector<S> vector(const FieldName name) const {
+            std::vector<S> v;
+            if(const mxArray *field = mxGetField(options, 0, name)){
+                mxLoadVector<S>(&v, field, name);
+            }
+            return v;
+        }
+        
+        template <typename S = double>
+        std::vector<S> vector(const FieldName name, S defaultValue, int minSize) const {
+            std::vector<S> v = vector<S>(name);
+            if(v.size() >= minSize) return v;
+            // single element => fill with it
+            if(v.size() == 1) {
+                defaultValue = v[0];
+            }
+            v.resize(minSize);
+            std::fill(v.begin(), v.end(), defaultValue);
+            return v;
+        }
+        
+        Image image(const FieldName name) const {
+            Image img;
+            if(const mxArray *field = mxGetField(options, 0, name)){
+                img = mxArrayToImage(field, name);
+            }
+            return img;
         }
         
     private:
-        std::string label;
-        T value;
-        T defaultValue;
-        bool valid;
+        const mxArray *options;
     };
 }
 

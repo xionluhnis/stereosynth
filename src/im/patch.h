@@ -48,11 +48,17 @@ namespace pm {
         return SourcePatch::width(newSize); // delegate to SourcePatch type
     }
     
+    // type names
+    typedef BasicPatch<int> Patch2ti;
+    typedef BasicPatch<float> Patch2tf;
+    typedef BasicPatch<double> Patch2td;
+    
     ////////////////////////////////////////////////////////////////////////////
     ///// Affine Patch /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
-    struct AffinePatch : public AffineTransform< Point<float> >, public Iterable2D< Point<float>, true > {
+    template < typename S >
+    struct AffinePatch : public AffineTransform< Point<S> >, public Iterable2D< Point<S>, true > {
         typedef BasicPatch<int> SourcePatch;
         
         inline static int width(int newSize = 0) {
@@ -67,6 +73,9 @@ namespace pm {
         }
     };
     
+    // type names
+    typedef AffinePatch<float> Patch2af;
+    typedef AffinePatch<double> Patch2ad;
 }
 
 #endif	/* IM_PATCH_H */

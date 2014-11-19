@@ -19,10 +19,6 @@
 
 namespace pm {
     
-    class DataProvider {
-        virtual void load()
-    };
-    
     template <int RowMajor = true>
     class Field2D : public Iterable2D<Point2i, RowMajor> {
     public:
@@ -46,7 +42,7 @@ namespace pm {
 		 * Returns the number of channels needed to store the field data
 		 * given the specified data type for storage
 		 */
-		virtual int dataChannels(DataType type) {
+		int dataChannels(DataType type) {
 			switch(type){
 				case IM_8U:
 					return totalChannels<unsigned char>();
@@ -62,14 +58,6 @@ namespace pm {
 					assert(0 && "Unsupported data type for field channels!");
 					return 0;
 			}
-		}
-		
-		virtual void load(const Point2i &, int, byte* data){
-			// no implementation by default
-		}
-		
-		virtual void save(const Point2i &, int, byte* data){
-			// no implementation by default
 		}
 
         /**
@@ -171,8 +159,6 @@ namespace pm {
             }
             return channels;
         }
-        
-        void 
         
     private:
         std::map<std::string, Mat> entries;

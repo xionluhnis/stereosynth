@@ -12,20 +12,19 @@
 
 using namespace pm;
 
-template< typename Patch >
 struct NNF : Field2D<true> {
     
     const Image source;
     const Image target;
     
     NNF(const Image &src, const Image &trg)
-    : Field2D(src.width - Patch::width() + 1, src.height - Patch::width() + 1),
+    : Field2D(src.width - Patch2ti::width() + 1, src.height - Patch2ti::width() + 1),
       source(src), target(trg){
         patches = createEntry<Patch>("patches");
 		distances = createEntry<float>("distances");
     }
 	
-	Entry<Patch> patches;
+	Entry<Patch2ti> patches;
 	Entry<float> distances;
 };
 
@@ -47,9 +46,9 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
 	}
 	
 	// options parameter
-	if (!mxIsStruct(in[OPTIONS_IDX])) {
-		mexErrMsgIdAndTxt("MATLAB:nnf:invalidOptions",
-				"Options must be put in a structure.");
-	}
+	mxOptions options(in[3]);
+    int numIters = options.integer("iterations", 6);
+    int patchSize = options.integer("patch_size", 7);
+    
 }
 
