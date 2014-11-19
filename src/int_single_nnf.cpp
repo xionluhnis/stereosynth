@@ -13,7 +13,7 @@
 using namespace pm;
 
 template< typename Patch >
-struct NNF : Field2D {
+struct NNF : Field2D<true> {
     
     const Image source;
     const Image target;
@@ -21,8 +21,12 @@ struct NNF : Field2D {
     NNF(const Image &src, const Image &trg)
     : Field2D(src.width - Patch::width() + 1, src.height - Patch::width() + 1),
       source(src), target(trg){
-        
+        patches = createEntry<Patch>("patches");
+		distances = createEntry<float>("distances");
     }
+	
+	Entry<Patch> patches;
+	Entry<float> distances;
 };
 
 /**

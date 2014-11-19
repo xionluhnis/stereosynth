@@ -11,20 +11,25 @@
 #include <algorithm>
 #include <cmath>
 
+namespace pm {
+	
+	/**
+	 * Image data type bits
+	 */
+	enum DataType {
+		IM_8U		= 0,
+		IM_8S		= 1,
+		IM_32S		= 2,
+		IM_32F		= 3,
+		IM_64F		= 4,
+		IM_USRTYPE	= 7,
+		IM_UNKNOWN	= -1
+	};
+	
 // bit boundaries
 #define IM_CN_MAX     512
 #define IM_CN_SHIFT   3
 #define IM_DEPTH_MAX  (1 << IM_CN_SHIFT)
-
-// bits for the type
-#define IM_8U   0
-#define IM_8S   1
-#define IM_32S  2
-#define IM_32F  3
-#define IM_64F  4
-#define IM_USRTYPE 7
-#define IM_UNKNOWN -1
-// ... we can add two more types
 
 // depth of type
 #define IM_MAT_DEPTH_MASK       (IM_DEPTH_MAX - 1)
@@ -63,8 +68,6 @@
 #define IM_SIZEOF_IMPL(depth, cn)	(cn > 0 ? cn * IM_SIZEOF_DEPTH(depth) : 0)
 #define IM_SIZEOF(flags)		IM_SIZEOF_IMPL(IM_MAT_DEPTH(flags), IM_MAT_CN(flags))
 #define IM_SIZEOF_BY_CHANNEL(flags)	IM_SIZEOF_IMPL(IM_MAT_DEPTH(flags), 1)
-
-namespace pm {
 	
 	/**
 	 * Basic byte type
