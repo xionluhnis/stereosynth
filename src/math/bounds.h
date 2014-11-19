@@ -60,6 +60,14 @@ namespace pm {
         inline vec range() const {
             return max - min;
         }
+        
+        inline bool contains(const vec &v) const {
+            for(int i = 0; i < numDim; ++i){
+                if(v[i] < min[i] || v[i] > max[i])
+                    return false;
+            }
+            return true;
+        }
     };
     
 }

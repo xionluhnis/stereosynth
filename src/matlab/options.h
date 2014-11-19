@@ -122,6 +122,10 @@ namespace pm {
             }
         }
         
+        bool has(const FieldName name) const {
+            return mxHasField(options, 0, name);
+        }
+        
         template <typename S = double>
         S scalar(const FieldName name, S defaultValue) const {
             if(const mxArray *field = mxGetField(options, 0, name)){

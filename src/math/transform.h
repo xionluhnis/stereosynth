@@ -23,14 +23,17 @@ namespace pm {
     
     template <typename T>
     struct Translation : public T, public Transform<T> {
+        typedef typename T::scalar scalar;
+        
         virtual T transform(const T &p) const {
             return p + *this;
         }
+        explicit Translation(scalar x = 0, scalar y = 0) : T(x, y){}
+        Translation(const T &t) : T(t){}
     };
     
     template <typename T>
     struct AffineTransform : public Transform<T> {
-        
         typedef typename T::scalar scalar;
         
         Translation<T> t;
@@ -39,6 +42,9 @@ namespace pm {
         scalar scaleY;
         
         virtual T transform(const T &p) const;
+        
+        AffineTransform(const Translation<T> &tr, scalar ang = 0, scalar sx = 1, scalar sy = 1)
+            : t(tr), angle(ang), scaleX(sx), scaleY(sy) {}
     };
     
     template<typename S>

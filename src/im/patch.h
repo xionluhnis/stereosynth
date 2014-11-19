@@ -25,6 +25,8 @@ namespace pm {
     template < typename S >
     struct BasicPatch : public Translation< Point<S> >, public Iterable2D< Point<S>, true > {
         typedef BasicPatch<int> SourcePatch;
+        typedef Point<S> point;
+        typedef Translation<point> translation;
         
         static int width(int newSize = 0);
         
@@ -34,6 +36,9 @@ namespace pm {
         virtual int size1() const {
             return width();
         }
+        
+        BasicPatch(const translation &t) : translation(t){}
+        BasicPatch(const point &p) : translation(p){}
     };
     template <>
     inline int BasicPatch<int>::width(int newSize) {
@@ -60,6 +65,9 @@ namespace pm {
     template < typename S >
     struct AffinePatch : public AffineTransform< Point<S> >, public Iterable2D< Point<S>, true > {
         typedef BasicPatch<int> SourcePatch;
+        typedef Point<S> point;
+        typedef Translation<point> translation;
+        typedef AffineTransformation<point> affine;
         
         inline static int width(int newSize = 0) {
             return SourcePatch::width(newSize);
@@ -71,6 +79,8 @@ namespace pm {
         virtual int size1() const {
             return width();
         }
+        
+        AffineTransform(const affine &aff) : affine(aff){}
     };
     
     // type names

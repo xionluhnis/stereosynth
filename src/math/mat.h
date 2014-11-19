@@ -28,7 +28,6 @@ namespace pm {
 	/**
 	 * Image matrix representation
 	 */
-    template < typename D >
 	struct Mat : public Iterable2D<Point2i, true> {
 		union {
 			int rows;
@@ -153,7 +152,6 @@ namespace pm {
 	 * Image type
 	 */
 	typedef Mat Image;
-	typedef Mat Mask;
 
 }
 

@@ -43,9 +43,9 @@ namespace pm {
             // copy data
             for(const Point2i &p : layer){
                 // load
-                layer
+                
                 // save
-                mat.update(p.y, p.x, )
+                
             }
         }
         

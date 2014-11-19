@@ -39,6 +39,13 @@ namespace pm {
 	inline void seed() {
 		seed(time(NULL));
 	}
+    
+    /**
+     * Return the current temporal seed
+     */
+    inline unsigned int timeSeed() {
+        return time(NULL);
+    }
 
 	/// Discrete Bernoulli RV ~ Bernoulli(p)
 
