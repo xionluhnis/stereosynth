@@ -5,7 +5,10 @@
  * Created on November 18, 2014, 7:14 AM
  */
 
+#define USE_MATLAB 1
+
 #include "int_single_nnf.h"
+#include "scanline.h"
 
 typedef unsigned int uint;
 
@@ -47,14 +50,14 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     nnf.load(in[2]);
     
     // create algorithm sequence
-    auto seq = algoSeq<UniformSearch, Propagation>(&nnf);
+    auto seq = Algorithm() << UniformSearch(&nnf) << Propagation(&nnf);
     
     // scanline with the sequence of algorithm
     scanline(nnf, numIter, seq);
     
     // save nnf and output it
     if(nout > 0){
-        nout[0] = nnf.save();
+        out[0] = nnf.save();
     }
 }
 

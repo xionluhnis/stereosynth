@@ -10,6 +10,8 @@
 
 #include "defs.h"
 
+#include <cstring>
+
 namespace pm {
     
     inline bool mxStringEquals(const mxArray *A, const char *s) {

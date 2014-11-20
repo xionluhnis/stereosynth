@@ -68,7 +68,7 @@ struct NNF : Field2D<true> {
         if(mxGetNumberOfElements(data) > 0){
             // transfer data
             const MatXD m(data);
-            for(const Point2i &i : this){
+            for(const Point2i &i : *this){
                 Patch2ti &p = patches.at(i);
                 p.x = m.read<float>(i.y, i.x, 0);
                 p.y = m.read<float>(i.y, i.x, 1);
@@ -76,7 +76,7 @@ struct NNF : Field2D<true> {
             }
         } else {
             // initialize the field
-            for(const Point2i &i : this){
+            for(const Point2i &i : *this){
                 init(i);
             }
         }
@@ -85,7 +85,7 @@ struct NNF : Field2D<true> {
     mxArray *save() const {
         mxArray *data = mxCreateMatrix<float>(height, width, 3);
         MatXD m(data);
-        for(const Point2i &i : this){
+        for(const Point2i &i : *this){
             const Patch2ti &p = patches.at(i);
             m.update(i.y, i.x, 0, float(p.x));
             m.update(i.y, i.x, 1, float(p.y));
