@@ -38,7 +38,7 @@ namespace pm {
         }
         
         bool operator==(const BasicPatch<S> &p) const {
-            return p.x == x && p.y == y;
+            return p.x == translation::x && p.y == translation::y;
         }
         
         BasicPatch(const translation &t) : translation(t){}
@@ -85,7 +85,8 @@ namespace pm {
         }
         
         bool operator==(const AffinePatch<S> &p) const {
-            return p.x == x && p.y == y && p.angle == angle && p.scaleX == scaleX && p.scaleY == scaleY;
+            return p.t.x == affine::t.x && p.t.y == affine::t.y
+                && p.angle == affine::angle && p.scaleX == affine::scaleX && p.scaleY == affine::scaleY;
         }
         
         AffinePatch(const affine &aff) : affine(aff){}
