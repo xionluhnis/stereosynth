@@ -48,18 +48,31 @@ namespace pm {
     };
     
     template<typename S>
-    Point<S> AffineTransform< Point<S> >::transform(const Point<S> &p) const {
-        Point<S> q = p;
-        q.x *= scaleX;
-        q.y *= scaleY;
+	struct AffineTransform< Point<S> > : public Transform< Point<S> > {
+		typedef Point<S> point;
+		typedef typename point::scalar scalar;
         
-        scalar cosA = std::cos(angle);
-        scalar sinA = std::sin(angle);
+        Translation<point> t;
+        scalar angle;
+        scalar scaleX;
+        scalar scaleY;
         
-        scalar tx = cosA * px - sinA * py;
-        scalar ty = sinA * px + cosA * py;
-        return Point<S>(tx, ty) + t;
-    }
+        virtual point transform(const point &p) const {
+			point q = p;
+			q.x *= scaleX;
+			q.y *= scaleY;
+
+			scalar cosA = std::cos(angle);
+			scalar sinA = std::sin(angle);
+
+			scalar tx = cosA * q.x - sinA * q.y;
+			scalar ty = sinA * q.x + cosA * q.y;
+			return point(tx, ty) + t;
+		}
+        
+        AffineTransform(const Translation<point> &tr, scalar ang = 0, scalar sx = 1, scalar sy = 1)
+            : t(tr), angle(ang), scaleX(sx), scaleY(sy) {}
+	};
     
 }
 

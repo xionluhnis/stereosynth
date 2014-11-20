@@ -18,6 +18,8 @@ int main() {
     // for(int i = 0; i < 100; ++i){
         
         Patch2ti::width(7); // set patch size
+		assert(Patch2ti::width() == 7 && "Patch width did not update correctly.");
+		assert(Patch2tf::width() == 7 && "Patch width isn't spread correctly.");
         seed(timeSeed() + i); // set rng state
 
         // create source and target (gradients)
@@ -37,7 +39,8 @@ int main() {
         }
 
         // create distance instance
-        DistanceFunc d = DistanceFactory<Patch2ti, float, 1>::get(dist::SSD, 3);
+        DistanceFunc d = DistanceFactory<Patch2ti, float>::get(dist::SSD, 3);
+		assert(d && "Null distance pointer!");
 
         // create nnf
         NNF nnf(source, target, d);

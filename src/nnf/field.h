@@ -127,8 +127,8 @@ namespace pm {
             return list;
         }
         
-        std::vector<const Mat> layers() const {
-            std::vector<const Mat> list;
+        std::vector<Mat> layers() const {
+            std::vector<Mat> list;
             list.resize(entries.size());
             for(auto k : entries){
                 list.push_back(k.second);

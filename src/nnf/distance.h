@@ -15,16 +15,16 @@
 
 namespace pm {
     
-    template <typename TargetPatch, typename Scalar>
-    using Distance = Scalar(*)(const Image &, const Image &, const typename TargetPatch::SourcePatch &, const TargetPatch &);
+    template <typename TargetPatch, typename Scalar, typename Img = Image>
+    using Distance = Scalar(*)(const Img &, const Img &, const typename TargetPatch::SourcePatch &, const TargetPatch &);
     
     namespace dist { 
         
         /**
 		 * \brief Simple sum of squared differences
 		 */
-        template <typename TargetPatch, typename Scalar, int numChannels>
-		Scalar SumSquaredDiff(const Image &source, const Image &target,
+        template <typename TargetPatch, typename Scalar, typename Img, int numChannels>
+		Scalar SumSquaredDiff(const Img &source, const Img &target,
 				const typename TargetPatch::SourcePatch &p1, const TargetPatch &p2) {
             typedef typename TargetPatch::SourcePatch SourcePatch;
             typedef Vec<Scalar, numChannels> Pixel;
@@ -33,7 +33,7 @@ namespace pm {
 			Scalar sum = 0;
 			
 			for (const auto &i : p1) {
-				Pixel diff = source.at<Pixel>(p1.transform(i)) - target.at<Pixel>(p2.transform(i));
+				Pixel diff = source.template at<Pixel>(p1.transform(i)) - target.template at<Pixel>(p2.transform(i));
 				Scalar d = diff.dot(diff);
 				sum += d * invArea;
 				if (!std::isfinite(sum)) return sum;
@@ -50,28 +50,28 @@ namespace pm {
         };
     }
     
-    template <typename Patch, typename Scalar, int channels = 1>
+    template <typename Patch, typename Scalar, typename Img = Image, int channels = 1>
     struct DistanceFactory {
-        static Distance<Patch, Scalar> get(dist::DistanceType type, int numChannels){
+        static Distance<Patch, Scalar, Img> get(dist::DistanceType type, int numChannels){
             if(numChannels > channels){
-                return DistanceFactory<Patch, Scalar, channels + 1>::get(type, numChannels);
+                return DistanceFactory<Patch, Scalar, Img, channels + 1>::get(type, numChannels);
             }
             switch(type){
                 default:
                    std::cerr << "Invalid distance type " << type << "\n";
                 case dist::SSD:
-                    return &dist::SumSquaredDiff<Patch, Scalar, channels>;
+                    return &dist::SumSquaredDiff<Patch, Scalar, Img, channels>;
             }
         }
     };
     
 #ifndef MAX_SUPPORTED_CHANNELS
-#define MAX_SUPPORTED_CHANNELS 1
+#define MAX_SUPPORTED_CHANNELS 12
 #endif
     
-    template <typename Patch, typename Scalar>
-    struct DistanceFactory<Patch, Scalar, MAX_SUPPORTED_CHANNELS+1> {
-        static Distance<Patch, Scalar> get(dist::DistanceType, int){
+    template <typename Patch, typename Scalar, typename Img>
+    struct DistanceFactory<Patch, Scalar, Img, MAX_SUPPORTED_CHANNELS+1> {
+        static Distance<Patch, Scalar, Img> get(dist::DistanceType, int){
             std::cerr << "We do not supported more than " << MAX_SUPPORTED_CHANNELS << "\n";
             return NULL;
         }
