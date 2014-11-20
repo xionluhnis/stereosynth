@@ -2,6 +2,7 @@
 #define USE_MATLAB 0
 
 #include "int_single_nnf.h"
+#include "scanline.h"
 
 #include <cassert>
 #include <cmath>
@@ -13,6 +14,7 @@
 int main() {
 
     // we do it multiple times for different seeds
+    int i = 0;
     // for(int i = 0; i < 100; ++i){
         
         Patch2ti::width(7); // set patch size
@@ -35,7 +37,7 @@ int main() {
         }
 
         // create distance instance
-        DistanceFunc d = DistanceFactory<Patch2ti, float>::get(dist::SSD, 3);
+        DistanceFunc d = DistanceFactory<Patch2ti, float, 1>::get(dist::SSD, 3);
 
         // create nnf
         NNF nnf(source, target, d);
@@ -44,7 +46,7 @@ int main() {
         }
 
         // create algorithm sequence
-        auto seq = algoSeq<UniformSearch, Propagation>(&nnf);
+        auto seq = Algorithm() << UniformSearch(&nnf) << Propagation(&nnf);
 
         // scanline with the sequence of algorithm
         scanline(nnf, 3, seq);

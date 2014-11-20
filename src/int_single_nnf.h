@@ -22,6 +22,8 @@
 #include "matlab.h"
 #endif
 
+#include <functional>
+
 using namespace pm;
 
 // distance type
@@ -38,7 +40,7 @@ struct NNF : Field2D<true> {
     NNF(const Image &src, const Image &trg, const DistanceFunc d, const RNG r = unif01)
     : Field2D(src.width - Patch2ti::width() + 1, src.height - Patch2ti::width() + 1),
       source(src), target(trg), distFunc(d), rand(r) {
-        patches = createEntry<Patch>("patches");
+        patches = createEntry<Patch2ti>("patches");
 		distances = createEntry<float>("distances");
     }
 	
@@ -55,7 +57,7 @@ struct NNF : Field2D<true> {
         Point2i pos = uniform(
             rand,
             Vec2i(0, 0),
-            Vec2i(nnf->target.width - Patch2ti::width(), nnf->target.height - Patch2ti::width())
+            Vec2i(target.width - Patch2ti::width(), target.height - Patch2ti::width())
         );
         p = Patch2ti(pos); // assign position
         distances.at(i) = dist(i, p);
@@ -147,7 +149,7 @@ public:
     bool tryDelta(const Point2i &i, const Point2i &delta) {
         Point2i j = i - delta;
         if(nnf->contains(j)){
-            Patch2ti q = nnf->patches.at(j) * dx; // transform delta in patch => new position => new patch
+            Patch2ti q = nnf->patches.at(j).transform(delta); // transform delta in patch => new position => new patch
             return tryPatch(i, q);
         }
         return false;
@@ -166,40 +168,25 @@ public:
     Propagation(NNF *nnf) : TryPatch(nnf){}
 };
 
-template < typename Algorithm, typename NextAlgorithm = NoAlgorithm >
-struct AlgoSeq {
+struct Algorithm {
+    typedef std::function<bool(const Point2i &, bool)> AlgorithmPart;
     bool operator()(const Point2i &i, bool rev) {
-        bool res = algorithm(i, rev);
-        res |= next(i, rev);
+        bool res = false;
+        for(AlgorithmPart &p : seq){
+            res |= p(i, rev);
+        }
         return res;
     }
     
-    AlgoSeq(NNF *nnf) : algorithm(nnf), next(nnf){
+    Algorithm(){}
+    
+    Algorithm &operator <<(AlgorithmPart p){
+        seq.push_back(p);
+        return *this;
     }
-    AlgoSeq(Algorithm algo, NextAlgorithm n) : algorithm(algo), next(n) {}
 private:
-    Algorithm algorithm;
-    NextAlgorithm next;
+    std::vector<AlgorithmPart> seq;
 };
-
-template < typename Algorithm >
-bool AlgoSeq<Algorithm, NoAlgorithm>::operator()(const Point2i &i, bool rev) {
-    return algorithm(i, rev); // no need to check the next algorithm
-}
-
-template < typename FirstAlgo, typename... AlgoSeq>
-auto algoSeq(NNF *nnf){
-    auto next = algoSeq<AlgoSeq>(nnf);
-    Algorithm algo(nnf);
-    return AlgoSeq(algo, next);
-}
-
-template< typename Algorithm >
-AlgoSeq<Algorithm, NoAlgorithm> algoSeq(NNF *nnf) {
-    Algorithm algo(nnf);
-    NoAlgorithm end(nnf);
-    return AlgoSeq<Algorithm, NoAlgorithm>(algo, end);
-}
 
 #endif	/* INT_SINGLE_NNF_H */
 

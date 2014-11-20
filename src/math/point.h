@@ -31,6 +31,7 @@ namespace pm {
 		Point(T a, T b) : x(a), y(b) {}
 		template <typename T2>
 		explicit Point(const Point<T2> &p) : x(p.x), y(p.y) {}
+        Point(const vec &v) : x(v[0]), y(v[1]){}
 		
 		inline T dot(const point &p) const {
 			return p.x * x + p.y * y;

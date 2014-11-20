@@ -11,8 +11,6 @@
 #include "../math/iterator2d.h"
 #include "../math/mat.h"
 #include "../math/point.h"
-#include "../im/patch.h"
-#include "../im/texture.h"
 
 #include <map>
 #include <string>
@@ -38,6 +36,13 @@ namespace pm {
         
         bool contains(const Point2i &p) const {
             return p.x >= 0 && p.y >= 0 && p.x < width && p.y < height;
+        }
+        
+        virtual int size0() const {
+            return width;
+        }
+        virtual int size1() const {
+            return height;
         }
         
     public:
@@ -92,6 +97,7 @@ namespace pm {
 
         protected:
             Entry(int h, int w, int ch = 1) : Mat(h, w, sizeof(T), ch) {}
+            friend class Field2D;
         };
 
         template < typename T >
@@ -116,7 +122,7 @@ namespace pm {
             std::vector<Mat> list;
             list.resize(entries.size());
             for(auto k : entries){
-                list.push_back(k->second);
+                list.push_back(k.second);
             }
             return list;
         }
@@ -125,7 +131,7 @@ namespace pm {
             std::vector<const Mat> list;
             list.resize(entries.size());
             for(auto k : entries){
-                list.push_back(k->second);
+                list.push_back(k.second);
             }
             return list;
         }
@@ -148,7 +154,7 @@ namespace pm {
         };
         
         template < typename T >
-        static EntryLayout<T> layout(const Mat &m) const {
+        static EntryLayout<T> layout(const Mat &m) {
             int bytesPerChannel = sizeof(T);
             int fullChannels = m.elemSize() / bytesPerChannel;
             int extraBytes = m.elemSize() % bytesPerChannel;
@@ -158,8 +164,8 @@ namespace pm {
         template <typename T>
         int totalChannels() const {
             int channels = 0;
-            for(auto it : entries) {
-                channels += layout(it->second).totalChannels();
+            for(auto k : entries) {
+                channels += layout(k.second).totalChannels();
             }
             return channels;
         }

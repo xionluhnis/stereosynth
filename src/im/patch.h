@@ -37,6 +37,10 @@ namespace pm {
             return width();
         }
         
+        bool operator==(const BasicPatch<S> &p) const {
+            return p.x == x && p.y == y;
+        }
+        
         BasicPatch(const translation &t) : translation(t){}
         BasicPatch(const point &p) : translation(p){}
     };
@@ -67,7 +71,7 @@ namespace pm {
         typedef BasicPatch<int> SourcePatch;
         typedef Point<S> point;
         typedef Translation<point> translation;
-        typedef AffineTransformation<point> affine;
+        typedef AffineTransform<point> affine;
         
         inline static int width(int newSize = 0) {
             return SourcePatch::width(newSize);
@@ -80,7 +84,11 @@ namespace pm {
             return width();
         }
         
-        AffineTransform(const affine &aff) : affine(aff){}
+        bool operator==(const AffinePatch<S> &p) const {
+            return p.x == x && p.y == y && p.angle == angle && p.scaleX == scaleX && p.scaleY == scaleY;
+        }
+        
+        AffinePatch(const affine &aff) : affine(aff){}
     };
     
     // type names
