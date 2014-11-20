@@ -43,6 +43,7 @@ namespace pm {
         
         BasicPatch(const translation &t) : translation(t){}
         BasicPatch(const point &p) : translation(p){}
+        BasicPatch() : translation() {}
     };
     template <>
     inline int BasicPatch<int>::width(int newSize) {
@@ -90,6 +91,7 @@ namespace pm {
         }
         
         AffinePatch(const affine &aff) : affine(aff){}
+        AffinePatch() : affine(){}
     };
     
     // type names

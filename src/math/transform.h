@@ -45,6 +45,7 @@ namespace pm {
         
         AffineTransform(const Translation<T> &tr, scalar ang = 0, scalar sx = 1, scalar sy = 1)
             : t(tr), angle(ang), scaleX(sx), scaleY(sy) {}
+        AffineTransform() : angle(0), scaleX(1), scaleY(1) {}
     };
     
     template<typename S>
@@ -72,6 +73,7 @@ namespace pm {
         
         AffineTransform(const Translation<point> &tr, scalar ang = 0, scalar sx = 1, scalar sy = 1)
             : t(tr), angle(ang), scaleX(sx), scaleY(sy) {}
+        AffineTransform() : angle(0), scaleX(1), scaleY(1) {}
 	};
     
 }

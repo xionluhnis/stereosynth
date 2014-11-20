@@ -40,8 +40,8 @@ struct NNF : Field2D<true> {
     NNF(const Image &src, const Image &trg, const DistanceFunc d, const RNG r = unif01)
     : Field2D(src.width - Patch2ti::width() + 1, src.height - Patch2ti::width() + 1),
       source(src), target(trg), distFunc(d), rand(r) {
-        patches = createEntry<Patch2ti>("patches");
-		distances = createEntry<float>("distances");
+        patches = createEntry<Patch2ti>("patches", true); // need to initialize for vtables
+		distances = createEntry<float>("distances", false); // no need as we'll overwrite it
     }
 	
 	Entry<Patch2ti> patches;
@@ -149,7 +149,9 @@ public:
     bool tryDelta(const Point2i &i, const Point2i &delta) {
         Point2i j = i - delta;
         if(nnf->contains(j)){
-            Patch2ti q = nnf->patches.at(j).transform(delta); // transform delta in patch => new position => new patch
+            NNF::Entry<Patch2ti> &patches = nnf->patches;
+            Patch2ti &n = patches.at(j);
+            Patch2ti q = n.transform(delta); // transform delta in patch => new position => new patch
             return tryPatch(i, q);
         }
         return false;

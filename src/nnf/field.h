@@ -13,6 +13,7 @@
 #include "../math/point.h"
 
 #include <map>
+#include <new>
 #include <string>
 
 namespace pm {
@@ -101,12 +102,24 @@ namespace pm {
         };
 
         template < typename T >
-        Entry<T> createEntry(const std::string &name){
+        Entry<T> createEntry(const std::string &name, bool initialize = true){
             auto it = entries.find(name);
             assert(it == entries.end() && "Creating field entry that already exists!");
 
             // create entry and insert
             Entry<T> entry(height, width);
+            if(initialize){
+                // call default constructor for all the elements (placement-new)
+                // @see http://stackoverflow.com/questions/222557/what-uses-are-there-for-placement-new
+                // @see http://www.parashift.com/c++-faq/placement-new.html
+                T* data = reinterpret_cast<T*>(entry.ptr());
+                for(int i = 0, n = width * height; i < n; ++i){
+                    new(&data[i])T();
+                    // /!\ the destructors won't be called!
+                    // TODO check about alignment
+                }
+            }
+            
             entries.insert(it, std::pair<std::string, Mat>(name, entry));
             return entry;
         }

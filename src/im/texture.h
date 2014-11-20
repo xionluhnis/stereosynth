@@ -87,7 +87,7 @@ namespace pm {
 			BoundaryModel bm = Unchecked, 
 			PixelInterpolation pi = Bilinear) : Mat(m), model(bm), interp(pi) {
 			if(depth > 0) {
-				stack.reset(new Image[depth]);
+				stack.reset(new Image[depth]); // FIXME should we call the constructor? where do we initialize them?
 			}
 		}
 
