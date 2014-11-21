@@ -2,11 +2,19 @@
 #define USE_MATLAB 0
 
 #include "int_single_nnf.h"
+#include "nnf/algorithm.h"
+#include "nnf/propagation.h"
+#include "nnf/uniformsearch.h"
 #include "scanline.h"
 
 #include <cassert>
 #include <cmath>
 #include <iostream>
+
+using namespace pm;
+
+typedef NearestNeighborField<Patch2ti, float> NNF;
+typedef Distance<Patch2ti, float> DistanceFunc;
 
 /**
  * Test the basic integer 1-nnf
@@ -49,7 +57,7 @@ int main() {
         }
 
         // create algorithm sequence
-        auto seq = Algorithm() << UniformSearch(&nnf) << Propagation(&nnf);
+        auto seq = Algorithm() << UniformSearch<Patch2ti, float>(&nnf) << Propagation<Patch2ti, float>(&nnf);
 
         // scanline with the sequence of algorithm
         scanline(nnf, 3, seq);

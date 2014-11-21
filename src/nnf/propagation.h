@@ -13,15 +13,16 @@
 
 namespace pm {
     
-    template < typename NNF, typename Patch = typename NNF::TargetPatch >
-    class Propagation : public TryPatch<NNF, Patch> {
+    template < typename Patch = Patch2ti, typename DistValue = float>
+    class Propagation {
     public:
+        typedef NearestNeighborField<Patch, DistValue> NNF;
 
         bool tryDelta(const Point2i &i, const Point2i &delta) {
             Point2i j = i - delta;
             if(nnf->contains(j)){
-                TargetPatch q = nnf->patches.at(j).transform(delta); // transform delta in patch => new position => new patch
-                return tryPatch(i, q);
+                Patch q = nnf->patches.at(j).transform(delta); // transform delta in patch => new position => new patch
+                return tryPatch(nnf, i, q);
             }
             return false;
         }
@@ -36,7 +37,10 @@ namespace pm {
             return res;
         }
 
-        Propagation(NNF *nnf) : TryPatch(nnf){}
+        Propagation(NNF *n) : nnf(n){}
+        
+    private:
+        NNF *nnf;
     };
     
 }

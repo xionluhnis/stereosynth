@@ -17,28 +17,44 @@ namespace pm {
     /**
      * Uniform search for NNF improvement
      */
-    template < typename NNF, typename Patch = typename NNF::TargetPatch >
-    class UniformSearch : public TryPatch<NNF, Patch> {
+    template < typename Patch = Patch2ti, typename DistValue = float >
+    class UniformSearch {
     public:
+        typedef NearestNeighborField<Patch, DistValue> NNF;
 
         bool operator()(const Point2i &i, bool);
 
-        UniformSearch(NNF *nnf) : TryPatch(nnf){}
+        UniformSearch(NNF *nnf);
     };
     
     // Implementation for 2d translation patches
-    template <typename NNF, typename Scalar = int>
-    bool UniformSearch< NNF, BasicPatch<Scalar> >::operator()(const Point2i &i, bool){
-        typedef typename BasicPatch<Scalar>::point point;
+    template < typename S, typename DistValue >
+    class UniformSearch<BasicPatch<S>, DistValue> {
+    public:
+        typedef BasicPatch<S> TargetPatch;
+        typedef typename BasicPatch<S>::point point;
         typedef typename point::vec vec;
-        // uniformly sample a position for the new patch
-        point q = uniform(
-            nnf->rand,
-            vec(0, 0),
-            vec(nnf->target.width - BasicPatch<Scalar>::width(), nnf->target.height - BasicPatch<Scalar>::width())
-        );
-        return Base::tryPatch(i, BasicPatch<Scalar>(q));
-    }
+        typedef NearestNeighborField<TargetPatch, DistValue> NNF;
+
+        bool operator()(const Point2i &i, bool){
+            
+            // uniformly sample a position for the new patch
+            point q = uniform(
+                nnf->rng(),
+                vec(0, 0),
+                vec(
+                    nnf->target.width - TargetPatch::width(),
+                    nnf->target.height - TargetPatch::width()
+                )
+            );
+            return tryPatch(nnf, i, TargetPatch(q));
+        }
+
+        UniformSearch(NNF *n) : nnf(n){}
+        
+    private:
+        NNF *nnf;
+    };
     
 }
 
