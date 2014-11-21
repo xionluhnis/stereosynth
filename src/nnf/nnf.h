@@ -1,39 +1,28 @@
 /* 
- * File:   int_single_nnf.h
+ * File:   nnf.h
  * Author: akaspar
  *
- * Created on November 19, 2014, 5:04 PM
+ * Created on November 21, 2014, 11:17 AM
  */
 
-#ifndef INT_SINGLE_NNF_H
-#define	INT_SINGLE_NNF_H
+#ifndef NNF_H
+#define	NNF_H
 
-#ifndef USE_MATLAB
-#define USE_MATLAB 1
-#endif
+#include "distance.h"
+#include "field.h"
+#include "../im/patch.h"
 
-#include "algebra.h"
-#include "im/patch.h"
-#include "nnf/distance.h"
-#include "nnf/field.h"
-#include "sampling/uniform.h"
-
-#if USE_MATLAB
-#include "matlab.h"
-#endif
-
-#include <functional>
-
-using namespace pm;
-
-// distance type
+namespace pm {
+    
+    // distance type
 typedef Distance<Patch2ti, float> DistanceFunc;
 
 // nearest neighbor field
-struct NNF : Field2D<true> {
+template < typename Patch = Patch2ti, typename DistanceValue = float >
+struct NearestNeighborField : Field2D<true> {
     
-    typedef Patch2ti TargetPatch;
-    typedef float DistanceType;
+    typedef Patch TargetPatch;
+    typedef DistanceValue DistanceType;
     
     const Image source;
     const Image target;
@@ -47,8 +36,8 @@ struct NNF : Field2D<true> {
 		distances = createEntry<float>("distances", false); // no need as we'll overwrite it
     }
 	
-	Entry<Patch2ti> patches;
-	Entry<float> distances;
+    TargetPatch &patch(const Point2i &);
+    DistanceType &distance(const Point2i &);
     
     float dist(const Point2i &pos, const Patch2ti &q) const {
         const Patch2ti p(pos);
@@ -99,6 +88,8 @@ struct NNF : Field2D<true> {
 #endif
     
 };
+    
+}
 
-#endif	/* INT_SINGLE_NNF_H */
+#endif	/* NNF_H */
 
