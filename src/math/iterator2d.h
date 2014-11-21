@@ -48,7 +48,7 @@ namespace pm {
 			return it.i0 == i0 && it.i1 == i1;
 		}
         inline bool operator !=(const this_type &it) const {
-            return it.i0 != i0 || it.i1 == i1;
+            return it.i0 != i0 || it.i1 != i1;
         }
 
 		operator this_value() const {
