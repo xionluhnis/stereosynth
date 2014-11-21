@@ -1,12 +1,12 @@
 /* 
- * File:   int_single_nnf.h
+ * File:   int_k_nnf.h
  * Author: akaspar
  *
- * Created on November 19, 2014, 5:04 PM
+ * Created on November 21, 2014, 3:51 PM
  */
 
-#ifndef INT_SINGLE_NNF_H
-#define	INT_SINGLE_NNF_H
+#ifndef INT_K_NNF_H
+#define	INT_K_NNF_H
 
 #ifndef USE_MATLAB
 #define USE_MATLAB 1
@@ -23,14 +23,15 @@
 #include "matlab.h"
 #endif
 
+#include <queue>
+
 namespace pm {
 
     // distance type
     typedef Distance<Patch2ti, float> DistanceFunc;
 
-    // nearest neighbor field
-    template<>
-    struct NearestNeighborField<Patch2ti, float> : public Field2D<true> {
+    // nearest neighbor field with the k best results
+    struct kNNF: public Field2D<true> {
 
         const Image source;
         const Image target;
@@ -42,6 +43,8 @@ namespace pm {
           source(src), target(trg), distFunc(d), rand(r) {
             patches = createEntry<Patch2ti>("patches", true); // need to initialize for vtables
             distances = createEntry<float>("distances", false); // no need as we'll overwrite it
+            
+            std::priority_queue<double> q;
         }
 
         Entry<Patch2ti> patches;
@@ -107,5 +110,5 @@ namespace pm {
 
 }
 
-#endif	/* INT_SINGLE_NNF_H */
+#endif	/* INT_K_NNF_H */
 
