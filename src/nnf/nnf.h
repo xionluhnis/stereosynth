@@ -27,12 +27,14 @@ namespace pm {
         typedef typename Patch::point point;
         typedef typename point::vec vec;
         
-        // --- provides a common RNG instance ----------------------------------
+        // --- provide a common RNG instance -----------------------------------
         RNG rng() const;
-        // --- provides patch and distance storage -----------------------------
+        // --- provide a target dimension --------------------------------------
+        FrameSize targetSize() const;
+        // --- provide patch and distance storage ------------------------------
         Entry<TargetPatch> patches;
         Entry<DistValue> distances;
-        // --- provides a distance computation ---------------------------------
+        // --- provide a distance computation ----------------------------------
         DistanceValue dist(const Point2i &pos, const TargetPatch &q);
 
     };

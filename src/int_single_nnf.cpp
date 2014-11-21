@@ -8,9 +8,17 @@
 #define USE_MATLAB 1
 
 #include "int_single_nnf.h"
+#include "nnf/algorithm.h"
+#include "nnf/propagation.h"
+#include "nnf/uniformsearch.h"
 #include "scanline.h"
 
 typedef unsigned int uint;
+
+using namespace pm;
+
+typedef NearestNeighborField<Patch2ti, float> NNF;
+typedef Distance<Patch2ti, float> DistanceFunc;
 
 /**
  * Usage:
@@ -50,7 +58,7 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     nnf.load(in[2]);
     
     // create algorithm sequence
-    auto seq = Algorithm() << UniformSearch(&nnf) << Propagation(&nnf);
+    auto seq = Algorithm() << UniformSearch<Patch2ti, float>(&nnf) << Propagation<Patch2ti, float>(&nnf);
     
     // scanline with the sequence of algorithm
     scanline(nnf, numIter, seq);

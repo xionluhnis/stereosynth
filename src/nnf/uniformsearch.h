@@ -38,14 +38,14 @@ namespace pm {
 
         bool operator()(const Point2i &i, bool){
             
+            // maximum
+            FrameSize target = nnf->targetSize().shrink(TargetPatch::width());
+            
             // uniformly sample a position for the new patch
             point q = uniform(
                 nnf->rng(),
                 vec(0, 0),
-                vec(
-                    nnf->target.width - TargetPatch::width(),
-                    nnf->target.height - TargetPatch::width()
-                )
+                vec(target.width, target.height)
             );
             return tryPatch(nnf, i, TargetPatch(q));
         }

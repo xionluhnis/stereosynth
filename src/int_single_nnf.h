@@ -55,6 +55,9 @@ namespace pm {
         inline RNG rng() const {
             return rand;
         }
+        inline FrameSize targetSize() const {
+            return FrameSize(target.width, target.height);
+        }
 
         // --- default initialization ------------------------------------------
         void init(const Point2i &i) {
