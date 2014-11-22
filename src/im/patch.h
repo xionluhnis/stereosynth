@@ -31,7 +31,7 @@ namespace pm {
         static int width(int newSize = 0);
         
         bool operator==(const BasicPatch<S> &p) const {
-            return p.x == translation::x && p.y == translation::y;
+            return p.x == this->x && p.y == this->y;
         }
         
         BasicPatch(const translation &t) : translation(t){}
@@ -72,8 +72,8 @@ namespace pm {
         }
         
         bool operator==(const AffinePatch<S> &p) const {
-            return p.t.x == affine::t.x && p.t.y == affine::t.y
-                && p.angle == affine::angle && p.scaleX == affine::scaleX && p.scaleY == affine::scaleY;
+            return p.t.x == this->t.x && p.t.y == this->t.y
+                && p.angle == this->angle && p.scaleX == this->scaleX && p.scaleY == this->scaleY;
         }
         
         AffinePatch(const affine &aff) : affine(aff){}
@@ -89,9 +89,14 @@ namespace pm {
     ////////////////////////////////////////////////////////////////////////////
     
     template < typename Patch = BasicPatch<int> >
-    Frame2D< Point<int> > pixels() {
+    inline Frame2D< Point<int> > pixels() {
         return Frame2D< Point<int> >(Patch::width(), Patch::width());
     }
+	
+	template < typename Patch = BasicPatch<int> >
+	inline Frame2D< Point<int> > pixels(const Patch &) {
+		return pixels< Patch >();
+	}
 }
 
 #endif	/* IM_PATCH_H */

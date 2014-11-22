@@ -66,6 +66,23 @@ namespace pm {
             return false; // no, the element is larger
         }
     }
+	
+	template <int K, typename T, Compare = std::less>
+	struct Heap {
+		T *data;
+		Heap(T *d) : data(d){}
+		
+		const T& head() const {
+			return data[0];
+		}
+		const T &tail() const {
+			return data[K-1];
+		}
+		
+		bool insert(const T &elem) {
+			heap_insert<T, Compare>(data, K, elem);
+		}
+	};
 }
 
 #endif	/* HEAP_H */

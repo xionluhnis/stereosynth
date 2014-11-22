@@ -25,7 +25,7 @@ namespace pm {
     struct Translation : public T, public Transform<T> {
         typedef typename T::scalar scalar;
         
-        virtual T transform(const T &p) const {
+        T transform(const T &p) const {
             return p + *this;
         }
         explicit Translation(scalar x = 0, scalar y = 0) : T(x, y){}
@@ -41,7 +41,7 @@ namespace pm {
         scalar scaleX;
         scalar scaleY;
         
-        virtual T transform(const T &p) const;
+        T transform(const T &p) const;
         
         AffineTransform(const Translation<T> &tr, scalar ang = 0, scalar sx = 1, scalar sy = 1)
             : t(tr), angle(ang), scaleX(sx), scaleY(sy) {}
@@ -58,7 +58,7 @@ namespace pm {
         scalar scaleX;
         scalar scaleY;
         
-        virtual point transform(const point &p) const {
+        point transform(const point &p) const {
 			point q = p;
 			q.x *= scaleX;
 			q.y *= scaleY;

@@ -32,7 +32,7 @@ namespace pm {
 			const Scalar invArea = 1.0 / (width * width);
 			Scalar sum = 0;
 			
-			for (const auto &i : p1) {
+			for (const auto &i : pixels(p1)) {
 				Pixel diff = source.template at<Pixel>(p1.transform(i)) - target.template at<Pixel>(p2.transform(i));
 				Scalar d = diff.dot(diff);
 				sum += d * invArea;

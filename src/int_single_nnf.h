@@ -63,7 +63,7 @@ namespace pm {
         void init(const Point2i &i) {
             Patch2ti &p = patches.at(i);
             Point2i pos = uniform(
-                rng(),
+                rand,
                 Vec2i(0, 0),
                 Vec2i(target.width - Patch2ti::width(), target.height - Patch2ti::width())
             );
