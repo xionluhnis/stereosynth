@@ -18,22 +18,6 @@
 
 namespace pm {
     
-    struct FrameSize {
-        union {
-            int width;
-            int cols;
-        };
-        union {
-            int height;
-            int rows;
-        };
-        explicit FrameSize(int w = 0, int h = 0) : width(w), height(h){}
-        
-        inline FrameSize shrink(int margin) const {
-            return FrameSize(width - margin, height - margin);
-        }
-    };
-    
     template <int RowMajor = true>
     class Field2D : public Iterable2D<Point2i, RowMajor> {
     public:

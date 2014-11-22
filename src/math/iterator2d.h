@@ -108,6 +108,74 @@ namespace pm {
         virtual int size0() const = 0;
         virtual int size1() const = 0;
 	};
+    
+    // -------------------------------------------------------------------------
+    // Iteration frame size
+    //
+    struct FrameSize {
+        union {
+            int width;
+            int cols;
+        };
+        union {
+            int height;
+            int rows;
+        };
+        explicit FrameSize(int w = 0, int h = 0) : width(w), height(h){}
+        
+        inline FrameSize shrink(int margin) const {
+            return FrameSize(width - margin, height - margin);
+        }
+        inline FrameSize transpose() const {
+            return FrameSize(height, width);
+        }
+    };
+    
+    // -------------------------------------------------------------------------
+    // Iterable2D that can be instantiated without any virtual function need
+    //
+    template < typename Index, bool RowMajor = true >
+    struct Frame2D {
+        typedef Index index;
+		typedef Iterator2D<Index, RowMajor> iterator;
+        
+        const FrameSize size;
+
+		iterator begin() const {
+			return iterator(
+				0, 0,
+				0, size.width,
+				1, 1
+			);
+		}
+
+		iterator end() const {
+			return iterator(
+				0, size.height,
+				0, size.width,
+				1, 1
+			);
+		}
+
+		iterator rbegin() const {
+			return iterator(
+				size.width - 1, size.height - 1,
+				size.width - 1, -1,
+				-1, -1
+			);
+		}
+
+		iterator rend() const {
+			return iterator(
+				size.width - 1, -1,
+				size.width - 1, -1,
+				-1, -1
+			);
+		}
+        
+        Frame2D(int s0, int s1) : size(RowMajor ? s0 : s1, RowMajor ? s1 : s0){}
+        Frame2D(const FrameSize &s) : size(RowMajor ? s : s.transpose()){}
+    };
 
 }
 

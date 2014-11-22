@@ -14,9 +14,9 @@ namespace pm {
     
     template <typename T>
     struct Transform {
-        virtual T transform(const T &) const = 0;
+        T transform(const T &) const;
         
-        inline T operator *(const T &p) const {
+        inline T operator %(const T &p) const {
             return transform(p);
         }
     };

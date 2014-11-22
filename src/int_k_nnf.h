@@ -38,7 +38,7 @@ namespace pm {
         const DistanceFunc distFunc;
         const RNG rand;
 
-        NearestNeighborField(const Image &src, const Image &trg, const DistanceFunc d, const RNG r = unif01)
+        kNNF(const Image &src, const Image &trg, const DistanceFunc d, const RNG r = unif01)
         : Field2D(src.width - Patch2ti::width() + 1, src.height - Patch2ti::width() + 1),
           source(src), target(trg), distFunc(d), rand(r) {
             patches = createEntry<Patch2ti>("patches", true); // need to initialize for vtables

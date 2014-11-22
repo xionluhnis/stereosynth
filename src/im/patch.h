@@ -23,19 +23,12 @@ namespace pm {
     ////////////////////////////////////////////////////////////////////////////
     
     template < typename S >
-    struct BasicPatch : public Translation< Point<S> >, public Iterable2D< Point<S>, true > {
+    struct BasicPatch : public Translation< Point<S> > {
         typedef BasicPatch<int> SourcePatch;
         typedef Point<S> point;
         typedef Translation<point> translation;
         
         static int width(int newSize = 0);
-        
-        virtual int size0() const {
-            return width();
-        }
-        virtual int size1() const {
-            return width();
-        }
         
         bool operator==(const BasicPatch<S> &p) const {
             return p.x == translation::x && p.y == translation::y;
@@ -68,7 +61,7 @@ namespace pm {
     ////////////////////////////////////////////////////////////////////////////
     
     template < typename S >
-    struct AffinePatch : public AffineTransform< Point<S> >, public Iterable2D< Point<S>, true > {
+    struct AffinePatch : public AffineTransform< Point<S> > {
         typedef BasicPatch<int> SourcePatch;
         typedef Point<S> point;
         typedef Translation<point> translation;
@@ -76,13 +69,6 @@ namespace pm {
         
         inline static int width(int newSize = 0) {
             return SourcePatch::width(newSize);
-        }
-        
-        virtual int size0() const {
-            return width();
-        }
-        virtual int size1() const {
-            return width();
         }
         
         bool operator==(const AffinePatch<S> &p) const {
@@ -97,6 +83,15 @@ namespace pm {
     // type names
     typedef AffinePatch<float> Patch2af;
     typedef AffinePatch<double> Patch2ad;
+    
+    ////////////////////////////////////////////////////////////////////////////
+    ///// Patch Pixel Frame ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    template < typename Patch = BasicPatch<int> >
+    Frame2D< Point<int> > pixels() {
+        return Frame2D< Point<int> >(Patch::width(), Patch::width());
+    }
 }
 
 #endif	/* IM_PATCH_H */
