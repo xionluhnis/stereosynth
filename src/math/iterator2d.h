@@ -8,6 +8,9 @@
 #ifndef ITERATOR2D_H
 #define	ITERATOR2D_H
 
+#include "point.h"
+
+
 namespace pm {
 
 	/**
@@ -128,6 +131,10 @@ namespace pm {
         }
         inline FrameSize transpose() const {
             return FrameSize(height, width);
+        }
+        
+        inline bool contains(const Point2i &p) const {
+            return p.x >= 0 && p.y >= 0 && p.x < width & p.y < height;
         }
     };
     

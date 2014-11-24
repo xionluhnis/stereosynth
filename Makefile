@@ -25,3 +25,5 @@ test:
 	$(CC) $(INCL) $(subst target,scanline,$(TEST))
 	$(CC) $(INCL) $(subst target,rng_uniform,$(TEST))
 	$(CC) $(INCL) $(subst target,int_single_nnf,$(TEST))
+	$(CC) $(INCL) $(subst target,int_k_nnf,$(TEST))
+	

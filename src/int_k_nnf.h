@@ -30,8 +30,8 @@ namespace pm {
     typedef Distance<Patch2ti, float> DistanceFunc;
 
     // nearest neighbor field with the k best results
-	template <int K = 7>
-    struct kNNF: public Field2D<true> {
+	template <int K>
+    struct NearestNeighborField<Patch2ti, float, K> : public Field2D<true> {
 
         const Image source;
         const Image target;
@@ -39,19 +39,25 @@ namespace pm {
         const RNG rand;
 		const int k;
 
-        kNNF(const Image &src, const Image &trg, const DistanceFunc d, const RNG r = unif01)
+        NearestNeighborField(const Image &src, const Image &trg, const DistanceFunc d, const RNG r = unif01)
         : Field2D(src.width - Patch2ti::width() + 1, src.height - Patch2ti::width() + 1),
           source(src), target(trg), distFunc(d), rand(r), k(K) {
-            patches = createEntry<PatchData[K]>("patches");
+            data = createEntry<PatchData[K]>("patches");
         }
 		
 		struct PatchData {
 			Patch2ti patch;
 			float distance;
+            
+            PatchData() : patch(), distance(std::numeric_limits<float>::max()) {}
+            PatchData(const Patch2ti &p, float d) : patch(p), distance(d) {}
 		};
-		struct DistanceCompare(const PatchData &p1, const PatchData &p2) {
-			return p1.distance < p2.distance;
-		}
+		struct DistanceCompare {
+            bool operator ()(const PatchData &p1, const PatchData &p2) const {
+                return p1.distance < p2.distance;
+            }
+		};
+        typedef Heap<K, PatchData, DistanceCompare> MaxHeap;
 
         Entry<PatchData[K]> data;
 
@@ -63,30 +69,50 @@ namespace pm {
         inline RNG rng() const {
             return rand;
         }
+        inline const Patch2ti &patch(const Point2i &i, int k) const {
+            return data.at(i)[k].patch;
+        }
+        inline const float &distance(const Point2i &i, int k) const {
+            // provide the worst distance of all (top)
+            return data.at(i)[k].distance;
+        }
+        inline bool store(const Point2i &i, const Patch2ti &p, const float &d) {
+            return MaxHeap(data.at(i)).insert(PatchData(p, d));
+        }
         inline FrameSize targetSize() const {
             return FrameSize(target.width, target.height);
         }
 
         // --- default initialization ------------------------------------------
-        void init(const Point2i &i) {
-            PatchData &p[K] = data.at(i);
-			Heap<K, PatchData> heap(&p[0]);
-			for(int i = 0; i < K; ++i){
-				// TODO make sure the K patches are different
-				Point2i pos = uniform(
-					rng(),
-					Vec2i(0, 0),
-					Vec2i(target.width - Patch2ti::width(), target.height - Patch2ti::width())
-				);
-				heap.insert(Patch2ti(pos));
+        int init(const Point2i &i) {
+            PatchData (&p)[K] = data.at(i);
+            for(int k = 0; k < K; ++k){
+                // initialize with bad data
+                p[k].patch = Patch2ti(Point2i(-1, -1));
+                p[k].distance = std::numeric_limits<float>::infinity();
+            }
+			MaxHeap heap(&p[0]);
+            int ok = 0;
+			for(int k = 0; k < K; ++k){
+				// make sure the K patches are different!
+                Point2i pos = uniform(
+                    rng(),
+                    Vec2i(0, 0),
+                    Vec2i(target.width - Patch2ti::width(), target.height - Patch2ti::width())
+                );
+                Patch2ti q(pos);
+                PatchData pd(q, dist(i, q));
+                // need the distance to insert in the heap
+				if(heap.insert(pd)) ++ok;
 			}
+            return ok;
         }
 
     #if USE_MATLAB
-        void load(const mxArray *data){
-            if(mxGetNumberOfElements(data) > 0){
+        void load(const mxArray *d){
+            if(mxGetNumberOfElements(d) > 0){
                 // transfer data
-                const MatXD m(data);
+                const MatXD m(d);
                 for(const Point2i &i : *this){
 					PatchData &p[K] = data.at(i);
 					for (int j = K-1; j >= 0; --j){
@@ -96,16 +122,18 @@ namespace pm {
 					}
                 }
             } else {
-                // initialize the field
                 for(const Point2i &i : *this){
-                    init(i);
+                    int k = init(i);
+                    while(k < K) {
+                        k += init(i);
+                    }
                 }
             }
         }
 
         mxArray *save() const {
-            mxArray *data = mxCreateMatrix<float>(height, width, 3 * K);
-            MatXD m(data);
+            mxArray *d = mxCreateMatrix<float>(height, width, 3 * K);
+            MatXD m(d);
             for(const Point2i &i : *this){
                 const PatchData &p[K] = data.at(i);
 				for(int j = K-1; j >= 0; --j){

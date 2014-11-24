@@ -1,7 +1,7 @@
 // we do not test with matlab here
 #define USE_MATLAB 0
 
-#include "int_single_nnf.h"
+#include "int_k_nnf.h"
 #include "nnf/algorithm.h"
 #include "nnf/propagation.h"
 #include "nnf/uniformsearch.h"
@@ -13,7 +13,7 @@
 
 using namespace pm;
 
-typedef NearestNeighborField<Patch2ti, float, 1> NNF;
+typedef NearestNeighborField<Patch2ti, float, 7> NNF;
 typedef Distance<Patch2ti, float> DistanceFunc;
 
 /**
@@ -28,7 +28,7 @@ int main() {
         Patch2ti::width(7); // set patch size
 		assert(Patch2ti::width() == 7 && "Patch width did not update correctly.");
 		assert(Patch2tf::width() == 7 && "Patch width isn't spread correctly.");
-        seed(timeSeed() + i); // set rng state
+        seed(0 /*timeSeed()*/ + i); // set rng state
 
         // create source and target (gradients)
         Image source(100, 100, IM_32FC3);
@@ -57,7 +57,7 @@ int main() {
         }
 
         // create algorithm sequence
-        auto seq = Algorithm() << UniformSearch<Patch2ti, float, 1>(&nnf) << Propagation<Patch2ti, float, 1>(&nnf);
+        auto seq = Algorithm() << UniformSearch<Patch2ti, float, 7>(&nnf) << Propagation<Patch2ti, float, 7>(&nnf);
 
         // scanline with the sequence of algorithm
         scanline(nnf, 3, seq);

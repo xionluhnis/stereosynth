@@ -30,7 +30,7 @@ namespace pm {
 
     // nearest neighbor field
     template<>
-    struct NearestNeighborField<Patch2ti, float> : public Field2D<true> {
+    struct NearestNeighborField<Patch2ti, float, 1> : public Field2D<true> {
 
         const Image source;
         const Image target;
@@ -54,6 +54,12 @@ namespace pm {
 
         inline RNG rng() const {
             return rand;
+        }
+        inline Patch2ti &patch(const Point2i &i) {
+            return patches.at(i);
+        }
+        inline float &distance(const Point2i &i) {
+            return distances.at(i);
         }
         inline FrameSize targetSize() const {
             return FrameSize(target.width, target.height);
@@ -80,7 +86,7 @@ namespace pm {
                     Patch2ti &p = patches.at(i);
                     p.x = m.read<float>(i.y, i.x, 0);
                     p.y = m.read<float>(i.y, i.x, 1);
-                    distances.at(i) = m.read<float>(i.y, i.x, 2);
+                    distance(i) = m.read<float>(i.y, i.x, 2);
                 }
             } else {
                 // initialize the field
