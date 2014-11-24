@@ -115,10 +115,10 @@ namespace pm {
                 const MatXD m(d);
                 for(const Point2i &i : *this){
 					PatchData (&p)[K] = data.at(i);
-					for (int j = K-1; j >= 0; --j){
-						p[j].patch.x = m.read<float>(i.y, i.x, 3 * j + 0);
-						p[j].patch.y = m.read<float>(i.y, i.x, 3 * j + 1);
-						p[j].distance = m.read<float>(i.y, i.x, 3 * j + 2);
+					for (int k = 0; k < K; ++k){
+						p[k].patch.x = m.read<float>(i.y, i.x, 3 * k + 0);
+						p[k].patch.y = m.read<float>(i.y, i.x, 3 * k + 1);
+						p[k].distance = m.read<float>(i.y, i.x, 3 * k + 2);
 					}
                 }
             } else {
@@ -136,10 +136,10 @@ namespace pm {
             MatXD m(d);
             for(const Point2i &i : *this){
                 const PatchData (&p)[K] = data.at(i);
-				for(int j = K-1; j >= 0; --j){
-					m.update(i.y, i.x, 0, float(p[j].patch.x));
-					m.update(i.y, i.x, 1, float(p[j].patch.y));
-					m.update(i.y, i.x, 2, p[j].distance);
+				for(int k = 0; k < K; ++k){
+					m.update(i.y, i.x, 3 * k + 0, float(p[k].patch.x));
+					m.update(i.y, i.x, 3 * k + 1, float(p[k].patch.y));
+					m.update(i.y, i.x, 3 * k + 2, p[k].distance);
 				}
             }
             return d;
