@@ -11,6 +11,8 @@ MEX := mex -v CXXOPTIMFLAGS='$$CXXOPTIMFLAGS $(OPTI_FLAGS)' CXXFLAGS='$$CXXFLAGS
 mex:
 	mkdir bin 2>/dev/null
 	$(MEX) src/int_single_nnf.cpp -output bin/isnnf -output bin/isnnf
+	$(MEX) src/int_k_nnf.cpp -output bin/iknnf -output bin/iknnf
+
 old_mex:
 	bash build.sh
 

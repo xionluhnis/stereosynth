@@ -17,7 +17,7 @@ typedef unsigned int uint;
 
 using namespace pm;
 
-typedef NearestNeighborField<Patch2ti, float> NNF;
+typedef NearestNeighborField<Patch2ti, float, 1> NNF;
 typedef Distance<Patch2ti, float> DistanceFunc;
 
 /**
@@ -58,7 +58,7 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     nnf.load(in[2]);
     
     // create algorithm sequence
-    auto seq = Algorithm() << UniformSearch<Patch2ti, float>(&nnf) << Propagation<Patch2ti, float>(&nnf);
+    auto seq = Algorithm() << UniformSearch<Patch2ti, float, 1>(&nnf) << Propagation<Patch2ti, float, 1>(&nnf);
     
     // scanline with the sequence of algorithm
     scanline(nnf, numIter, seq);

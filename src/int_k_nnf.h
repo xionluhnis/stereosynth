@@ -114,7 +114,7 @@ namespace pm {
                 // transfer data
                 const MatXD m(d);
                 for(const Point2i &i : *this){
-					PatchData &p[K] = data.at(i);
+					PatchData (&p)[K] = data.at(i);
 					for (int j = K-1; j >= 0; --j){
 						p[j].patch.x = m.read<float>(i.y, i.x, 3 * j + 0);
 						p[j].patch.y = m.read<float>(i.y, i.x, 3 * j + 1);
@@ -135,14 +135,14 @@ namespace pm {
             mxArray *d = mxCreateMatrix<float>(height, width, 3 * K);
             MatXD m(d);
             for(const Point2i &i : *this){
-                const PatchData &p[K] = data.at(i);
+                const PatchData (&p)[K] = data.at(i);
 				for(int j = K-1; j >= 0; --j){
 					m.update(i.y, i.x, 0, float(p[j].patch.x));
 					m.update(i.y, i.x, 1, float(p[j].patch.y));
 					m.update(i.y, i.x, 2, p[j].distance);
 				}
             }
-            return data;
+            return d;
         }
     #endif
 
