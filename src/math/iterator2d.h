@@ -183,6 +183,53 @@ namespace pm {
         Frame2D(int s0, int s1) : size(RowMajor ? s0 : s1, RowMajor ? s1 : s0){}
         Frame2D(const FrameSize &s) : size(RowMajor ? s : s.transpose()){}
     };
+    
+    template < typename Index, bool RowMajor = true >
+    struct SubFrame2D {
+        typedef Index index;
+		typedef Iterator2D<Index, RowMajor> iterator;
+        
+        const Point2i start;
+        const Point2i last;
+
+		iterator begin() const {
+			return iterator(
+				0, 0,
+				start.x, last.x,
+				1, 1
+			);
+		}
+
+		iterator end() const {
+			return iterator(
+				0, last.y,
+				start.x, last.x,
+				1, 1
+			);
+		}
+
+		iterator rbegin() const {
+			return iterator(
+				last.x - 1, last.y - 1,
+				last.x - 1, -1,
+				-1, -1
+			);
+		}
+
+		iterator rend() const {
+			return iterator(
+				last.x - 1, -1,
+				last.x - 1, -1,
+				-1, -1
+			);
+		}
+        
+        SubFrame2D() {}
+        SubFrame2D(const SubFrame2D &sf)
+        : start(sf.start), last(sf.last) {}
+        SubFrame2D(const Point2i &p0, const Point2i &p1)
+        : start(RowMajor ? p0 : p0.transpose()), last(RowMajor ? p0 : p0.transpose()) {}
+    };
 
 }
 

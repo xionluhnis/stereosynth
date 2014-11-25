@@ -77,7 +77,7 @@ namespace pm {
 	/**
 	 * Single data type numerical representation
 	 */
-	template<typename Scalar> struct DataDepth {};
+	template<typename Scalar> struct DataDepth { enum { value = -2, fmt = -1, exact = 0 }; };
 
 	template<> struct DataDepth<bool> { enum { value = IM_8U, fmt=(int)'u', exact = 1 }; };
 	template<> struct DataDepth<unsigned char> { enum { value = IM_8U, fmt=(int)'u', exact = 1 }; };

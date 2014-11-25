@@ -79,6 +79,10 @@ namespace pm {
 				const MeanShiftParams &params) {
 			typedef Vec<Scalar, Channels> PixVal;
 			typedef Cluster<Scalar, Channels> Clu;
+            
+            // TODO get adaptive window
+            // @see http://en.wikipedia.org/wiki/Kernel_density_estimation
+            // @see http://yoni.wexlers.org/papers/SpaceTimeCompletion-cvpr04.pdf
 
 			// workspace creation
 			const int N = points.size();
