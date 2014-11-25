@@ -95,6 +95,12 @@ namespace pm {
                 }
             }
         }
+        
+        void update() {
+            for(const Point2i &i : *this){
+                distance(i) = dist(i, patch(i));
+            }
+        }
 
         mxArray *save() const {
             mxArray *data = mxCreateMatrix<float>(height, width, 3);

@@ -24,6 +24,8 @@
 #include "matlab.h"
 #endif
 
+#include <limits>
+
 namespace pm {
 
     // distance type
@@ -128,6 +130,17 @@ namespace pm {
                         k += init(i);
                     }
                 }
+            }
+        }
+        
+        void update() {
+            for(const Point2i &i : *this){
+                PatchData (&p)[K] = data.at(i);
+                for (int k = 0; k < K; ++k){
+                    p[k].distance = dist(i, p[k].patch);
+                }
+                // reorder heap
+                MaxHeap(&p[0]).build();
             }
         }
 

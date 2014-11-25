@@ -27,7 +27,7 @@ typedef Distance<Patch2ti, float> DistanceFunc;
  */
 void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     // checking the input
-	if (nin != 4) {
+	if (nin < 2 || nin > 4) {
 		mexErrMsgIdAndTxt("MATLAB:nnf:invalidNumInputs",
 				"Requires 4 arguments! (#in = %d)", nin);
 	}
@@ -38,7 +38,7 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
 	}
 	
 	// options parameter
-	mxOptions options(in[3]);
+	mxOptions options(nin >= 4 ? in[3] : mxCreateNothing());
     int numIter = options.integer("iterations", 6);
     int patchSize = options.integer("patch_size", 7);
     uint algo_seed = options.scalar<uint>("rand_seed", timeSeed());
@@ -55,7 +55,12 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     
     // create nnf (load maybe)
     NNF nnf(source, target, d);
-    nnf.load(in[2]);
+    nnf.load(nin >= 3 ? in[2] : mxCreateNothing());
+    
+    // update distance (for external nnf changes)
+    if(options.boolean("compute_dist", false)){
+        nnf.update();
+    }
     
     // create algorithm sequence
     auto seq = Algorithm() << UniformSearch<Patch2ti, float, 1>(&nnf) << Propagation<Patch2ti, float, 1>(&nnf);

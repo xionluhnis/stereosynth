@@ -85,6 +85,9 @@ namespace pm {
 		bool insert(const T &elem) {
 			return heap::heap_insert<T, Compare>(data, K, elem, comp);
 		}
+        void build() {
+            heap::heapify<T, Compare>(data, K, comp);
+        }
     private:
         Compare comp;
 	};

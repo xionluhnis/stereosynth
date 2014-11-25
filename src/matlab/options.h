@@ -21,8 +21,19 @@ namespace pm {
     ////////////////////////////////////////////////////////////////////////////
 
     template <typename Scalar>
+    inline mxArray *mxCreateNothing() {
+        mwSize sz[2] = {0, 0};
+        mxArray *d =  mxCreateNumericArray(2, sz, classID<Scalar>(), mxREAL);
+        return d;
+    }
+    inline mxArray *mxCreateNothing() {
+        return mxCreateNothing<float>();
+    }
+    
+    template <typename Scalar>
     inline mxArray *mxCreateScalar(Scalar s) {
-        mxArray *d = mxCreateNumericArray(1, 1, classID<Scalar>());
+        mwSize sz[2] = {1, 1};
+        mxArray *d =  mxCreateNumericArray(2, sz, classID<Scalar>(), mxREAL);
         Scalar *ptr = reinterpret_cast<Scalar *>(mxGetData(d));
         *ptr = s;
         return d;
@@ -117,7 +128,7 @@ namespace pm {
         typedef char* FieldName;
         
         mxOptions(const mxArray *arr) : options(arr){
-            if(!mxIsStruct(arr) & mxGetNumberOfElements(arr) > 0){
+            if(!mxIsStruct(arr) && mxGetNumberOfElements(arr) > 0){
                 mexErrMsgIdAndTxt("MATLAB:mex:options", "Invalid mxOptions on non-struct data.");
             }
         }
