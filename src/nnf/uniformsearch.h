@@ -17,7 +17,7 @@ namespace pm {
     /**
      * Uniform search for NNF improvement
      */
-    template < typename Patch = Patch2ti, typename DistValue = float, int K = 1 >
+    template < typename Patch = Patch2ti, typename DistValue = float, int K = 7 >
     class UniformSearch {
     public:
         typedef NearestNeighborField<Patch, DistValue, K> NNF;

@@ -46,7 +46,7 @@ void scanline(Grid &grid, unsigned int numIters, Algorithm &algo, IterationFilte
 			   done = false; // the update was successful => more to do
 			}
 		}
-		iterEnd(iter, rev);
+		done |= iterEnd(iter, rev);
         rev = !rev; // reverse scanline order
 		// potential shortcut
 		if(done){

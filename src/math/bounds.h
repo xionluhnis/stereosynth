@@ -15,6 +15,7 @@ namespace pm {
     template <typename T, int numDim>
     struct Bounds {
         typedef Vec<T, numDim> vec;
+        typedef Bounds<T, numDim> bounds;
         
         union {
             vec min;
@@ -30,9 +31,33 @@ namespace pm {
         
         Bounds() {}
         Bounds(const vec &v1, const vec &v2) : min(v1), max(v2) {}
+        Bounds(const vec &c, T radius) {
+            for(int i = 0; i < numDim; ++i){
+                min[i] = c[i] - radius;
+                max[i] = c[i] + radius;
+            }
+        }
         
-        static Bounds get(const vec &p1, const vec &p2) {
-            Bounds bounds;
+        bounds operator &(const bounds &b) const {
+            bounds newBounds;
+            for(int i = 0; i < numDim; ++i){
+                newBounds.min[i] = std::max(min[i], b.min[i]);
+                newBounds.max[i] = std::min(max[i], b.max[i]);
+            }
+            return newBounds;
+        }
+        
+        bounds operator |(const bounds &b) const {
+            bounds newBounds;
+            for(int i = 0; i < numDim; ++i){
+                newBounds.min[i] = std::min(min[i], b.min[i]);
+                newBounds.max[i] = std::max(max[i], b.max[i]);
+            }
+            return newBounds;
+        }
+        
+        static bounds get(const vec &p1, const vec &p2) {
+            bounds bounds;
             for(int i = 0; i < numDim; ++i) {
                 if(p1[i] < p2[i]){
                     bounds.min[i] = p1[i];
@@ -44,8 +69,8 @@ namespace pm {
             }
         }
         
-        static Bounds get(const std::vector<vec> &p) {
-            Bounds bounds;
+        static bounds get(const std::vector<vec> &p) {
+            bounds bounds;
             for(int i = 0; i < numDim; ++i) {
                 bounds.min[i] = p[0][i];
                 bounds.max[i] = p[0][i];
@@ -55,6 +80,19 @@ namespace pm {
                     /* else */ if(v[i] > bounds.max[i]) bounds.max[i] = v[i];
                 }
             }
+        }
+        
+        inline bool empty() const {
+            bool singular = true;
+            for(int i = 0; i < numDim; ++i){
+                if(min[i] > max[i]){
+                    return true;
+                } else if(min[i] < max[i]){
+                    singular = false;
+                }
+                // only singular if min==max
+            }
+            return singular;
         }
         
         inline vec range() const {
@@ -69,6 +107,9 @@ namespace pm {
             return true;
         }
     };
+    
+    typedef Bounds<int, 2> Bounds2i;
+    typedef Bounds<float, 2> Bounds2f;
     
 }
 

@@ -13,8 +13,6 @@
 
 namespace pm {
     
-    
-    
     template <typename TargetPatch = Patch2ti, typename DistValue = float>
     bool tryPatch(NearestNeighborField<TargetPatch, DistValue, 1> *nnf, const Point2i &i, const TargetPatch &q) {
         TargetPatch &p = nnf->patch(i);
