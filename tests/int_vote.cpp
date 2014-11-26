@@ -48,14 +48,14 @@ int main() {
     seed(timeSeed()); // set rng state
 
     // create source and target (gradients)
-    Image source(100, 100, IM_32FC3);
+    Image source(10, 10, IM_32FC3);
     for(const auto &i : source){
         auto &v = source.at<Vec3f>(i);
         v[0] = i.x;
         v[1] = i.y;
         v[2] = 0;
     }
-    Image target(200, 50, IM_32FC3);
+    Image target(20, 20, IM_32FC3);
     for(const auto &i : target){
         auto &v = target.at<Vec3f>(i);
         v[0] = i.x;

@@ -228,7 +228,7 @@ namespace pm {
         SubFrame2D(const SubFrame2D &sf)
         : start(sf.start), last(sf.last) {}
         SubFrame2D(const Point2i &p0, const Point2i &p1)
-        : start(RowMajor ? p0 : p0.transpose()), last(RowMajor ? p0 : p0.transpose()) {}
+        : start(RowMajor ? p0 : p0.transpose()), last(RowMajor ? p1 : p1.transpose()) {}
     };
 
 }

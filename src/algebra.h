@@ -8,6 +8,7 @@
 #define	ALGEBRA_H
 
 #include "math/defs.h"
+#include "math/bounds.h"
 #include "math/filter.h"
 #include "math/grid2d.h"
 #include "math/mat.h"

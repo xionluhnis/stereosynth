@@ -29,7 +29,15 @@ namespace pm {
             vec to;
         };
         
+		// default constructor has no value!
         Bounds() {}
+		// initialization constructor
+		explicit Bounds(T init) {
+			for(int i = 0; i < numDim; ++i){
+				min[i] = init;
+				max[i] = init;
+			}
+		}
         Bounds(const vec &v1, const vec &v2) : min(v1), max(v2) {}
         Bounds(const vec &c, T radius) {
             for(int i = 0; i < numDim; ++i){
@@ -106,6 +114,13 @@ namespace pm {
             }
             return true;
         }
+		
+		inline bool operator ==(const bounds &b) const {
+			return min == b.min && max == b.max;
+		}
+		inline bool operator !=(const bounds &b) const {
+			return !(*this == b);
+		}
     };
     
     typedef Bounds<int, 2> Bounds2i;

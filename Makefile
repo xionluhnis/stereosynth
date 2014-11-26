@@ -30,6 +30,7 @@ all: mex
 .phony: mex
 
 test: clean create
+	$(CC) $(INCL) $(subst target,bounds,$(TEST))
 	$(CC) $(INCL) $(subst target,scanline,$(TEST))
 	$(CC) $(INCL) $(subst target,rng_uniform,$(TEST))
 	$(CC) $(INCL) $(subst target,int_single_nnf,$(TEST))

@@ -130,6 +130,18 @@ namespace pm {
 			for (int i = 0; i < channels; ++i) v[i] = -data[i];
 			return v;
 		}
+		
+		//! equality operators
+		inline bool operator ==(const vec &v) const {
+			bool eq = true;
+			for(int i = 0; eq && i < channels; ++i){
+				eq &= v[i] == data[i];
+			}
+			return eq;
+		}
+		inline bool operator !=(const vec &v) const {
+			return !(*this == v);
+		}
 
 		//! element access
 		inline const T& operator [](int i) const {
