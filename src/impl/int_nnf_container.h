@@ -27,7 +27,7 @@ namespace pm {
         };
 
         Frame2D<Point2i, true> frame() const {
-            return Frame2D<Point2i, true>(nnf->targetSize());
+            return Frame2D<Point2i, true>(FrameSize(nnf->source.width, nnf->source.height));
         }
         const vec &pixel(const point &p) const {
             return nnf->target.at<vec>(p);

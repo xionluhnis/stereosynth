@@ -194,16 +194,16 @@ namespace pm {
 
 		iterator begin() const {
 			return iterator(
-				0, 0,
-				start.x, last.x,
+				start.x, start.y,
+				start.x, last.x + 1,
 				1, 1
 			);
 		}
 
 		iterator end() const {
 			return iterator(
-				0, last.y,
-				start.x, last.x,
+				start.x, last.y,
+				start.x, last.x + 1,
 				1, 1
 			);
 		}
@@ -211,15 +211,15 @@ namespace pm {
 		iterator rbegin() const {
 			return iterator(
 				last.x - 1, last.y - 1,
-				last.x - 1, -1,
+				last.x - 1, start.x - 1,
 				-1, -1
 			);
 		}
 
 		iterator rend() const {
 			return iterator(
-				last.x - 1, -1,
-				last.x - 1, -1,
+				last.x - 1, start.y - 1,
+				last.x - 1, start.x - 1,
 				-1, -1
 			);
 		}
