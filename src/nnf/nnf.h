@@ -17,12 +17,6 @@ namespace pm {
     
     // distance type
     typedef Distance<Patch2ti, float> DistanceFunc;
-    
-    enum NNVariant {
-        Default = 0,
-        kNN = 1,
-        
-    };
 
     // nearest neighbor field
     template < typename Patch = Patch2ti, typename DistValue = float, int K = 7 >

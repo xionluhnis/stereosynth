@@ -7,7 +7,7 @@
 
 #define USE_MATLAB 1
 
-#include "int_k_nnf.h"
+#include "impl/int_k_nnf.h"
 #include "nnf/algorithm.h"
 #include "nnf/propagation.h"
 #include "nnf/uniformsearch.h"

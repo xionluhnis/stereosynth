@@ -1,7 +1,7 @@
 // we do not test with matlab here
 #define USE_MATLAB 0
 
-#include "int_single_nnf.h"
+#include "impl/int_single_nnf.h"
 #include "nnf/algorithm.h"
 #include "nnf/propagation.h"
 #include "nnf/uniformsearch.h"

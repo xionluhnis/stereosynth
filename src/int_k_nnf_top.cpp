@@ -7,8 +7,8 @@
 
 #define USE_MATLAB 1
 
-#include "int_k_nnf.h"
-#include "int_single_nnf.h"
+#include "impl/int_k_nnf.h"
+#include "impl/int_single_nnf.h"
 
 using namespace pm;
 

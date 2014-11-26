@@ -12,15 +12,15 @@
 #define USE_MATLAB 1
 #endif
 
-#include "algebra.h"
-#include "im/patch.h"
-#include "nnf/distance.h"
-#include "nnf/field.h"
-#include "nnf/nnf.h"
-#include "sampling/uniform.h"
+#include "../algebra.h"
+#include "../im/patch.h"
+#include "../nnf/distance.h"
+#include "../nnf/field.h"
+#include "../nnf/nnf.h"
+#include "../sampling/uniform.h"
 
 #if USE_MATLAB
-#include "matlab.h"
+#include "../matlab.h"
 #endif
 
 namespace pm {
