@@ -9,7 +9,9 @@
 #define	VOTING_DEFS_H
 
 #include "../im/patch.h"
-#include "../math/iterator2d.h"
+#include "../math/mat.h"
+
+#include <iostream>
 
 namespace pm {
     
@@ -31,16 +33,26 @@ namespace pm {
     
     struct VoteOperation {
         template <int channels>
-        void compute();
+        Image compute();
     };
     
     template <int channels>
     void compute(const VoteOperation &vote, int numChannels) {
         if(channels == numChannels){
-            vote.compute<channels>();
+            return vote.compute<channels>();
         } else {
-            compute<channels + 1>(vote, numChannels);
+            return compute<channels + 1>(vote, numChannels);
         }
+    }
+    
+#ifndef MAX_SUPPORTED_CHANNELS
+#define MAX_SUPPORTED_CHANNELS 12
+#endif
+    
+    template<>
+    Image compute<MAX_SUPPORTED_CHANNELS+1>(const VoteOperation &vote, int numChannels) {
+        std::cerr << "We support only up to " << MAX_SUPPORTED_CHANNELS << "\n";
+        return Image();
     }
     
 }
