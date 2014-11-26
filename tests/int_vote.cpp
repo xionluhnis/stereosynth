@@ -3,6 +3,8 @@
 
 #include "impl/int_single_nnf.h"
 #include "impl/int_nnf_container.h"
+#include "math/mat.h"
+#include "math/vec.h"
 #include "voting/weighted_average.h"
 
 #include <cassert>
@@ -80,7 +82,7 @@ int main() {
     
     // check that pixels are valid (more to be done!)
     for(const Point2i &i : img){
-        const Vec3f &v = img->at<Vec3f>(i);
+        const Vec3f &v = img.at<Vec3f>(i);
         for(int i = 0; i < 3; ++i){
             assert(v[i] >= 0 && "Negative pixel value!");
         }
