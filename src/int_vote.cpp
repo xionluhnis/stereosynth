@@ -8,55 +8,64 @@
 #define USE_MATLAB 1
 
 #include "int_single_nnf.h"
+#include "math/bounds.h"
 #include "voting/weighted_average.h"
+#include "matlab.h"
 
 using namespace pm;
 
 typedef NearestNeighborField<Patch2ti, float, 1> NNF;
 typedef Distance<Patch2ti, float> DistanceFunc;
 
-template < int numChannels >
-struct PixelContainer<numChannels, Patch2ti, float> {
-    typedef Vec<float, numChannels> vec;
-    typedef Point2i point;
+namespace pm {
 
-    enum {
-        channels = numChannels
+    template < int numChannels >
+    struct PixelContainer<numChannels, Patch2ti, float> {
+        typedef Vec<float, numChannels> vec;
+        typedef Point2i point;
+
+        enum {
+            channels = numChannels
+        };
+
+        Frame2D<Point2i, true> frame() const {
+            return Frame2D<Point2i, true>(nnf->targetSize());
+        }
+        const vec &pixel(const point &p) const {
+            return nnf->target.at<vec>(p);
+        }
+        SubFrame2D<Point2i, true> overlap(const point &p) const {
+            Bounds2i frame(Vec2i(0, 0), Vec2i(nnf->source.width, nnf->source.height));
+            Bounds2i zone = frame & Bounds2i(p - Vec2i(Patch2ti::width() - 1, Patch2ti::width() - 1), p);
+            return SubFrame2D<Point2i, true>(zone.min, zone.max);
+        }
+        const Patch2ti &patch(const point &i) const {
+            return nnf->patches.at(i);
+        }
+
+        PixelContainer(NNF *n) : nnf(n) {}
+    private:
+        NNF *nnf;
     };
 
-    Frame2D<Point2i, true> frame() const {
-        return Frame2D<Point2i, true>(nnf->targetSize());
-    }
-    const vec &pixel(const point &p) const {
-        return nnf->target.at<vec>(p);
-    }
-    SubFrame2D<Point2i, true> overlap(const point &p) const {
-        Bounds2i frame(Vec2i(0, 0), Vec2i(nnf->source.width, nnf->source.height));
-        Bounds2i zone = frame & Bounds2i(p - Vec2i(Patch2ti::width() - 1, Patch2ti::width() - 1), p);
-        return SubFrame2D<Point2i, true>(zone.min, zone.max);
-    }
-    const Patch2ti &patch(const point &i) const {
-        return nnf->patches.at(i);
-    }
-    
-    PixelContainer(NNF *n) : nnf(n) {}
-private:
-    NNF *nnf;
-};
+    template <int channels = 1>
+    struct VoteOperation {
+        
+        typedef VoteOperation<channels + 1> Next;
+        
+        Image compute() const{
+            PixelContainer<channels, Patch2ti, float> data(nnf);
+            return weighted_average(data, *filter);
+        }
 
-struct VoteOperation {
-    template <int channels>
-    Image compute(){
-        PixelContainer<channels, Patch2ti, float> data(nnf);
-        return weighted_average(data, filter);
-    }
-    
-    VoteOperation(NNF *n, const Filter &f) : nnf(n), filter(f) {}
-    
-private:
-    NNF *nnf;
-    Filter filter;
-};
+        VoteOperation(const VoteOperation<channels-1> &v) :  nnf(v.nnf), filter(v.filter) {}
+        VoteOperation(NNF *n, Filter *f) : nnf(n), filter(f) {}
+
+        NNF *nnf;
+        Filter *filter;
+    };
+
+}
 
 /**
  * Usage:
@@ -88,7 +97,7 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     DistanceFunc d = DistanceFactory<Patch2ti, float>::get(dist::SSD, source.channels());
     
     // create nnf (load maybe)
-    kNNF nnf(source, target, d);
+    NNF nnf(source, target, d);
     nnf.load(in[2]);
     
     // update distance (for external nnf changes)
@@ -100,14 +109,14 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     // filter
     Filter filter(patchSize);
     if(options.has("vote_filter")){
-        filter.weight = options.vector("vote_filter", 1.0f);
+        filter.weight = options.vector("vote_filter", 1.0f, patchSize * patchSize);
     }
     
     // vote result
-    VoteOperation vote(&nnf, filter);
-    Image img = compute(vote, source.channels());
+    VoteOperation<1> op(&nnf, &filter);
+    Image img = vote(op, source.channels());
     if(nout > 0){
-        out[0] = img;
+        out[0] = mxImageToArray(img);
     }
 }
 

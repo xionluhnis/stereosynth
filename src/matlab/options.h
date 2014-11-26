@@ -47,7 +47,7 @@ namespace pm {
         return mxGetScalar(a);
     }
 
-    template <typename S, typename T>
+    template <typename T, typename S>
     inline void mxLoadVector(std::vector<T> *v_ptr, const mxArray *arr, const char *s) {
         if (!mxIsNumeric(arr)) {
             mexErrMsgIdAndTxt("MATLAB:mex:invalidInput", s);
@@ -66,10 +66,12 @@ namespace pm {
     template <typename T>
     inline void mxLoadVector(std::vector<T> *v, const mxArray *arr, const char *s) {
         switch (mxGetClassID(arr)) {
-            case mxINT8_CLASS: mxLoadVector<char, T>(v, arr, s); break;
-            case mxUINT8_CLASS: mxLoadVector<unsigned char, T>(v, arr, s); break;
-            case mxSINGLE_CLASS: mxLoadVector<float, T>(v, arr, s); break;
-            case mxDOUBLE_CLASS: mxLoadVector<double, T>(v, arr, s); break;
+            case mxINT8_CLASS: mxLoadVector<T, char>(v, arr, s); break;
+            case mxUINT8_CLASS: mxLoadVector<T, unsigned char>(v, arr, s); break;
+            case mxINT32_CLASS: mxLoadVector<T, int>(v, arr, s); break;
+            case mxUINT32_CLASS: mxLoadVector<T, unsigned int>(v, arr, s); break;
+            case mxSINGLE_CLASS: mxLoadVector<T, float>(v, arr, s); break;
+            case mxDOUBLE_CLASS: mxLoadVector<T, double>(v, arr, s); break;
             default:
                 mexErrMsgIdAndTxt("MATLAB:mex:mxLoadVector", "Class type not supported!");
         }

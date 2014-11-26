@@ -31,28 +31,42 @@ namespace pm {
         const Patch &patch(const point &i) const;
     };
     
-    struct VoteOperation {
-        template <int channels>
-        Image compute();
-    };
-    
-    template <int channels>
-    void compute(const VoteOperation &vote, int numChannels) {
-        if(channels == numChannels){
-            return vote.compute<channels>();
-        } else {
-            return compute<channels + 1>(vote, numChannels);
+    template <int channels, typename VoteOperation>
+    struct Vote {
+        typedef typename VoteOperation::Next NextOperation;
+        
+        Image compute(int numChannels) {
+            if(channels == numChannels){
+                return vote.compute();
+            } else {
+                return Vote<channels + 1, NextOperation>(vote).compute(numChannels);
+            }
         }
-    }
+        
+        Vote(const VoteOperation &v) : vote(v) {}
+        
+    private:
+        VoteOperation vote;
+    };
     
 #ifndef MAX_SUPPORTED_CHANNELS
 #define MAX_SUPPORTED_CHANNELS 12
 #endif
     
-    template<>
-    Image compute<MAX_SUPPORTED_CHANNELS+1>(const VoteOperation &vote, int numChannels) {
-        std::cerr << "We support only up to " << MAX_SUPPORTED_CHANNELS << "\n";
-        return Image();
+    template <typename VoteOperation>
+    struct Vote<MAX_SUPPORTED_CHANNELS+1, VoteOperation> {
+        Image compute(int numChannels) {
+            std::cerr << "We support only up to " << MAX_SUPPORTED_CHANNELS << " (curr=" << numChannels << ")\n";
+            return Image();
+        }
+        
+        Vote(const VoteOperation &v) {}
+    };
+    
+    template <typename VoteOperation>
+    Image vote(const VoteOperation &op, int numChannels){
+        Vote<1, VoteOperation> v(op);
+        return v.compute(numChannels);
     }
     
 }
