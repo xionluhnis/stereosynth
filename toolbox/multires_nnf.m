@@ -27,7 +27,7 @@ function [ nnf ] = multires_nnf( A, B, options, method )
     
     % multi-resolution nnf
     nnf = []; % start with empty nnf
-    iterations = param(options, 'iterations', 1);
+    iterations = param(options, 'iterations', 6);
     for s = 1:num_scales
         
         % upscaling the nnf when necessary
@@ -35,8 +35,23 @@ function [ nnf ] = multires_nnf( A, B, options, method )
             % TODO rescale with padding (to enforce correct values)
         end
         
+        % per scale parameters
+        opts = options;
+        if numel(iterations) > 1
+            opts.iterations = iterations(s);
+        elseif isfield(options, 'iter_decr')
+            iterations = iteration - options.iterations_decr;
+            opts.iterations = iterations;
+        elseif isfield(options, 'iter_decr_factor')
+            iterations = ceil(iteration / options.iter_decr_factor);
+            opts.iterations = iterations;
+        end
+        if isfield(options, 'iter_min')
+            opts.iterations = min(options.iter_min, opts.iterations);
+        end
+        
         % compute new nnf
-        nnf = @method(A, B, nnf, options);
+        nnf = method(A, B, nnf, opts);
     end
 end
 
