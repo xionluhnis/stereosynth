@@ -34,9 +34,11 @@ namespace pm {
         
         Field2D(int w, int h) : width(w), height(h){
         }
+		
+		Field2D() : width(0), height(0) {}
         
         bool contains(const Point2i &p) const {
-            return p.x >= 0 && p.y >= 0 && p.x < width && p.y < height;
+            return p.x >= 0 && p.y >= 0 && p.x < this->width && p.y < this->height;
         }
         
         virtual int size0() const {

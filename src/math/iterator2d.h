@@ -189,13 +189,13 @@ namespace pm {
         typedef Index index;
 		typedef Iterator2D<Index, RowMajor> iterator;
         
-        const Point2i start;
-        const Point2i last;
+        const Point2i start; // included
+        const Point2i last; // excluded
 
 		iterator begin() const {
 			return iterator(
 				start.x, start.y,
-				start.x, last.x + 1,
+				start.x, last.x,
 				1, 1
 			);
 		}
@@ -203,7 +203,7 @@ namespace pm {
 		iterator end() const {
 			return iterator(
 				start.x, last.y,
-				start.x, last.x + 1,
+				start.x, last.x,
 				1, 1
 			);
 		}

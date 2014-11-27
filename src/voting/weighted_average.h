@@ -36,7 +36,8 @@ namespace pm {
             Pixel &votedPixel = vote.at<Pixel>(i);
             Scalar weight = 0;
             // use weighted average of overlapping patch pixels
-            for(const Point2i &p : data.overlap(i)){
+			SubFrame2D<Point2i, true> overlap = data.overlap(i);
+            for(const Point2i &p : overlap){
                 const Patch &patch = data.patch(p);
                 const Point2i b = i - p;
                 const Pixel &pixel = data.pixel(patch.transform(b));

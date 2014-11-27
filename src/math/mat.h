@@ -151,6 +151,10 @@ namespace pm {
             return at<T>(p.y, p.x);
         }
 		
+		inline bool contains(const Point2i &p) const {
+			return p.x >= 0 && p.y >= 0 && p.x < width && p.y < height;
+		}
+		
 	private:
 		int flags;
 		DataPtr data;
