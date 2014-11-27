@@ -39,7 +39,7 @@ namespace pm {
 #ifdef DEBUG_STRICT_TEST
             assert(nnf->source.contains(p) && "Patch out of bounds");
 #endif
-            Bounds2i frame(Vec2i(0, 0), Vec2i(nnf->source.width, nnf->source.height));
+            Bounds2i frame(Vec2i(0, 0), Vec2i(nnf->width, nnf->height));
             Bounds2i zone = frame & Bounds2i(p - Vec2i(Patch2ti::width() - 1, Patch2ti::width() - 1), p + Vec2i(1, 1));
             return SubFrame2D<Point2i, true>(zone.min, zone.max);
         }
