@@ -7,13 +7,17 @@
 
 #define USE_MATLAB 1
 
+#ifndef KNNF_K
+#define KNNF_K 7
+#endif
+
 #include "impl/int_k_nnf.h"
 #include "impl/int_single_nnf.h"
 
 using namespace pm;
 
 typedef NearestNeighborField<Patch2ti, float, 1> NNF;
-typedef NearestNeighborField<Patch2ti, float, 7> kNNF;
+typedef NearestNeighborField<Patch2ti, float, KNNF_K> kNNF;
 typedef Distance<Patch2ti, float> DistanceFunc;
 
 /**
@@ -57,10 +61,10 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     // transfer data to 1-nnf
     NNF nnf(source, target, d);
     for(const Point2i &i : knnf){
-        typename kNNF::PatchData (&p)[7] = knnf.data.at(i);
+        typename kNNF::PatchData (&p)[KNNF_K] = knnf.data.at(i);
         int bestK = 0;
         float bestDist = p[0].distance;
-        for(int k = 1; k < 7; ++k){
+        for(int k = 1; k < KNNF_K; ++k){
             if(p[k].distance < bestDist){
                 bestDist = p[k].distance;
                 bestK = k;

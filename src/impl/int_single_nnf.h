@@ -64,6 +64,9 @@ namespace pm {
         inline FrameSize targetSize() const {
             return FrameSize(target.width, target.height);
         }
+        inline bool filter(const Point2i &i, const Patch2ti &p) const {
+            return false;
+        }
 
         // --- default initialization ------------------------------------------
         void init(const Point2i &i) {

@@ -44,7 +44,6 @@ namespace pm {
                 votedPixel += pixel * filter[b.y][b.x];
                 weight += filter[b.y][b.x];
             }
-			std::cout << "\n";
             if(weight > 1e-8){
                 votedPixel *= 1.0 / weight;
             }

@@ -1,12 +1,12 @@
 /* 
- * File:   int_k_nnf.h
+ * File:   auto_k_nnf.h
  * Author: akaspar
  *
- * Created on November 21, 2014, 3:51 PM
+ * Created on December 1, 2014, 4:04 PM
  */
 
-#ifndef INT_K_NNF_H
-#define	INT_K_NNF_H
+#ifndef AUTO_K_NNF_H
+#define	AUTO_K_NNF_H
 
 #ifndef USE_MATLAB
 #define USE_MATLAB 1
@@ -35,15 +35,15 @@ namespace pm {
 	template <int K>
     struct NearestNeighborField<Patch2ti, float, K> : public Field2D<true> {
 
-        const Image source;
-        const Image target;
+        const Image img;
         const DistanceFunc distFunc;
         const RNG rand;
 		const int k;
+        const int minSqDisp;
 
-        NearestNeighborField(const Image &src, const Image &trg, const DistanceFunc d, const RNG r = unif01)
-        : Field2D(src.width - Patch2ti::width() + 1, src.height - Patch2ti::width() + 1),
-          source(src), target(trg), distFunc(d), rand(r), k(K) {
+        NearestNeighborField(const Image &im, const DistanceFunc d, int minD = 5, const RNG r = unif01)
+        : Field2D(im.width - Patch2ti::width() + 1, im.height - Patch2ti::width() + 1),
+          img(im), distFunc(d), rand(r), k(K), minSqDisp(minD * minD) {
             data = createEntry<PatchData[K]>("patches");
         }
 		
@@ -65,7 +65,7 @@ namespace pm {
 
         float dist(const Point2i &pos, const Patch2ti &q) const {
             const Patch2ti p(pos);
-            return distFunc(source, target, p, q);
+            return distFunc(img, img, p, q);
         }
         inline RNG rng() const {
             return rand;
@@ -78,13 +78,13 @@ namespace pm {
             return data.at(i)[k].distance;
         }
         inline bool filter(const Point2i &i, const Patch2ti &p) const {
-            return false;
+            return (i - p).sqNorm() < minSqDisp; // filter patches below the minimum distance
         }
         inline bool store(const Point2i &i, const Patch2ti &p, const float &d) {
             return MaxHeap(data.at(i)).insert(PatchData(p, d));
         }
         inline FrameSize targetSize() const {
-            return FrameSize(target.width, target.height);
+            return FrameSize(img.width, img.height);
         }
 
         // --- default initialization ------------------------------------------
@@ -97,14 +97,17 @@ namespace pm {
             }
 			MaxHeap heap(&p[0]);
             int ok = 0;
-			for(int k = 0; k < K; ++k){
+            // we try at most 5K times => can have invalid patches
+			for(int k = 0; k < 5 * K && ok < K; ++k){
 				// make sure the K patches are different!
                 Point2i pos = uniform(
                     rng(),
                     Vec2i(0, 0),
-                    Vec2i(target.width - Patch2ti::width(), target.height - Patch2ti::width())
+                    Vec2i(img.width - Patch2ti::width(), img.height - Patch2ti::width())
                 );
                 Patch2ti q(pos);
+                if(filter(i, q))
+                    continue; // we cannot use that one
                 PatchData pd(q, dist(i, q));
                 // need the distance to insert in the heap
 				if(heap.insert(pd)) ++ok;
@@ -165,5 +168,5 @@ namespace pm {
 
 }
 
-#endif	/* INT_K_NNF_H */
+#endif	/* AUTO_K_NNF_H */
 

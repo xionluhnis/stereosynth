@@ -15,6 +15,10 @@ namespace pm {
     
     template <typename TargetPatch = Patch2ti, typename DistValue = float>
     bool tryPatch(NearestNeighborField<TargetPatch, DistValue, 1> *nnf, const Point2i &i, const TargetPatch &q) {
+        // filter patch based on location
+        if(nnf->filter(i, q))
+            return false;
+        // check whether it's the same
         TargetPatch &p = nnf->patch(i);
         // if it's the same patch, too bad
         if(p == q){
@@ -34,6 +38,9 @@ namespace pm {
 
     template <int K = 7, typename TargetPatch = Patch2ti, typename DistValue = float>
     bool kTryPatch(NearestNeighborField<TargetPatch, DistValue, K> *nnf, const Point2i &i, const TargetPatch &q) {
+        // filter patch based on location
+        if(nnf->filter(i, q))
+            return false;
         // check whether the patch is already present on the heap
         for(int k = 0; k < K; ++k){
             if(nnf->patch(i, k) == q

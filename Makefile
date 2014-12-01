@@ -14,6 +14,7 @@ mex_nnf: clean create
 	$(MEX) src/int_single_nnf.cpp -output bin/isnnf -output bin/isnnf
 	$(MEX) src/int_k_nnf.cpp -output bin/iknnf -output bin/iknnf
 	$(MEX) src/int_k_nnf_top.cpp -output bin/iknnf_top -output bin/iknnf_top
+	$(MEX) src/auto_k_nnf.cpp -output bin/autoknnf -output bin/autoknnf
 
 mex_vote: clean create
 	$(MEX) src/int_vote.cpp -output bin/ivote -output bin/ivote

@@ -1,5 +1,5 @@
 /* 
- * File:   int_k_nnf.cpp
+ * File:   auto_k_nnf.cpp
  * Author: akaspar
  *
  * Created on November 18, 2014, 7:14 AM
@@ -11,7 +11,7 @@
 #define KNNF_K 7
 #endif
 
-#include "impl/int_k_nnf.h"
+#include "impl/auto_k_nnf.h"
 #include "nnf/algorithm.h"
 #include "nnf/propagation.h"
 #include "nnf/uniformsearch.h"
@@ -27,11 +27,11 @@ typedef Distance<Patch2ti, float> DistanceFunc;
 /**
  * Usage:
  * 
- * [newNNF, conv] = iknnf( source, target, prevNNF, options )
+ * [newNNF, conv] = autoknnf( img, prevNNF, options )
  */
 void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     // checking the input
-	if (nin < 2 || nin > 4) {
+	if (nin < 2 || nin > 3) {
 		mexErrMsgIdAndTxt("MATLAB:nnf:invalidNumInputs",
 				"Requires 4 arguments! (#in = %d)", nin);
 	}
@@ -42,7 +42,7 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
 	}
 	
 	// options parameter
-	mxOptions options(nin >= 4 ? in[3] : mxCreateNothing());
+	mxOptions options(nin >= 3 ? in[2] : mxCreateNothing());
     int numIter = options.integer("iterations", 6);
     int patchSize = options.integer("patch_size", 7);
     uint algo_seed = options.scalar<uint>("rand_seed", timeSeed());
@@ -50,16 +50,15 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     Patch2ti::width(patchSize); // set patch size
     seed(algo_seed); // set rng state
     
-    // load source and target
-    Image source = mxArrayToImage(in[0]);
-    Image target = mxArrayToImage(in[1]);
+    // load source == target
+    Image img = mxArrayToImage(in[0]);
     
     // create distance instance
-    DistanceFunc d = DistanceFactory<Patch2ti, float>::get(dist::SSD, source.channels());
+    DistanceFunc d = DistanceFactory<Patch2ti, float>::get(dist::SSD, img.channels());
     
     // create nnf (load maybe)
-    NNF nnf(source, target, d);
-    nnf.load(nin >= 3 ? in[2] : mxCreateNothing());
+    NNF nnf(img, d, options.integer("min_disp", 4));
+    nnf.load(nin >= 3 ? in[1] : mxCreateNothing());
     
     // update distance (for external nnf changes)
     if(options.boolean("compute_dist", false)){
@@ -77,4 +76,3 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
         out[0] = nnf.save();
     }
 }
-

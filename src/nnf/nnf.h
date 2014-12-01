@@ -37,7 +37,8 @@ namespace pm {
         bool store(const Point2i &i, const TargetPatch &p, const DistValue &d);
         // --- provide a distance computation ----------------------------------
         DistanceValue dist(const Point2i &pos, const TargetPatch &q);
-
+        // --- provide a filtering for special cases (auto-nnf) ----------------
+        bool filter(const Point2i &pos, const TargetPatch &q) const;
     };
     
     template < typename Patch, typename DistValue>
@@ -57,7 +58,8 @@ namespace pm {
         DistValue &distance(const Point2i &i);
         // --- provide a distance computation ----------------------------------
         DistanceValue dist(const Point2i &pos, const TargetPatch &q);
-
+        // --- provide a filtering for special cases (auto-nnf) ----------------
+        bool filter(const Point2i &pos, const TargetPatch &q) const;
     };
     
     template < typename Patch, typename DistValue, int K >

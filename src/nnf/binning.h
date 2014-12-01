@@ -12,7 +12,7 @@
 
 namespace pm {
 	
-	template < typename Patch = Patch2ti>
+	template < typename Patch = Patch2ti, int M = 4>
 	struct PatchProvider {
 		
 		void query(const Point2i &i);
@@ -21,7 +21,7 @@ namespace pm {
 	};
 
 	// TODO implement and design patch provider
-	template < typename Patch = Patch2ti, typename DistValue = float, int K = 7 >
+	template < typename Patch = Patch2ti, typename DistValue = float, int K = 7, int M = 4 >
     struct Binning {
         typedef NearestNeighborField<Patch, DistValue, K> NNF;
 
@@ -35,15 +35,15 @@ namespace pm {
 			return success;
 		}
 
-        Binning(NNF *n, const PatchProvider<Patch> &p) : nnf(n), provider(p) {}
+        Binning(NNF *n, const PatchProvider<Patch, M> &p) : nnf(n), provider(p) {}
 		
 	private:
 		NNF *nnf;
-		PatchProvider<Patch> provider;
+		PatchProvider<Patch, M> provider;
     };
 	
-	template < typename Patch, typename DistValue >
-    struct Binning<Patch, DistValue, 1> {
+	template < typename Patch, typename DistValue, int M = 4 >
+    struct Binning<Patch, DistValue, 1, M> {
         typedef NearestNeighborField<Patch, DistValue, 1> NNF;
 
         bool operator()(const Point2i &i, bool){
@@ -56,11 +56,11 @@ namespace pm {
 			return success;
 		}
 
-        Binning(NNF *n, const PatchProvider<Patch> &p) : nnf(n), provider(p) {}
+        Binning(NNF *n, const PatchProvider<Patch, M> &p) : nnf(n), provider(p) {}
 		
 	private:
 		NNF *nnf;
-		PatchProvider<Patch> provider;
+		PatchProvider<Patch, M> provider;
     };
 	
 }
