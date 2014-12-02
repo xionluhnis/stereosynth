@@ -8,13 +8,16 @@ BASE_FLAGS := -std=c++11 -DNDEBUG -DUNIX_MODE -DMEXMODE -fPIC -ftls-model=global
 LIBS_FLAGS := -Wl,--export-dynamic -Wl,-e,mexFunction -shared
 MEX := mex -v CXXOPTIMFLAGS='$$CXXOPTIMFLAGS $(OPTI_FLAGS)' CXXFLAGS='$$CXXFLAGS $(BASE_FLAGS)' CXXLIBS='$$CXXLIBS ${LIBS_FLAGS}' ${INCL}
 
-mex: clean create mex_nnf mex_vote
+mex: clean create mex_nnf mex_vote mex_disp
 
 mex_nnf: clean create
 	$(MEX) src/int_single_nnf.cpp -output bin/isnnf -output bin/isnnf
 	$(MEX) src/int_k_nnf.cpp -output bin/iknnf -output bin/iknnf
 	$(MEX) src/int_k_nnf_top.cpp -output bin/iknnf_top -output bin/iknnf_top
 	$(MEX) src/auto_k_nnf.cpp -output bin/autoknnf -output bin/autoknnf
+
+mex_disp: clean create
+	$(MEX) src/int_k_disp.cpp -output bin/ikdisp -output bin/ikdisp
 
 mex_vote: clean create
 	$(MEX) src/int_vote.cpp -output bin/ivote -output bin/ivote

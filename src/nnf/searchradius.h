@@ -19,7 +19,7 @@ namespace pm {
         
         S radius;
         S minimum;
-        S decreaseFactor;
+        double decreaseFactor;
         
         static SearchRadius<S> *create(){
             radiuses.push_back(SearchRadius<S>());
@@ -37,10 +37,10 @@ namespace pm {
     struct DecreasingSearchRadius {
         
         DecreasingSearchRadius() : search(0) {}
-        explicit DecreasingSearchRadius(SearchRadius *sr) : search(sr) {}
+        explicit DecreasingSearchRadius(SearchRadius<S> *sr) : search(sr) {}
             
         bool operator()(int, bool){
-            search.radius = std::max(search->minimum, search->radius / search->decreaseFactor);
+            search->radius = std::max(search->minimum, S(std::ceil(search->radius / search->decreaseFactor)));
             return false;
         }
         
