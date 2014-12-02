@@ -1,6 +1,6 @@
 /* 
  * File:   fwd_enrichment.h
- * Author: Alexandre Kaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 30, 2014, 8:52 PM
  */

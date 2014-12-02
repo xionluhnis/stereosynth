@@ -1,8 +1,9 @@
-/*******************************************************************************
- * filter.h - 2d filter implementations
- *******************************************************************************
- * Add license here...
- *******************************/
+/* 
+ * File:   filter.h
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
+ *
+ * Created on November 21, 2014, 4:20 PM
+ */
 
 #ifndef MATH_FILTER_H
 #define	MATH_FILTER_H

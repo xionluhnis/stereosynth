@@ -1,8 +1,9 @@
-/*******************************************************************************
- * texture.h - complex texture access
- *******************************************************************************
- * Add license here...
- *******************************/
+/* 
+ * File:   texture.h
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
+ *
+ * Created on November 21, 2014, 4:20 PM
+ */
 
 #ifndef TEXTURE_H
 #define	TEXTURE_H

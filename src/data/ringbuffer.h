@@ -1,8 +1,9 @@
-/*******************************************************************************
- * ringbuffer.h - ring buffer implementation
- *******************************************************************************
- * Add license here...
- *******************************/
+/* 
+ * File:   ringbuffer.h
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
+ *
+ * Created on November 21, 2014, 4:20 PM
+ */
 
 #ifndef RINGBUFFER_H
 #define	RINGBUFFER_H

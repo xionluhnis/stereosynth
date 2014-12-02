@@ -1,8 +1,9 @@
-/*******************************************************************************
- * algebra.h - matrix and vectors for imaging
- *******************************************************************************
- * Add license here...
- *******************************/
+/* 
+ * File:   algebra.h
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
+ *
+ * Created on November 21, 2014, 4:20 PM
+ */
 
 #ifndef ALGEBRA_H
 #define	ALGEBRA_H

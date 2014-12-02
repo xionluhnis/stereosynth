@@ -1,6 +1,6 @@
 /* 
  * File:   matlab.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 18, 2014, 7:15 AM
  */

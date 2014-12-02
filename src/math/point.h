@@ -1,6 +1,6 @@
 /* 
  * File:   point.h
- * Author: xion
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 15, 2014, 9:22 PM
  */

@@ -1,6 +1,6 @@
 /* 
  * File:   field.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 18, 2014, 9:46 AM
  */

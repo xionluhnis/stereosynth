@@ -1,6 +1,6 @@
 /* 
  * File:   heap.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 21, 2014, 4:20 PM
  */

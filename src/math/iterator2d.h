@@ -1,6 +1,6 @@
 /* 
  * File:   iterator2d.h
- * Author: xion
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 15, 2014, 9:31 PM
  */

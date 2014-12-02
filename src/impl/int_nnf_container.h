@@ -1,6 +1,6 @@
 /* 
  * File:   int_nnf_container.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 26, 2014, 2:36 PM
  */

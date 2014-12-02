@@ -1,6 +1,6 @@
 /* 
  * File:   int_single_nnf.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 19, 2014, 5:04 PM
  */

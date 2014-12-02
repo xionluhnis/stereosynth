@@ -1,6 +1,6 @@
 /* 
  * File:   trypatch.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 21, 2014, 10:56 AM
  */

@@ -1,6 +1,6 @@
 /* 
  * File:   auto_k_nnf.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on December 1, 2014, 4:04 PM
  */

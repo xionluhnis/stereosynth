@@ -1,6 +1,6 @@
 /* 
  * File:   distance.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 19, 2014, 3:41 PM
  */

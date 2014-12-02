@@ -1,6 +1,6 @@
 /* 
  * File:   binning.h
- * Author: Alexandre Kaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 30, 2014, 9:25 PM
  */

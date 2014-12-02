@@ -1,6 +1,6 @@
 /* 
  * File:   int_k_nnf.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 21, 2014, 3:51 PM
  */

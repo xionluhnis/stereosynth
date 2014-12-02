@@ -1,6 +1,6 @@
 /* 
  * File:   algorithm.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 21, 2014, 11:18 AM
  */

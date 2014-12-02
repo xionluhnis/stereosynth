@@ -1,6 +1,6 @@
 /* 
  * File:   auto_k_nnf.cpp
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 18, 2014, 7:14 AM
  */
@@ -40,6 +40,8 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
 		mexErrMsgIdAndTxt("MATLAB:nnf:maxlhs",
 				"Too many output arguments.");
 	}
+    
+    // FIXME some patches are still mapped within minDist bounds of identity!!!
 	
 	// options parameter
 	mxOptions options(nin >= 3 ? in[2] : mxCreateNothing());

@@ -1,6 +1,6 @@
 /* 
  * File:   rng.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 17, 2014, 8:32 PM
  */

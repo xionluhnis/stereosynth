@@ -1,6 +1,6 @@
 /* 
  * File:   histogram_weighted_average.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 25, 2014, 4:31 PM
  */

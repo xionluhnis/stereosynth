@@ -1,8 +1,9 @@
-/*******************************************************************************
- * meanshift.h - mean-shift algorithm for voting
- *******************************************************************************
- * Add license here...
- *******************************/
+/* 
+ * File:   meanshift.h
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
+ *
+ * Created on November 21, 2014, 4:20 PM
+ */
 
 #ifndef MEANSHIFT_H
 #define	MEANSHIFT_H

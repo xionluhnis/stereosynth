@@ -1,6 +1,6 @@
 /* 
  * File:   propagation.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 21, 2014, 11:13 AM
  */

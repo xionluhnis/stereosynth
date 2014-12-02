@@ -1,8 +1,9 @@
-/*******************************************************************************
- * scanline.h - scanline traversal algorithm
- *******************************************************************************
- * Add license here...
- *******************************/
+/* 
+ * File:   scanline.h
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
+ *
+ * Created on November 21, 2014, 4:20 PM
+ */
 
 #ifndef SCANLINE_H
 #define	SCANLINE_H

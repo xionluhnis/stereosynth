@@ -1,6 +1,6 @@
 /* 
  * File:   vec.h
- * Author: xion
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 15, 2014, 9:21 PM
  */

@@ -1,6 +1,6 @@
 /* 
  * File:   weighted_average.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 25, 2014, 3:17 PM
  */

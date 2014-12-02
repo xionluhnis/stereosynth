@@ -1,6 +1,6 @@
 /* 
  * File:   wrapper.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on November 17, 2014, 5:17 PM
  */

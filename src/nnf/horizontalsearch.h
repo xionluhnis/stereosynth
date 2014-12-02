@@ -1,101 +1,87 @@
 /* 
- * File:   randsearch.h
+ * File:   horizontalsearch.h
  * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
- * Created on November 24, 2014, 9:37 PM
+ * Created on December 2, 2014, 9:31 AM
  */
 
-#ifndef RANDSEARCH_H
-#define	RANDSEARCH_H
+#ifndef HORIZONTALSEARCH_H
+#define	HORIZONTALSEARCH_H
 
-#include "nnf.h"
-#include "searchradius.h"
 #include "trypatch.h"
 #include "../im/patch.h"
-#include "../math/bounds.h"
+#include "../sampling/uniform.h"
 
 namespace pm {
     
+    /**
+     * Uniform horizontal search for NNF improvement
+     */
     template < typename Patch = Patch2ti, typename DistValue = float, int K = 7 >
-    struct RandomSearch {
+    class HorizontalSearch {
+    public:
         typedef NearestNeighborField<Patch, DistValue, K> NNF;
 
         bool operator()(const Point2i &i, bool);
 
-        RandomSearch(NNF *nnf);
+        HorizontalSearch(NNF *nnf);
     };
     
     // Implementation for 2d translation patches
     template < typename S, typename DistValue>
-    class RandomSearch<BasicPatch<S>, DistValue, 1> {
+    class HorizontalSearch<BasicPatch<S>, DistValue, 1> {
     public:
         typedef BasicPatch<S> TargetPatch;
         typedef typename BasicPatch<S>::point point;
         typedef typename point::vec vec;
         typedef NearestNeighborField<TargetPatch, DistValue, 1> NNF;
-        typedef Bounds<S, 2> bounds;
 
         bool operator()(const Point2i &i, bool){
             
-            // target patch
-            const TargetPatch &p = nnf->patch(i);
-            
-            // search bounds
+            // maximum
             const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
-            bounds b = bounds(vec(0, 0), vec(target.width, target.height)) & bounds(p, search->radius);
             
             // uniformly sample a position for the new patch
-            const point &q = uniform(nnf->rng(), b.min, b.max);
+            point q(uniform(nnf->rng(), 0, target.width), i.y);
             return tryPatch<TargetPatch, DistValue>(nnf, i, TargetPatch(q));
         }
 
-        RandomSearch(NNF *n, const SearchRadius<S> *sr) : nnf(n), search(sr){}
+        HorizontalSearch(NNF *n) : nnf(n){}
         
     private:
         NNF *nnf;
-        const SearchRadius<S> *search;
     };
     
     // Implementation for 2d translation patches and k-NN
     template < typename S, typename DistValue, int K>
-    class RandomSearch<BasicPatch<S>, DistValue, K> {
+    class HorizontalSearch<BasicPatch<S>, DistValue, K> {
     public:
         typedef BasicPatch<S> TargetPatch;
         typedef typename BasicPatch<S>::point point;
         typedef typename point::vec vec;
         typedef NearestNeighborField<TargetPatch, DistValue, K> NNF;
-        typedef Bounds<S, 2> bounds;
 
         bool operator()(const Point2i &i, bool){
             
-            // target patches
-            point p[K];
-            for(int k = 0; k < K; ++k){
-                p[k] = nnf->patch(i, k);
-            }
-            
-            // bounds
+            // maximum
             const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
-            bounds frame(vec(0, 0), vec(target.width, target.height));
             
-            // sample in window defined by the current patch and the given radius
+            // uniformly sample a position for the new patch
             bool success = false;
             for(int k = 0; k < K; ++k){
-                bounds b = frame & bounds(p[k], search->radius);
-                const point &q = uniform(nnf->rng(), b.min, b.max);
+                point q(uniform(nnf->rng(), 0, target.width), i.y);
                 success |= kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q));
             }
             return success;
         }
 
-        RandomSearch(NNF *n, const SearchRadius<S> *sr) : nnf(n), search(sr){}
+        HorizontalSearch(NNF *n) : nnf(n){}
         
     private:
         NNF *nnf;
-        const SearchRadius<S> *search;
     };
     
 }
 
-#endif	/* RANDSEARCH_H */
+#endif	/* HORIZONTALSEARCH_H */
 

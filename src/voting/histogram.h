@@ -1,8 +1,9 @@
-/*******************************************************************************
- * histogram.h - histogram algorithms for voting
- *******************************************************************************
- * Add license here...
- *******************************/
+/* 
+ * File:   histogram.h
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
+ *
+ * Created on November 21, 2014, 4:20 PM
+ */
 
 #ifndef HISTOGRAM_H
 #define	HISTOGRAM_H
