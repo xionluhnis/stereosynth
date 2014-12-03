@@ -21,15 +21,15 @@ namespace pm {
         }
     };
     
-    template <typename T>
-    struct Translation : public T, public Transform<T> {
-        typedef typename T::scalar scalar;
+    template <typename T1, typename T2 = T1>
+    struct Translation : public T1, public Transform<T2> {
+        typedef typename T1::scalar scalar;
         
-        T transform(const T &p) const {
-            return p + *this;
+        T1 transform(const T2 &p) const {
+            return T1(p) + *this;
         }
-        explicit Translation(scalar x = 0, scalar y = 0) : T(x, y){}
-        Translation(const T &t) : T(t){}
+        explicit Translation(scalar x = 0, scalar y = 0) : T1(x, y){}
+        Translation(const T1 &t) : T1(t){}
     };
     
     template <typename T>

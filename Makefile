@@ -18,6 +18,7 @@ mex_nnf: clean create
 
 mex_disp: clean create
 	$(MEX) src/int_k_disp.cpp -output bin/ikdisp -output bin/ikdisp
+	$(MEX) src/float_k_disp.cpp -output bin/fkdisp -output bin/fkdisp
 
 mex_vote: clean create
 	$(MEX) src/int_vote.cpp -output bin/ivote -output bin/ivote

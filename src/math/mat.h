@@ -53,6 +53,11 @@ namespace pm {
 		
 		Mat() : flags(IM_UNKNOWN){
 		}
+        
+        Mat(const Mat &m) : height(m.height), width(m.width), flags(m.flags), data(m.data) {
+            step[0] = m.step[0];
+            step[1] = m.step[1];
+        }
 		
 		Mat(int h, int w, int dataType) : height(h), width(w), flags(dataType){
 			create(IM_SIZEOF(dataType));
@@ -155,7 +160,7 @@ namespace pm {
 			return p.x >= 0 && p.y >= 0 && p.x < width && p.y < height;
 		}
 		
-	private:
+	protected:
 		int flags;
 		DataPtr data;
 		int step[2];

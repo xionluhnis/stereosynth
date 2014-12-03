@@ -22,13 +22,13 @@ typedef unsigned int uint;
 
 using namespace pm;
 
-typedef NearestNeighborField<Patch2ti, float, KNNF_K> NNF;
-typedef Distance<Patch2ti, float> DistanceFunc;
+typedef NearestNeighborField<Patch2tf, float, KNNF_K> NNF;
+typedef Distance<Patch2tf, float, BilinearMatF> DistanceFunc;
 
 /**
  * Usage:
  * 
- * [newNNF, conv] = ikdisp( left, right, prevNNF, options )
+ * [newNNF, conv] = fkdisp( left, right, prevNNF, options )
  */
 void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     // checking the input
@@ -49,15 +49,15 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     uint algo_seed = options.scalar<uint>("rand_seed", timeSeed());
     int maxDY = options.integer("max_dy", 5);
     
-    Patch2ti::width(patchSize); // set patch size
+    Patch2tf::width(patchSize); // set patch size
     seed(algo_seed); // set rng state
     
     // load source and target
-    Image source = mxArrayToImage(in[0]);
-    Image target = mxArrayToImage(in[1]);
+    BilinearMatF source = mxArrayToImage(in[0]);
+    BilinearMatF target = mxArrayToImage(in[1]);
     
     // create distance instance
-    DistanceFunc d = DistanceFactory<Patch2ti, float>::get(dist::SSD, source.channels());
+    DistanceFunc d = DistanceFactory<Patch2tf, float, BilinearMatF>::get(dist::SSD, source.channels());
     
     // create nnf (load maybe)
     NNF nnf(source, target, d, maxDY);
@@ -69,15 +69,15 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     }
     
     // create algorithm sequence
-    SearchRadius<int> search;
-    search.radius = options.integer("search_radius", std::max(target.width, target.height) / 2);
+    SearchRadius<float> search;
+    search.radius = options.scalar<float>("search_radius", std::max(target.width, target.height) / 2.0f);
     search.decreaseFactor = options.scalar<double>("search_decr_factor", 2.0);
-    search.minimum = options.integer("search_min_radius", patchSize);
-    auto seq = Algorithm() << HorizontalSearch<Patch2ti, float, KNNF_K>(&nnf)
-                           << HorizontalRandomSearch<Patch2ti, float, KNNF_K>(&nnf, &search, maxDY)
-                           << Propagation<Patch2ti, float, KNNF_K>(&nnf);
+    search.minimum = options.scalar<float>("search_min_radius", float(patchSize));
+    auto seq = Algorithm() << HorizontalSearch<Patch2tf, float, KNNF_K>(&nnf)
+                           << HorizontalRandomSearch<Patch2tf, float, KNNF_K>(&nnf, &search, maxDY)
+                           << Propagation<Patch2tf, float, KNNF_K>(&nnf);
     NoOp<Point2i, false> filter;
-    DecreasingSearchRadius<int> post(&search);
+    DecreasingSearchRadius<float> post(&search);
     
     // scanline with the sequence of algorithm
     scanline(nnf, numIter, seq, filter, post);

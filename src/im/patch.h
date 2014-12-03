@@ -23,10 +23,10 @@ namespace pm {
     ////////////////////////////////////////////////////////////////////////////
     
     template < typename S >
-    struct BasicPatch : public Translation< Point<S> > {
+    struct BasicPatch : public Translation< Point<S>, Point2i > {
         typedef BasicPatch<int> SourcePatch;
         typedef Point<S> point;
-        typedef Translation<point> translation;
+        typedef Translation< Point<S>, Point2i > translation;
         
         static int width(int newSize = 0);
         

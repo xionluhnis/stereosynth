@@ -14,6 +14,7 @@
 
 #include "../algebra.h"
 #include "../data/heap.h"
+#include "../im/bilinear.h"
 #include "../im/patch.h"
 #include "../nnf/distance.h"
 #include "../nnf/field.h"
@@ -25,35 +26,43 @@
 #endif
 
 #include <limits>
+#include <type_traits>
 
 namespace pm {
-
-    // distance type
-    typedef Distance<Patch2ti, float> DistanceFunc;
+    
+    template < typename S >
+    struct mat_impl {
+        typedef typename std::conditional<std::is_floating_point<S>::value, BilinearMat<S>, Mat>::type type;
+    };
 
     // disparity field with the k best results
-	template <int K>
-    struct NearestNeighborField<Patch2ti, float, K> : public Field2D<true> {
+	template <typename S, int K>
+    struct NearestNeighborField<BasicPatch<S>, float, K> : public Field2D<true> {
+        typedef BasicPatch<S> TargetPatch;
+        typedef typename BasicPatch<S>::point TargetPoint;
+        typedef typename TargetPatch::SourcePatch SourcePatch;
+        typedef typename mat_impl<S>::type ImageType;
+        typedef Distance<TargetPatch, float, ImageType> DistanceFunc;
 
-        const Image source;
-        const Image target;
+        const ImageType source;
+        const ImageType target;
         const DistanceFunc distFunc;
         const RNG rand;
 		const int k;
         const int maxDY;
 
-        NearestNeighborField(const Image &src, const Image &trg, const DistanceFunc d, int dy = 5, const RNG r = unif01)
-        : Field2D(src.width - Patch2ti::width() + 1, src.height - Patch2ti::width() + 1),
+        NearestNeighborField(const ImageType &src, const ImageType &trg, const DistanceFunc d, int dy = 5, const RNG r = unif01)
+        : Field2D(src.width - TargetPatch::width() + 1, src.height - TargetPatch::width() + 1),
           source(src), target(trg), distFunc(d), rand(r), k(K), maxDY(dy) {
             data = createEntry<PatchData[K]>("patches");
         }
 		
 		struct PatchData {
-			Patch2ti patch;
+			TargetPatch patch;
 			float distance;
             
             PatchData() : patch(), distance(std::numeric_limits<float>::max()) {}
-            PatchData(const Patch2ti &p, float d) : patch(p), distance(d) {}
+            PatchData(const TargetPatch &p, float d) : patch(p), distance(d) {}
 		};
 		struct DistanceCompare {
             bool operator ()(const PatchData &p1, const PatchData &p2) const {
@@ -64,24 +73,24 @@ namespace pm {
 
         Entry<PatchData[K]> data;
 
-        float dist(const Point2i &pos, const Patch2ti &q) const {
-            const Patch2ti p(pos);
+        float dist(const Point2i &pos, const TargetPatch &q) const {
+            const SourcePatch p(pos);
             return distFunc(source, target, p, q);
         }
         inline RNG rng() const {
             return rand;
         }
-        inline const Patch2ti &patch(const Point2i &i, int k) const {
+        inline const TargetPatch &patch(const Point2i &i, int k) const {
             return data.at(i)[k].patch;
         }
         inline const float &distance(const Point2i &i, int k) const {
             // provide the worst distance of all (top)
             return data.at(i)[k].distance;
         }
-        inline bool filter(const Point2i &i, const Patch2ti &p) const {
+        inline bool filter(const Point2i &i, const TargetPatch &p) const {
             return (i - p).abs().y > maxDY; // filter patches deviating too much vertically
         }
-        inline bool store(const Point2i &i, const Patch2ti &p, const float &d) {
+        inline bool store(const Point2i &i, const TargetPatch &p, const float &d) {
             return MaxHeap(data.at(i)).insert(PatchData(p, d));
         }
         inline FrameSize targetSize() const {
@@ -93,7 +102,7 @@ namespace pm {
             PatchData (&p)[K] = data.at(i);
             for(int k = 0; k < K; ++k){
                 // initialize with bad data
-                p[k].patch = Patch2ti(Point2i(-1, -1));
+                p[k].patch = TargetPatch(TargetPoint(-1, -1));
                 p[k].distance = std::numeric_limits<float>::infinity();
             }
 			MaxHeap heap(&p[0]);
@@ -103,7 +112,7 @@ namespace pm {
             int ok = 0;
             for(int x = bounds.min[0], X = bounds.max[0]; x <= X; ++x){
                 // we insert the identity (0 disparity)
-                Patch2ti q(Point2i(x, i.y));
+                TargetPatch q(TargetPoint(x, i.y));
                 PatchData pd(q, dist(i, q));
                 if(heap.insert(pd)) ++ok;
             }

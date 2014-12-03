@@ -14,9 +14,6 @@
 #include "../sampling/uniform.h"
 
 namespace pm {
-    
-    // distance type
-    typedef Distance<Patch2ti, float> DistanceFunc;
 
     // nearest neighbor field
     template < typename Patch = Patch2ti, typename DistValue = float, int K = 7 >
@@ -63,7 +60,7 @@ namespace pm {
     };
     
     template < typename Patch, typename DistValue, int K >
-    inline bool isValid(const NearestNeighborField<Patch, DistValue, K> *nnf, const Patch2ti &p) {
+    inline bool isValid(const NearestNeighborField<Patch, DistValue, K> *nnf, const Patch &p) {
         const FrameSize &f = nnf->targetSize();
         Point2i farPixel(Patch::width() - 1, Patch::width() - 1);
         // a patch is valid if the target contains its top-left and bottom-right pixels
