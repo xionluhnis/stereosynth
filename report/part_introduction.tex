@@ -1,0 +1,42 @@
+
+
+\section{Introduction}
+
+Topic: stereo synthesis.
+
+Related:
+\begin{itemize}
+	\item stereo disparity (even optical flow != motion flow)
+	\item scene synthesis
+	\item texture / style transfer
+	\item nearest neighbor computation $\to$ patch match
+	\item scene recognition $\to$ find patches in multiple images
+\end{itemize}
+
+Texture is important for photorealistic depiction as it provides a succinct description of surface properties and details which can be hard to specify otherwise.
+It is extensively used in computer graphics for augmenting coarse geometric models with fine surface details, while imaging softwares such as Photoshop have been using it to provide hole filling, seamless blending and other tools where the impression of detail matters.
+
+%-------------------------------------------------------------------------
+\subsection{Texture Synthesis}
+
+As it can be difficult to acquire textures that fit the resolution and boundary constraints of a specific modeling task, one might be interested in automatically synthesizing texture.
+Algorithms for texture synthesis include parametric approaches such as \textbf{procedural texture} models \cite{Ebert02, Musgrave93, Worley96} based on particular texture models (e.g.\;wood, cloud, ground, fire), as well as exemplar-based methods that have been very popular recently.
+While many texture models have been explored for exemplar-based synthesis \cite{Heeger95}, we focus on the Markov Random Field methods that have produced the most impressive results so far (which we briefly present here, see \cite{Wei09} for more details).
+
+\textbf{Pixel-based} methods \cite{Efros99} grow textures one pixel at a time by selecting exemplar patches that match the window around the newly synthesized pixel.
+Different accelerations have been proposed such as fixed neighborhoods and scanline processing \cite{Wei00}, $k$-coherence \cite{Tong02} and eventually led to \textbf{patch-based} methods \cite{Praun00, Efros01, Liang01, Kwatra03} that directly copy full patches.
+
+Then came \textbf{optimization-based} methods \cite{Kwatra05} that grow the texture as a whole by minimizing a patch energy
+\begin{equation}
+	\sum_i d(\ti, \si)
+	\label{eq:patch_energy}
+\end{equation}
+where $\ti$ are patches of our synthesized target, $\si$ are the corresponding patches in the exemplar and $d(\cdot)$ is a patch distance such as the sum of squared differences.
+
+Further controllability has been introduced with the use of extra feature channels \cite{Ashikhmin01, Matusik05, Lefebvre06, Lu07}.
+
+\subsection{Applications}
+
+Many of the aforementioned methods have applications outside of simple texture synthesis.
+For example, 2D patches have been extended into 3D patches for solid texture synthesis \cite{Wei02, Kopf07, Dong08} or extended with a temporal dimension for video textures \cite{Schodl00, Schodl02, Agarwala05} and spatio-temporal video texture synthesis \cite{Kwatra03, Wexler07}.
+Editing tools have been developed using texture-based methods such as style transfer \cite{Efros01, Hertzmann01} and image completion \cite{Bertalmio00, Drori03, Hays07} that have then been used for geometry \cite{Bhat04, Zhou06} and shape synthesis \cite{Rosenberger09}.

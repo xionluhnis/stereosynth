@@ -6,13 +6,17 @@ function [ uv ] = pm_flow( left, right, options )
     if nargin < 3
         options = struct();
     end
-    
-    kdisp = ikdisp(left, right, [], options);
-    disp = iknnf_top(left, right, kdisp, options);
-    
-    % stupid voting by patch position
-    [y, x] = ndgrid(0:size(disp, 1)-1, 0:size(disp, 2)-1);
-    uv = disp(:, :, 1:2) - cat(3, x, y);
+    if ~isfield(options, 'flow_type')
+        options.flow_type = 'float';
+    end
+    switch options.flow_type
+        case {'i', 'int', 'integer'}
+            uv = int_flow(left, right, options);
+        case {'f', 'float'}
+            uv = float_flow(left, right, options);
+        otherwise
+            error('Invalid flow type: %s', options.flow_type);
+    end
     
     % thresholding and displaying
     for N = [10, 25, 50, 100, 200]
@@ -27,3 +31,20 @@ function [ uv ] = pm_flow( left, right, options )
     end
 end
 
+function uv = int_flow(left, right, options)
+    kdisp = ikdisp(left, right, [], options);
+    disp = iknnf_top(left, right, kdisp, options);
+    
+    % stupid voting by patch position
+    [y, x] = ndgrid(0:size(disp, 1)-1, 0:size(disp, 2)-1);
+    uv = disp(:, :, 1:2) - cat(3, x, y);
+end
+
+function uv = float_flow(left, right, options)
+    kdisp = fkdisp(left, right, [], options);
+    disp = fknnf_top(left, right, kdisp, options);
+    
+    % stupid voting by patch position
+    [y, x] = ndgrid(0:size(disp, 1)-1, 0:size(disp, 2)-1);
+    uv = disp(:, :, 1:2) - cat(3, x, y);
+end

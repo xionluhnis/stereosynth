@@ -1,0 +1,68 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage{cvpr}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{xcolor}
+
+% Include other packages here, before hyperref.
+
+% If you comment hyperref and then uncomment it, you should delete
+% egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+% run, let it finish, and you should be clear).
+\usepackage[breaklinks=true,bookmarks=false]{hyperref}
+
+\cvprfinalcopy % *** Uncomment this line for the final submission
+
+\def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+
+\def\ti{\mathbf{t}_i}
+\def\si{\mathbf{s}_i}
+
+\newcommand{\ignore}[1]{}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\newcommand{\TODO}[1]{
+	{\bfseries\colorbox{red}{\color{white}TODO: #1}}
+}
+
+% Pages are numbered in submission mode, and unnumbered in camera-ready
+%\ifcvprfinal\pagestyle{empty}\fi
+\setcounter{page}{1}
+\begin{document}
+
+%%%%%%%%% TITLE
+\title{Stereo View Synthesis using Patch Match}
+
+\author{Alexandre Kaspar\\
+\\
+{\tt\small akaspar@csail.mit.edu}
+}
+
+\maketitle
+%\thispagestyle{empty}
+
+%%%%%%%%% ABSTRACT
+
+\input{part_abstract}
+
+%%%%%%%%% BODY TEXT
+\input{part_introduction}
+\input{part_overview}
+\input{part_implementation}
+\input{part_results}
+\input{part_conclusion}
+
+
+{\small
+\bibliographystyle{ieee}
+\bibliography{report}
+}
+
+\end{document}
