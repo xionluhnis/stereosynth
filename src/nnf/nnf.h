@@ -14,6 +14,10 @@
 #include "../sampling/uniform.h"
 
 namespace pm {
+    
+#ifndef ONLY_K_NNF
+#define ONLY_K_NNF 0
+#endif
 
     // nearest neighbor field
     template < typename Patch = Patch2ti, typename DistValue = float, int K = 7 >
@@ -38,6 +42,8 @@ namespace pm {
         bool filter(const Point2i &pos, const TargetPatch &q) const;
     };
     
+#if !ONLY_K_NNF
+    
     template < typename Patch, typename DistValue>
     struct NearestNeighborField<Patch, DistValue, 1> : Field2D<true> {
 
@@ -58,6 +64,8 @@ namespace pm {
         // --- provide a filtering for special cases (auto-nnf) ----------------
         bool filter(const Point2i &pos, const TargetPatch &q) const;
     };
+    
+#endif
     
     template < typename Patch, typename DistValue, int K >
     inline bool isValid(const NearestNeighborField<Patch, DistValue, K> *nnf, const Patch &p) {

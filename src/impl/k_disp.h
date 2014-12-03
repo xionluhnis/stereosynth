@@ -12,6 +12,8 @@
 #define USE_MATLAB 1
 #endif
 
+#define ONLY_K_NNF 1
+
 #include "../algebra.h"
 #include "../data/heap.h"
 #include "../im/bilinear.h"

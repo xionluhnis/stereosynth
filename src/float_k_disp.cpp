@@ -1,8 +1,8 @@
 /* 
- * File:   int_k_disp.h
+ * File:   float_k_disp.h
  * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
- * Created on December 2, 2014, 9:41 AM
+ * Created on December 3, 2014, 9:41 AM
  */
 
 #define USE_MATLAB 1
