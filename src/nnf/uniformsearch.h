@@ -22,7 +22,7 @@ namespace pm {
     public:
         typedef NearestNeighborField<Patch, DistValue, K> NNF;
 
-        bool operator()(const Point2i &i, bool);
+        uint operator()(const Point2i &i, bool);
 
         UniformSearch(NNF *nnf);
     };
@@ -36,7 +36,7 @@ namespace pm {
         typedef typename point::vec vec;
         typedef NearestNeighborField<TargetPatch, DistValue, 1> NNF;
 
-        bool operator()(const Point2i &i, bool){
+        uint operator()(const Point2i &i, bool){
             
             // maximum
             const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
@@ -71,14 +71,14 @@ namespace pm {
             const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
             
             // uniformly sample a position for the new patch
-            bool success = false;
+            uint success = 0;
             for(int k = 0; k < K; ++k){
                 const point &q = uniform(
                     nnf->rng(),
                     vec(0, 0),
                     vec(target.width, target.height)
                 );
-                success |= kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q));
+                success += kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q));
             }
             return success;
         }

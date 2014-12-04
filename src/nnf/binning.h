@@ -25,12 +25,12 @@ namespace pm {
     struct Binning {
         typedef NearestNeighborField<Patch, DistValue, K> NNF;
 
-        bool operator()(const Point2i &i, bool){
-			bool success = false;
+        uint operator()(const Point2i &i, bool){
+			uint success = 0;
 			provider.query(i);
 			while(!provider.empty()){
 				const Patch &p = provider.next();
-				success |= kTryPatch<K, Patch, DistValue>(nnf, i, p);
+				success += kTryPatch<K, Patch, DistValue>(nnf, i, p);
 			}
 			return success;
 		}
@@ -46,12 +46,12 @@ namespace pm {
     struct Binning<Patch, DistValue, 1, M> {
         typedef NearestNeighborField<Patch, DistValue, 1> NNF;
 
-        bool operator()(const Point2i &i, bool){
-			bool success = false;
+        uint operator()(const Point2i &i, bool){
+			uint success = 0;
 			provider.query(i);
 			while(!provider.empty()){
 				const Patch &p = provider.next();
-				success |= tryPatch<Patch, DistValue>(nnf, i, p);
+				success += tryPatch<Patch, DistValue>(nnf, i, p);
 			}
 			return success;
 		}

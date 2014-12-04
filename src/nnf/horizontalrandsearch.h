@@ -20,7 +20,7 @@ namespace pm {
     struct HorizontalRandomSearch {
         typedef NearestNeighborField<Patch, DistValue, K> NNF;
 
-        bool operator()(const Point2i &i, bool);
+        uint operator()(const Point2i &i, bool);
 
         HorizontalRandomSearch(NNF *nnf);
     };
@@ -35,7 +35,7 @@ namespace pm {
         typedef NearestNeighborField<TargetPatch, DistValue, 1> NNF;
         typedef Bounds<S, 2> bounds;
 
-        bool operator()(const Point2i &i, bool){
+        uint operator()(const Point2i &i, bool){
             
             // target patch
             const TargetPatch &p = nnf->patch(i);
@@ -70,7 +70,7 @@ namespace pm {
         typedef NearestNeighborField<TargetPatch, DistValue, K> NNF;
         typedef Bounds<S, 2> bounds;
 
-        bool operator()(const Point2i &i, bool){
+        uint operator()(const Point2i &i, bool){
             
             // target patches
             point p[K];
@@ -86,11 +86,11 @@ namespace pm {
             );
             
             // sample in window defined by the current patch and the given radius
-            bool success = false;
+            uint success = 0;
             for(int k = 0; k < K; ++k){
                 bounds b = frame & bounds(p[k], search->radius);
                 const point &q = uniform<vec>(nnf->rng(), b.min, b.max);
-                success |= kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q));
+                success += kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q));
             }
             return success;
         }

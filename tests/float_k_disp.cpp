@@ -90,7 +90,7 @@ int main() {
                            << HorizontalRandomSearch<Patch2tf, float, KNNF_K>(&nnf, &search, maxDY)
                            << Propagation<Patch2tf, float, KNNF_K>(&nnf)
                            << RandomPropagation<Patch2tf, float, KNNF_K>(&nnf);
-    NoOp<Point2i, false> filter;
+    NoOp<Point2i, bool, false> filter;
     DecreasingSearchRadius<float> post(&search);
     
     // scanline with the sequence of algorithm

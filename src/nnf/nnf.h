@@ -15,6 +15,8 @@
 
 namespace pm {
     
+    typedef unsigned int uint;
+    
 #ifndef ONLY_K_NNF
 #define ONLY_K_NNF 0
 #endif

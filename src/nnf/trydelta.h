@@ -14,20 +14,20 @@
 namespace pm {
     
     template <typename TargetPatch = Patch2ti, typename DistValue = float>
-    bool tryDelta(NearestNeighborField<TargetPatch, DistValue, 1> *nnf, const Point2i &i, const Point2i &delta) {
+    uint tryDelta(NearestNeighborField<TargetPatch, DistValue, 1> *nnf, const Point2i &i, const Point2i &delta) {
         Point2i j = i - delta;
         if(nnf->contains(j)){
             TargetPatch q = nnf->patch(j).transform(delta); // transform delta in patch => new position => new patch
             if(!isValid(nnf, q))
-                return false;
+                return 0;
             return tryPatch(nnf, i, q);
         }
-        return false;
+        return 0;
     }
 
     template <int K = 7, typename TargetPatch = Patch2ti, typename DistValue = float>
-    bool kTryDelta(NearestNeighborField<TargetPatch, DistValue, K> *nnf, const Point2i &i, const Point2i &delta) {
-        bool success = false;
+    uint kTryDelta(NearestNeighborField<TargetPatch, DistValue, K> *nnf, const Point2i &i, const Point2i &delta) {
+        uint success = 0;
         Point2i j = i - delta;
         if(nnf->contains(j)){
             TargetPatch q[K];
@@ -38,7 +38,7 @@ namespace pm {
                 // check that the patch is valid in the target
                 if(!isValid(nnf, q[k]))
                     continue;
-                success |= kTryPatch<K, TargetPatch, DistValue>(nnf, i, q[k]);
+                success += kTryPatch<K, TargetPatch, DistValue>(nnf, i, q[k]);
             }
         }
         return success;

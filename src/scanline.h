@@ -8,12 +8,14 @@
 #ifndef SCANLINE_H
 #define	SCANLINE_H
 
-template< typename T, bool Result = false >
+typedef unsigned int uint;
+
+template< typename T, typename R = uint, R Result = 0 >
 struct NoOp {
     /**
      * Iteration per index
      */
-    bool operator()(const T &, bool) const {
+    R operator()(const T &, bool) const {
         // do ... nothing
         return Result;
     }
@@ -63,7 +65,7 @@ template <
     typename IterationFilter = NoOp<typename Grid::index>
 >
 void scanline(Grid &grid, unsigned int numIters, Algorithm &&algo, IterationFilter &&filter){
-    NoOp<unsigned int> defaultIterEnd;
+    NoOp<uint> defaultIterEnd;
     scanline(grid, numIters, algo, filter, defaultIterEnd);
 }
 
@@ -74,7 +76,7 @@ template <
 >
 void scanline(Grid &grid, unsigned int numIters, Algorithm &&algo){
     NoOp<typename Grid::index> noFilter;
-    NoOp<unsigned int> defaultIterEnd;
+    NoOp<uint> defaultIterEnd;
     scanline(grid, numIters, algo, noFilter, defaultIterEnd);
 }
 

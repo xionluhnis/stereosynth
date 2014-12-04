@@ -37,7 +37,7 @@ clean:
 clean_test:
 	rm -rf bin/test_*
 create:
-	mkdir bin 2>/dev/null
+	mkdir -p bin 2>/dev/null
 
 all: mex
 .phony: mex

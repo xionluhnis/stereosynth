@@ -19,13 +19,13 @@ namespace pm {
     public:
         typedef NearestNeighborField<Patch, DistValue, K> NNF;
 
-        bool operator()(const Point2i &i, bool rev) {
+        uint operator()(const Point2i &i, bool rev) {
             // direction for deltas
             int d = rev ? -1 : 1;
             // two propagation tentatives
-            bool res = false;
-            res |= kTryDelta(nnf, i, Point2i(d, 0)); // dx
-            res |= kTryDelta(nnf, i, Point2i(0, d)); // dy
+            uint res = 0;
+            res += kTryDelta(nnf, i, Point2i(d, 0)); // dx
+            res += kTryDelta(nnf, i, Point2i(0, d)); // dy
             return res;
         }
 
@@ -40,13 +40,13 @@ namespace pm {
     public:
         typedef NearestNeighborField<Patch, DistValue, 1> NNF;
 
-        bool operator()(const Point2i &i, bool rev) {
+        uint operator()(const Point2i &i, bool rev) {
             // direction for deltas
             int d = rev ? -1 : 1;
             // two propagation tentatives
-            bool res = false;
-            res |= tryDelta(nnf, i, Point2i(d, 0)); // dx
-            res |= tryDelta(nnf, i, Point2i(0, d)); // dy
+            uint res = 0;
+            res += tryDelta(nnf, i, Point2i(d, 0)); // dx
+            res += tryDelta(nnf, i, Point2i(0, d)); // dy
             return res;
         }
 

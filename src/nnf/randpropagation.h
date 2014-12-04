@@ -29,7 +29,7 @@ namespace pm {
     public:
         typedef NearestNeighborField<Patch, DistValue, K> NNF;
 
-        bool operator()(const Point2i &i, bool rev) {
+        uint operator()(const Point2i &i, bool rev) {
             const Point2i &q = samplePoint(nnf->frameSize(), nnf->rng());
             return kTryDelta(nnf, i, i - q); // propagate from randomly far point
         }
@@ -45,7 +45,7 @@ namespace pm {
     public:
         typedef NearestNeighborField<Patch, DistValue, 1> NNF;
 
-        bool operator()(const Point2i &i, bool rev) {
+        uint operator()(const Point2i &i, bool rev) {
             const Point2i &q = samplePoint(nnf->frameSize(), nnf->rng());
             return tryDelta(nnf, i, i - q); // propagate from randomly far point
         }

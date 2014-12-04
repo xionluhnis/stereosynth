@@ -17,8 +17,8 @@ namespace pm {
         typedef NearestNeighborField<Patch, DistValue, K1> NNF1;
 		typedef NearestNeighborField<Patch, DistValue, K2> NNF2;
 
-        bool operator()(const Point2i &i, bool){
-			bool success = false;
+        uint operator()(const Point2i &i, bool){
+			uint success = 0;
 			
 			// save the current K1 patches
 			Patch patches[K1];
@@ -33,7 +33,7 @@ namespace pm {
 				// try all K2 extensions from the extension NNF
 				for(int k2 = 0; k2 < K2; ++k2) {
 					const Patch &p = extension->patch(patches[k1], k2);
-					success |= kTryPatch<K1, Patch, DistValue>(nnf, i, p);
+					success += kTryPatch<K1, Patch, DistValue>(nnf, i, p);
 				}
 			}
 			return success;
@@ -51,13 +51,13 @@ namespace pm {
         typedef NearestNeighborField<Patch, DistValue, 1> NNF1;
 		typedef NearestNeighborField<Patch, DistValue, K2> NNF2;
 
-        bool operator()(const Point2i &i, bool){
-			bool success = false;
+        uint operator()(const Point2i &i, bool){
+			uint success = 0;
 			Patch p = nnf->patch(i); // /!\ not the reference as it may change!!!
 			
 			// try all K2 extensions
 			for(int k = 0; k < K2; ++k){
-				success |= tryPatch<Patch, DistValue>(nnf, i, p);
+				success += tryPatch<Patch, DistValue>(nnf, i, p);
 			}
 			return success;
 		}
