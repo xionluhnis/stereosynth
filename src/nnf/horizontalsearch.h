@@ -42,7 +42,7 @@ namespace pm {
             const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
             
             // uniformly sample a position for the new patch
-            point q(uniform(nnf->rng(), 0, target.width), i.y);
+            point q(uniform<S>(nnf->rng(), 0, target.width), i.y);
             return tryPatch<TargetPatch, DistValue>(nnf, i, TargetPatch(q));
         }
 
@@ -69,7 +69,7 @@ namespace pm {
             // uniformly sample a position for the new patch
             bool success = false;
             for(int k = 0; k < K; ++k){
-                point q(uniform(nnf->rng(), 0, target.width), i.y);
+                point q(uniform<S>(nnf->rng(), 0, target.width), i.y);
                 success |= kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q));
             }
             return success;

@@ -48,7 +48,7 @@ namespace pm {
             ) & bounds(p, search->radius);
             
             // uniformly sample a position for the new patch
-            const point &q = uniform(nnf->rng(), b.min, b.max);
+            const point &q = uniform<vec>(nnf->rng(), b.min, b.max);
             return tryPatch<TargetPatch, DistValue>(nnf, i, TargetPatch(q));
         }
 
@@ -89,7 +89,7 @@ namespace pm {
             bool success = false;
             for(int k = 0; k < K; ++k){
                 bounds b = frame & bounds(p[k], search->radius);
-                const point &q = uniform(nnf->rng(), b.min, b.max);
+                const point &q = uniform<vec>(nnf->rng(), b.min, b.max);
                 success |= kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q));
             }
             return success;

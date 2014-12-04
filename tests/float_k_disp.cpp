@@ -10,6 +10,7 @@
 #include "nnf/propagation.h"
 #include "nnf/horizontalsearch.h"
 #include "nnf/horizontalrandsearch.h"
+#include "nnf/randpropagation.h"
 #include "scanline.h"
 
 // png++
@@ -87,7 +88,8 @@ int main() {
     search.minimum = 7.0f;
     auto seq = Algorithm() << HorizontalSearch<Patch2tf, float, KNNF_K>(&nnf)
                            << HorizontalRandomSearch<Patch2tf, float, KNNF_K>(&nnf, &search, maxDY)
-                           << Propagation<Patch2tf, float, KNNF_K>(&nnf);
+                           << Propagation<Patch2tf, float, KNNF_K>(&nnf)
+                           << RandomPropagation<Patch2tf, float, KNNF_K>(&nnf);
     NoOp<Point2i, false> filter;
     DecreasingSearchRadius<float> post(&search);
     

@@ -109,7 +109,10 @@ namespace pm {
             }
 			MaxHeap heap(&p[0]);
             // look for K patches around identity
-            Bounds2i line(Vec2i(0, width), Vec2i(i.y, i.y));
+            Bounds2i line(
+                Vec2i(0, i.y),          // min position (included)
+                Vec2i(width - 1, i.y)   // max position (included)
+            );
             Bounds2i bounds = Bounds2i(i, K) & line;
             int ok = 0;
             for(int x = bounds.min[0], X = bounds.max[0]; x <= X; ++x){

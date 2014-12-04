@@ -51,10 +51,18 @@ namespace pm {
         
         template <typename T>
         inline T at(const point &p) const {
+            Point2i i(p);
+            if(p == point(i)){
+                return Mat::at<T>(p);
+            }
             return bilinearLookup<T, S>(*this, p);
         }
         template <typename T>
         inline T at(const point &p) {
+            Point2i i(p);
+            if(p == point(i)){
+                return Mat::at<T>(p);
+            }
             return bilinearLookup<T, S>(*this, p);
         }
         

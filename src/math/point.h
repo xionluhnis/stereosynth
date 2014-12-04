@@ -27,16 +27,18 @@ namespace pm {
 			type = IM_MAKETYPE(typeDepth, channels),
 			exact = DataDepth<scalar>::exact
 		};
+        
+        // constructors --------------------------------------------------------
 		Point() : x(0), y(0) {}
 		Point(T a, T b) : x(a), y(b) {}
 		template <typename T2>
 		explicit Point(const Point<T2> &p) : x(p.x), y(p.y) {}
         Point(const vec &v) : x(v[0]), y(v[1]){}
         
+        // operations ----------------------------------------------------------
         inline point transpose() const {
             return point(y, x);
         }
-		
 		inline T dot(const point &p) const {
 			return p.x * x + p.y * y;
 		}
@@ -65,15 +67,15 @@ namespace pm {
 					std::max(T(0), std::min(T(image->height - 1), y))
 					);
 		}
-		inline operator Point<int>() const {
-			return Point<int>(round(x), round(y));
-		}
 		inline Point<int> floor() const {
 			return Point<int>(std::floor(x), std::floor(y));
 		}
 		inline Point<int> ceil() const {
 			return Point<int>(std::ceil(x), std::ceil(y));
 		}
+        inline Point<int> round() const {
+            return Point<int>(round(x), round(y));
+        }
 		inline point abs() const {
 			return point(std::abs(x), std::abs(y));
 		}
@@ -89,11 +91,22 @@ namespace pm {
 		inline T area() const {
 			return x * y;
 		}
-		
+        // equality ------------------------------------------------------------
+        inline bool operator ==(const point &p) const {
+            return p.x == x && p.y == y;
+        }
+        inline bool operator !=(const point &p) const {
+            return !(*this == p);
+        }
+        // conversions ---------------------------------------------------------
+		inline operator Point<int>() const {
+			return Point<int>(x, y);
+		}
 		operator vec() const {
 			return vec(x, y);
 		}
 		
+        // members -------------------------------------------------------------
 		T x;
 		T y;
 	};
