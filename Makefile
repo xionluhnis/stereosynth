@@ -34,23 +34,25 @@ old_mex:
 
 clean:
 	rm -rf bin
+clean_test:
+	rm -rf bin/test_*
 create:
 	mkdir bin 2>/dev/null
 
 all: mex
 .phony: mex
 
-test: clean create test_algo test_int test_float
+test: clean_test create test_algo test_int test_float
 
-test_algo: clean create
+test_algo: clean_test create
 	$(CC) $(INCL) $(subst target,bounds,$(TEST))
 	$(CC) $(INCL) $(subst target,scanline,$(TEST))
 	$(CC) $(INCL) $(subst target,rng_uniform,$(TEST))
 	
-test_int: clean create
+test_int: clean_test create
 	$(CC) $(INCL) $(subst target,int_single_nnf,$(TEST))
 	$(CC) $(INCL) $(subst target,int_k_nnf,$(TEST))
 	$(CC) $(INCL) $(subst target,int_vote,$(TEST))
 	
-test_float: clean create
+test_float: clean_test create
 	$(CC) $(INCL) $(subst target,float_k_disp,$(TEST_WITH_PNG))
