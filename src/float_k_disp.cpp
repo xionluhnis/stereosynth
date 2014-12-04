@@ -85,7 +85,7 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
         ConvergenceDiary::Data convData;
         auto pseq = PostSequence() << post << ConvergenceDiary(&vseq, &convData);
         
-        scanline(nnf, numIter, seq, filter, pseq);
+        scanline(nnf, numIter, vseq, filter, pseq);
         
         std::cout << "convData: " << convData.size() << "==" << vseq.counts().size() << " by " << numIter << "\n";
         MatXD convMat(convData.size(), numIter, IM_64FC(1));

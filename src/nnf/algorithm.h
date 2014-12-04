@@ -94,10 +94,11 @@ namespace pm {
                 data->resize(n);
             }
             for(uint j = 0; j < n; ++j){
+                Sequence &seq = data->at(j);
                 size_t curr = sums[j];
-                size_t prev = data->at(j).empty() ? 0 : data->at(j).back();
-                assert(prev <= curr && "Convergence decrease?");
-                data->at(j).push_back(curr - prev);
+                size_t last = seq.empty() ? 0 : seq.back();
+                assert(last <= curr && "Convergence decrease?");
+                data->at(j).push_back(curr - last);
             }
             return 0;
         }
