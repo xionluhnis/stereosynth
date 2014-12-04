@@ -43,8 +43,8 @@ namespace pm {
 			return flags;
 		}
 		//! returns the depth of the matrix elements
-		inline int depth() const {
-			return IM_MAT_DEPTH(flags);
+		inline DataType depth() const {
+			return static_cast<DataType>(IM_MAT_DEPTH(flags));
 		}
 		//! returns the number of channels in each matrix element
 		inline int channels() const {

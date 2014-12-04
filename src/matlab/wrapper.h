@@ -46,36 +46,33 @@ namespace pm {
 		   int num_ch = IM_MAT_CN(dataType);
 		   mx = num_ch > 1 ? mxCreateMatrix(h, w, num_ch, classOf(dataType))
 				   : mxCreateMatrix(h, w, classOf(dataType));
-		   data = reinterpret_cast<byte *>(mxGetData(mx));
-		   if(data != NULL){
-			   step[0] = elemSize;
-			   step[1] = height * elemSize;
-			   step[2] = height * width * elemSize;
-		   } else {
-			   std::cerr << "No byte for dataType=" << dataType << " with size=" << elemSize << "\n";
-			   step[0] = step[1] = step[2] = 0;
-		   }
+		   create(elemSize);
 	   }
+       MatWrapper(int h, int w, DataType dt, int num_ch = 1) : height(h), width(w) {
+           int elemSize = IM_SIZEOF_DEPTH(dt);
+           mx = num_ch > 1 ? mxCreateMatrix(h, w, num_ch, classOf(dt))
+				   : mxCreateMatrix(h, w, classOf(dt));
+           flags = IM_MAKETYPE(dt, num_ch);
+		   create(elemSize);
+       }
 	   MatWrapper(int h, int w, mxClassID c, int num_ch = 1) : height(h), width(w) {
 		   mx = num_ch > 1 ? mxCreateMatrix(h, w, num_ch, c)
 				   : mxCreateMatrix(h, w, c);
-		   data = reinterpret_cast<byte *>(mxGetData(mx));
 		   flags = IM_MAKETYPE(depthOf(c), num_ch);
-		   int elemSize = IM_SIZEOF_BY_CHANNEL(flags);
-		   if(data != NULL){
-			   step[0] = elemSize;
-			   step[1] = height * elemSize;
-			   step[2] = height * width * elemSize;
-		   }
+		   create(IM_SIZEOF_BY_CHANNEL(flags));
 	   }
-	   
 	   MatWrapper(const mxArray *arr)
 	   : height(mxGetDimensions(arr)[0]), width(mxGetDimensions(arr)[1]) {
 		   int num_ch = mxGetNumberOfDimensions(arr) < 3 ? 1 : mxGetDimensions(arr)[2];
 		   flags = IM_MAKETYPE(depthOf(arr), num_ch);
 		   mx = const_cast<mxArray *>(arr); // you shouldn't try modifying this instance!
-		   data = reinterpret_cast<byte *>(mxGetData(mx));
-		   int elemSize = IM_SIZEOF_BY_CHANNEL(flags);
+		   create(IM_SIZEOF_BY_CHANNEL(flags));
+	   }
+       
+    protected:
+        
+        void create(int elemSize){
+           data = reinterpret_cast<byte *>(mxGetData(mx));
 		   if(data != NULL){
 			   step[0] = elemSize;
 			   step[1] = height * elemSize;
@@ -84,7 +81,10 @@ namespace pm {
 			   std::cerr << "No byte for dataType=" << flags << " with size=" << elemSize << "\n";
 			   step[0] = step[1] = step[2] = 0;
 		   }
-	   }
+        }
+        
+    public:
+       
 	   operator mxArray*() {
 		   return mx;
 	   }

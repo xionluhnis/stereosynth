@@ -76,11 +76,28 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     auto seq = Algorithm() << HorizontalSearch<Patch2tf, float, KNNF_K>(&nnf)
                            << HorizontalRandomSearch<Patch2tf, float, KNNF_K>(&nnf, &search, maxDY)
                            << Propagation<Patch2tf, float, KNNF_K>(&nnf);
-    NoOp<Point2i, false> filter;
+    NoOp<Point2i, bool, false> filter;
     DecreasingSearchRadius<float> post(&search);
     
     // scanline with the sequence of algorithm
-    scanline(nnf, numIter, seq, filter, post);
+    if(nout > 1){
+        VerboseAlgorithm vseq(seq);
+        ConvergenceDiary diary(&vseq);
+        auto pseq = PostSequence() << post << diary;
+        
+        scanline(nnf, numIter, seq, filter, pseq);
+        
+        auto convData = diary.data();
+        MatXD convMat(convData.size(), numIter, IM_64F);
+        for(int algo = 0; algo < convData.size(); ++algo){
+            for(int iter = 0; iter < numIter; ++iter){
+                convMat.update<double>(algo, iter, convData[algo][iter]);
+            }
+        }
+        out[1] = convMat;
+    } else {
+        scanline(nnf, numIter, seq, filter, post);
+    }
     
     // save nnf and output it
     if(nout > 0){

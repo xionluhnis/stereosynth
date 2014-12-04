@@ -18,9 +18,8 @@ namespace pm {
     ///// Image Type to mxClassID //////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    inline mxClassID classOf(int dataType) {
-        int depth = IM_MAT_DEPTH(dataType);
-        switch (depth) {
+    inline mxClassID classOf(DataType dt) {
+        switch (dt) {
             case IM_8U: return mxUINT8_CLASS;
             case IM_8S: return mxINT8_CLASS;
             case IM_32S: return mxINT32_CLASS;
@@ -31,11 +30,14 @@ namespace pm {
                 return mxUNKNOWN_CLASS;
         }
     }
+    inline mxClassID classOf(int dataType) {
+        return classOf(static_cast<DataType>(IM_MAT_DEPTH(dataType)));
+    }
     inline mxClassID classOf(const Image &img) {
         return classOf(img.depth());
     }
 
-    inline int depthOf(mxClassID c) {
+    inline DataType depthOf(mxClassID c) {
         switch(c) {
             case mxUINT8_CLASS: return IM_8U;
             case mxINT8_CLASS: return IM_8S;
@@ -45,10 +47,10 @@ namespace pm {
             case mxLOGICAL_CLASS: return IM_8U;
             default:
                 mexErrMsgIdAndTxt("MATLAB:mex:depthOf", "Unsupported depth!");
-                return -1;
+                return IM_UNKNOWN;
         }
     }
-    inline int depthOf(const mxArray *arr) {
+    inline DataType depthOf(const mxArray *arr) {
         return depthOf(mxGetClassID(arr));
     }
     

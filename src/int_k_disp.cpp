@@ -76,7 +76,7 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     auto seq = Algorithm() << HorizontalSearch<Patch2ti, float, KNNF_K>(&nnf)
                            << HorizontalRandomSearch<Patch2ti, float, KNNF_K>(&nnf, &search, maxDY)
                            << Propagation<Patch2ti, float, KNNF_K>(&nnf);
-    NoOp<Point2i, false> filter;
+    NoOp<Point2i, bool, false> filter;
     DecreasingSearchRadius<int> post(&search);
     
     // scanline with the sequence of algorithm

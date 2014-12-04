@@ -15,9 +15,10 @@ namespace pm {
     /**
      * Algorithm sequence wrapper
      */
-    struct Algorithm {
-        typedef std::function<uint(const Point2i &, bool)> AlgorithmPart;
-        uint operator()(const Point2i &i, bool rev) {
+    template < typename Index = Point2i >
+    struct AlgorithmSequence {
+        typedef std::function<uint(const Index &, bool)> AlgorithmPart;
+        uint operator()(const Index &i, bool rev) {
             uint res = 0;
             for(AlgorithmPart &p : seq){
                 res += p(i, rev);
@@ -25,9 +26,9 @@ namespace pm {
             return res;
         }
 
-        Algorithm(){}
+        AlgorithmSequence(){}
 
-        Algorithm &operator <<(AlgorithmPart p){
+        AlgorithmSequence &operator <<(AlgorithmPart p){
             seq.push_back(p);
             return *this;
         }
@@ -35,6 +36,9 @@ namespace pm {
         std::vector<AlgorithmPart> seq;
         friend class VerboseAlgorithm;
     };
+    // the main algorithm type
+    typedef AlgorithmSequence<Point2i> Algorithm;
+    typedef AlgorithmSequence<int> PostSequence;
     
     /**
      * Algorithm sequence wrapper with result verbosity
@@ -94,7 +98,7 @@ namespace pm {
             return 0;
         }
         
-        const std::vector<sequence> &diary() const {
+        const std::vector<sequence> &data() const {
             return convergence;
         }
         
