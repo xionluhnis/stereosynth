@@ -16,13 +16,11 @@
 
 namespace pm {
     
-    template < bool RowMajor = true >
-    Point2i samplePoint(const Field2D<RowMajor> *field, RNG rng){
-        const FrameSize &frame = field->frameSize();
+    Point2i samplePoint(const FrameSize &frame, RNG rng){
         return uniform<Vec2i>(
             rng,
             Vec2i(0, 0),
-            Vec2i(frame.width, frame.height)
+            Vec2i(frame.width - 1, frame.height - 1)
         );
     }
     
@@ -32,7 +30,7 @@ namespace pm {
         typedef NearestNeighborField<Patch, DistValue, K> NNF;
 
         bool operator()(const Point2i &i, bool rev) {
-            const Point2i &q = samplePoint(nnf, nnf->rng());
+            const Point2i &q = samplePoint(nnf->frameSize(), nnf->rng());
             return kTryDelta(nnf, i, i - q); // propagate from randomly far point
         }
 
@@ -48,7 +46,7 @@ namespace pm {
         typedef NearestNeighborField<Patch, DistValue, 1> NNF;
 
         bool operator()(const Point2i &i, bool rev) {
-            const Point2i &q = samplePoint(nnf, nnf->rng());
+            const Point2i &q = samplePoint(nnf->frameSize(), nnf->rng());
             return tryDelta(nnf, i, i - q); // propagate from randomly far point
         }
 
