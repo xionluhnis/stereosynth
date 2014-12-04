@@ -48,13 +48,6 @@ namespace pm {
 				   : mxCreateMatrix(h, w, classOf(dataType));
 		   create(elemSize);
 	   }
-       MatWrapper(int h, int w, DataType dt, int num_ch = 1) : height(h), width(w) {
-           int elemSize = IM_SIZEOF_DEPTH(dt);
-           mx = num_ch > 1 ? mxCreateMatrix(h, w, num_ch, classOf(dt))
-				   : mxCreateMatrix(h, w, classOf(dt));
-           flags = IM_MAKETYPE(dt, num_ch);
-		   create(elemSize);
-       }
 	   MatWrapper(int h, int w, mxClassID c, int num_ch = 1) : height(h), width(w) {
 		   mx = num_ch > 1 ? mxCreateMatrix(h, w, num_ch, c)
 				   : mxCreateMatrix(h, w, c);

@@ -82,13 +82,13 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     // scanline with the sequence of algorithm
     if(nout > 1){
         VerboseAlgorithm vseq(seq);
-        ConvergenceDiary diary(&vseq);
-        auto pseq = PostSequence() << post << diary;
+        ConvergenceDiary::Data convData;
+        auto pseq = PostSequence() << post << ConvergenceDiary(&vseq, &convData);
         
         scanline(nnf, numIter, seq, filter, pseq);
         
-        auto convData = diary.data();
-        MatXD convMat(convData.size(), numIter, IM_64F);
+        std::cout << "convData: " << convData.size() << "==" << vseq.counts().size() << " by " << numIter << "\n";
+        MatXD convMat(convData.size(), numIter, IM_64FC(1));
         for(int algo = 0; algo < convData.size(); ++algo){
             for(int iter = 0; iter < numIter; ++iter){
                 convMat.update<double>(algo, iter, convData[algo][iter]);

@@ -56,9 +56,12 @@ namespace pm {
             return res;
         }
         VerboseAlgorithm(const Algorithm &algo){
+            // function sequence
             seq.resize(algo.seq.size());
             std::copy(algo.seq.begin(), algo.seq.end(), seq.begin());
-            std::fill(results.begin(), results.end(), 0);
+            // result sequence
+            results.resize(algo.seq.size());
+            std::fill(results.begin(), results.end(), 0); // set to zero
         }
         VerboseAlgorithm(){}
 
@@ -81,33 +84,31 @@ namespace pm {
      * Diary recording convergence over iterations
      */
     struct ConvergenceDiary {
-        typedef std::vector<size_t> sequence;
+        typedef std::vector<size_t> Sequence;
+        typedef std::vector<Sequence> Data;
         
         uint operator()(int iter, bool rev) {
             const std::vector<size_t> &sums = algorithm->counts();
             uint n = sums.size();
-            if(convergence.empty()){
-                convergence.resize(n);
+            if(data->empty()){
+                data->resize(n);
             }
             for(uint j = 0; j < n; ++j){
                 size_t curr = sums[j];
-                size_t prev = convergence[j].empty() ? 0 : convergence[j].back();
+                size_t prev = data->at(j).empty() ? 0 : data->at(j).back();
                 assert(prev <= curr && "Convergence decrease?");
-                convergence[j].push_back(curr - prev);
+                data->at(j).push_back(curr - prev);
             }
             return 0;
         }
         
-        const std::vector<sequence> &data() const {
-            return convergence;
-        }
-        
-        ConvergenceDiary(const VerboseAlgorithm *algo) : algorithm(algo) {
+        ConvergenceDiary(const VerboseAlgorithm *algo, Data *d) : algorithm(algo), data(d) {
+            assert(data && "Null diary!");
         }
         
     private:
         const VerboseAlgorithm *algorithm;
-        std::vector< sequence > convergence;
+        Data *data;
     };
     
 }
