@@ -1,7 +1,10 @@
 CC := g++ -std=c++11
 INCL := -I./include/ -I./src -I/usr/include/
 RESULT := echo "[Passed] target" || echo "[Failed] target"
+PNG_INCL := $(shell pkg-config --cflags libpng)
+PNG_LIBS := $(shell pkg-config --libs libpng)
 TEST := -g -DDEBUG_STRICT_TEST=1 -o bin/test_target tests/target.cpp && bin/test_target && $(RESULT)
+TEST_WITH_PNG := -g -DDEBUG_STRICT_TEST=1 $(PNG_INCL) -o bin/test_target tests/target.cpp $(PNG_LIBS) && bin/test_target && $(RESULT)
 
 OPTI_FLAGS := -O6 -w -s -ffast-math -fomit-frame-pointer -fstrength-reduce -msse2 -funroll-loops -fPIC
 BASE_FLAGS := -std=c++11 -DNDEBUG -DUNIX_MODE -DMEXMODE -fPIC -ftls-model=global-dynamic
@@ -37,11 +40,17 @@ create:
 all: mex
 .phony: mex
 
-test: clean create
+test: clean create test_algo test_int test_float
+
+test_algo: clean create
 	$(CC) $(INCL) $(subst target,bounds,$(TEST))
 	$(CC) $(INCL) $(subst target,scanline,$(TEST))
 	$(CC) $(INCL) $(subst target,rng_uniform,$(TEST))
+	
+test_int: clean create
 	$(CC) $(INCL) $(subst target,int_single_nnf,$(TEST))
 	$(CC) $(INCL) $(subst target,int_k_nnf,$(TEST))
 	$(CC) $(INCL) $(subst target,int_vote,$(TEST))
 	
+test_float: clean create
+	$(CC) $(INCL) $(subst target,float_k_disp,$(TEST_WITH_PNG))
