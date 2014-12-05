@@ -23,8 +23,8 @@ namespace pm {
 	 *			the voting parameters
 	 * \return the voted picture
 	 */
-	template <int channels, typename Patch, typename Scalar>
-	Image weighted_average(const PixelContainer<channels, Patch, Scalar> &data, const Filter &filter) {
+	template <int channels, typename Patch, typename Scalar, int K>
+	Image weighted_average(const PixelContainer<channels, Patch, Scalar, K> &data, const Filter &filter) {
 		typedef Vec<Scalar, channels> Pixel;
         
         // create workspace

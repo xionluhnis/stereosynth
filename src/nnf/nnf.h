@@ -74,7 +74,8 @@ namespace pm {
         const FrameSize &f = nnf->targetSize();
         Point2i farPixel(Patch::width() - 1, Patch::width() - 1);
         // a patch is valid if the target contains its top-left and bottom-right pixels
-        return f.contains(p) && f.contains(p.transform(farPixel));
+        typedef typename Patch::point point;
+        return f.contains(point(p)) && f.contains(point(p.transform(farPixel)));
     }
     
 }

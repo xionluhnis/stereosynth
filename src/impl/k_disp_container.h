@@ -1,14 +1,14 @@
 /* 
- * File:   int_nnf_container.h
- * Author: Alexandre Kaspar <akaspar@mit.edu>
+ * File:   k_disp_container.h
+ * Author: akaspar
  *
- * Created on November 26, 2014, 2:36 PM
+ * Created on December 4, 2014, 10:41 PM
  */
 
-#ifndef INT_NNF_CONTAINER_H
-#define	INT_NNF_CONTAINER_H
+#ifndef K_DISP_CONTAINER_H
+#define	K_DISP_CONTAINER_H
 
-#include "int_single_nnf.h" // we base ourself on 1-NNF since this is for voting
+#include "k_disp.h" // we base ourself on 1-NNF since this is for voting
 #include "../im/patch.h"
 #include "../math/bounds.h"
 #include "../nnf/nnf.h"
@@ -16,11 +16,12 @@
 
 namespace pm {
     
-    template < int numChannels >
-    struct PixelContainer<numChannels, Patch2ti, float, 1> {
+    template < typename S, int K, int numChannels >
+    struct PixelContainer<numChannels, BasicPatch<S>, float, K> {
         typedef Vec<float, numChannels> vec;
-        typedef Point2i PixelLoc;
-        typedef NearestNeighborField<Patch2ti, float, 1> NNF;
+        typedef Point<S> PixelLoc;
+        typedef BasicPatch<S> TargetPatch;
+        typedef NearestNeighborField<TargetPatch, float, K> NNF;
 
         enum {
             channels = numChannels
@@ -33,7 +34,7 @@ namespace pm {
 #ifdef DEBUG_STRICT_TEST
             assert(nnf->target.contains(p) && "Patch out of bounds");
 #endif			
-            return nnf->target.at<vec>(p);
+            return nnf->target.template at<vec>(p);
         }
         SubFrame2D<Point2i, true> overlap(const Point2i &p) const {
 #ifdef DEBUG_STRICT_TEST
@@ -43,18 +44,17 @@ namespace pm {
             Bounds2i zone = frame & Bounds2i(p - Vec2i(Patch2ti::width() - 1, Patch2ti::width() - 1), p + Vec2i(1, 1));
             return SubFrame2D<Point2i, true>(zone.min, zone.max);
         }
-        const Patch2ti &patch(const Point2i &i, int = 1) const {
+        const TargetPatch &patch(const Point2i &i, int k = 0) const {
 #ifdef DEBUG_STRICT_TEST
             assert(nnf->contains(i) && "Patch out of bounds");
 #endif
-            return nnf->patch(i);
+            return nnf->patch(i, k);
         }
-        
-        const float &distance(const Point2i &i, int = 1) const {
+        const float &distance(const Point2i &i, int k = 0) const {
 #ifdef DEBUG_STRICT_TEST
             assert(nnf->contains(i) && "Patch distance out of bounds");
 #endif
-            return nnf->distance(i);
+            return nnf->distance(i, k);
         }
 
         PixelContainer(NNF *n) : nnf(n) {}
@@ -64,5 +64,5 @@ namespace pm {
     
 }
 
-#endif	/* INT_NNF_CONTAINER_H */
+#endif	/* K_DISP_CONTAINER_H */
 

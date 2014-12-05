@@ -15,20 +15,21 @@
 
 namespace pm {
     
-    template < int numChannels, typename Patch = Patch2ti, typename Scalar = float >
+    template < int numChannels, typename Patch = Patch2ti, typename Scalar = float, int K = 1 >
     struct PixelContainer {
         typedef Scalar scalar;
         typedef Vec<Scalar, numChannels> vec;
-        typedef typename Patch::point point;
+        typedef typename Patch::point PixelLoc;
         
         enum {
             channels = numChannels
         };
         
         Frame2D<Point2i, true> frame() const;
-        vec pixel(const point &p) const;
-        SubFrame2D<Point2i, true> overlap(const point &p) const;
-        const Patch &patch(const point &i) const;
+        vec pixel(const PixelLoc &p) const;
+        SubFrame2D<Point2i, true> overlap(const Point2i &p) const;
+        const Patch &patch(const Point2i &i, int k = 0) const;
+        const Scalar &distance(const Point2i &i, int k = 0) const;
     };
     
     template <int channels, typename VoteOperation>

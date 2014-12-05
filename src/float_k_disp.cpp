@@ -13,9 +13,11 @@
 
 #include "impl/k_disp.h"
 #include "nnf/algorithm.h"
-#include "nnf/propagation.h"
 #include "nnf/horizontalsearch.h"
 #include "nnf/horizontalrandsearch.h"
+#include "nnf/localmean.h"
+#include "nnf/propagation.h"
+#include "nnf/randpropagation.h"
 #include "scanline.h"
 
 typedef unsigned int uint;
@@ -75,9 +77,15 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     search.minimum = options.scalar<float>("search_min_radius", float(patchSize));
     auto seq = Algorithm() << HorizontalSearch<Patch2tf, float, KNNF_K>(&nnf)
                            << HorizontalRandomSearch<Patch2tf, float, KNNF_K>(&nnf, &search, maxDY)
-                           << Propagation<Patch2tf, float, KNNF_K>(&nnf);
+                           << Propagation<Patch2tf, float, KNNF_K>(&nnf)
+                           << RandomPropagation<Patch2tf, float, KNNF_K>(&nnf)
+                           << LocalMean<Patch2tf, float, KNNF_K, 4>(&nnf)
+                           << LocalMean<Patch2tf, float, KNNF_K, 8>(&nnf)
+                           << LocalMean<Patch2tf, float, KNNF_K, 16>(&nnf);
     NoOp<Point2i, bool, false> filter;
     DecreasingSearchRadius<float> post(&search);
+    
+    std::cout << "init.\n";
     
     // scanline with the sequence of algorithm
     if(nout > 1){
@@ -87,7 +95,8 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
         
         scanline(nnf, numIter, vseq, filter, pseq);
         
-        std::cout << "convData: " << convData.size() << "==" << vseq.counts().size() << " by " << numIter << "\n";
+        std::cout << "post scanline.\n";
+        
         MatXD convMat(convData.size(), numIter, IM_64FC(1));
         for(int algo = 0; algo < convData.size(); ++algo){
             for(int iter = 0; iter < numIter; ++iter){
@@ -97,11 +106,14 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
         out[1] = convMat;
     } else {
         scanline(nnf, numIter, seq, filter, post);
+        std::cout << "post scanline2.\n";
     }
     
     // save nnf and output it
     if(nout > 0){
         out[0] = nnf.save();
     }
+    
+    std::cout << "done.\n";
 }
 

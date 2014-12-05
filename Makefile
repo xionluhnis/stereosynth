@@ -22,12 +22,13 @@ mex_disp: clean create
 	$(MEX) src/int_k_disp.cpp -output bin/ikdisp -output bin/ikdisp
 	$(MEX) src/float_k_disp.cpp -output bin/fkdisp -output bin/fkdisp
 
-mex_top: clean create
+mex_top: clean_top create
 	$(MEX) src/int_k_nnf_top.cpp -output bin/iknnf_top -output bin/iknnf_top
 	$(MEX) src/float_k_nnf_top.cpp -output bin/fknnf_top -output bin/fknnf_top
 
-mex_vote: clean create
+mex_vote: clean_vote create
 	$(MEX) src/int_vote.cpp -output bin/ivote -output bin/ivote
+	$(MEX) src/float_k_disp_vote.cpp -output bin/fkdispvote -output bin/fkdispvote
 
 old_mex:
 	bash build.sh
@@ -36,6 +37,10 @@ clean:
 	rm -rf bin
 clean_test:
 	rm -rf bin/test_*
+clean_top:
+	rm -rf bin/*_top.mex*
+clean_vote:
+	rm -rf bin/*vote.mex*
 create:
 	mkdir -p bin 2>/dev/null
 
@@ -55,4 +60,5 @@ test_int: clean_test create
 	$(CC) $(INCL) $(subst target,int_vote,$(TEST))
 	
 test_float: clean_test create
+	$(CC) $(INCL) $(subst target,float_k_disp2,$(TEST_WITH_PNG))
 	$(CC) $(INCL) $(subst target,float_k_disp,$(TEST_WITH_PNG))

@@ -31,6 +31,7 @@ void scanline(Grid &grid, unsigned int numIters, Algorithm &algo, IterationFilte
 	bool rev = false;
 	for(unsigned int iter = 0; iter < numIters; ++iter){
 		bool done = true;
+        std::cout << "starting iter " << iter << "\n";
 		// scanline traversal
 		typename Grid::iterator it, end;
 		if(!rev){

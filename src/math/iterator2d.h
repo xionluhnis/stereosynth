@@ -133,8 +133,9 @@ namespace pm {
             return FrameSize(height, width);
         }
         
-        inline bool contains(const Point2i &p) const {
-            return p.x >= 0 && p.y >= 0 && p.x < width & p.y < height;
+        template < typename S = float >
+        inline bool contains(const Point<S> &p) const {
+            return p.x >= 0 && p.y >= 0 && p.x <= width - 1 & p.y <= height - 1;
         }
     };
     
