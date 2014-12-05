@@ -65,7 +65,7 @@ namespace pm {
         typedef typename point::vec vec;
         typedef NearestNeighborField<TargetPatch, DistValue, K> NNF;
 
-        bool operator()(const Point2i &i, bool){
+        uint operator()(const Point2i &i, bool){
             
             // maximum
             const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
@@ -73,6 +73,40 @@ namespace pm {
             // uniformly sample a position for the new patch
             uint success = 0;
             for(int k = 0; k < K; ++k){
+                const point &q = uniform(
+                    nnf->rng(),
+                    vec(0, 0),
+                    vec(target.width, target.height)
+                );
+                success += kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q));
+            }
+            return success;
+        }
+
+        UniformSearch(NNF *n) : nnf(n){}
+        
+    private:
+        NNF *nnf;
+    };
+    
+    // Implementation for 2d+1x translation patches and k-NN
+    template < typename S, typename DistValue, int K>
+    class UniformSearch<BasicIndexedPatch<S>, DistValue, K> {
+    public:
+        typedef BasicIndexedPatch<S> TargetPatch;
+        typedef typename BasicIndexedPatch<S>::point point;
+        typedef typename point::vec vec;
+        typedef NearestNeighborField<TargetPatch, DistValue, K> NNF;
+
+        uint operator()(const Point2i &i, bool){
+            // uniformly sample a position for the new patch
+            uint success = 0;
+            for(int k = 0; k < K; ++k){
+                // uniformly sample image from set
+                int idx = uniform<int>(nnf->rng(), 0, nnf->targetCount());
+                // frame bounds
+                const FrameSize &target = nnf->targetSize(idx).shrink(TargetPatch::width());
+                // uniformly sample a position within that target image
                 const point &q = uniform(
                     nnf->rng(),
                     vec(0, 0),

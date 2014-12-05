@@ -56,6 +56,28 @@ namespace pm {
         NNF *nnf;
     };
     
+    template < typename S, typename DistValue, int K>
+    class Propagation<BasicIndexedPatch<S>, DistValue, K> {
+    public:
+        typedef BasicIndexedPatch<S> TargetPatch;
+        typedef NearestNeighborField<TargetPatch, DistValue, K> NNF;
+
+        uint operator()(const Point2i &i, bool rev) {
+            // direction for deltas
+            int d = rev ? -1 : 1;
+            // two propagation tentatives
+            uint res = 0;
+            res += kTryDelta(nnf, i, Point2i(d, 0)); // dx
+            res += kTryDelta(nnf, i, Point2i(0, d)); // dy
+            return res;
+        }
+
+        Propagation(NNF *n) : nnf(n){}
+        
+    private:
+        NNF *nnf;
+    };
+    
 }
 
 #endif	/* PROPAGATION_H */

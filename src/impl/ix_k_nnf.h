@@ -80,14 +80,17 @@ namespace pm {
             // provide the worst distance of all (top)
             return data.at(i)[k].distance;
         }
-        inline bool filter(const Point2i &i, const Patch2ti &p) const {
+        inline bool filter(const Point2i &i, const TargetPatch &p) const {
             return false;
         }
-        inline bool store(const Point2i &i, const Patch2ti &p, const float &d) {
+        inline bool store(const Point2i &i, const TargetPatch &p, const float &d) {
             return MaxHeap(data.at(i)).insert(PatchData(p, d));
         }
         inline FrameSize targetSize(size_t n) const {
             return FrameSize(targets[n].width, targets[n].height);
+        }
+        inline size_t targetCount() const {
+            return targets.size();
         }
 
         // --- default initialization ------------------------------------------
@@ -95,7 +98,7 @@ namespace pm {
             PatchData (&p)[K] = data.at(i);
             for(int k = 0; k < K; ++k){
                 // initialize with bad data
-                p[k].patch = TargetPatch(Point2i(-1, -1, -1));
+                p[k].patch = TargetPatch(Point2ix(-1, -1, -1));
                 p[k].distance = std::numeric_limits<float>::infinity();
             }
 			MaxHeap heap(&p[0]);

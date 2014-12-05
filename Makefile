@@ -11,7 +11,7 @@ BASE_FLAGS := -std=c++11 -DNDEBUG -DUNIX_MODE -DMEXMODE -fPIC -ftls-model=global
 LIBS_FLAGS := -Wl,--export-dynamic -Wl,-e,mexFunction -shared
 MEX := mex -v CXXOPTIMFLAGS='$$CXXOPTIMFLAGS $(OPTI_FLAGS)' CXXFLAGS='$$CXXFLAGS $(BASE_FLAGS)' CXXLIBS='$$CXXLIBS ${LIBS_FLAGS}' ${INCL}
 
-mex: clean create mex_nnf mex_disp mex_top mex_vote
+mex: clean create mex_nnf mex_disp mex_top mex_vote mex_web
 
 mex_nnf: clean_nnf create
 	$(MEX) src/int_single_nnf.cpp -output bin/isnnf -output bin/isnnf
@@ -30,6 +30,9 @@ mex_vote: clean_vote create
 	$(MEX) src/int_vote.cpp -output bin/ivote -output bin/ivote
 	$(MEX) src/float_k_disp_vote.cpp -output bin/fkdispvote -output bin/fkdispvote
 
+mex_web: clean_web create
+	$(MEX) src/ix_k_nnf.cpp -output bin/ixknnf -output bin/ixknnf
+
 old_mex:
 	bash build.sh
 
@@ -45,6 +48,8 @@ clean_top:
 	rm -rf bin/*_top.mex*
 clean_vote:
 	rm -rf bin/*vote.mex*
+clean_web:
+	rm -rf bin/*x*nnf.mex*
 create:
 	mkdir -p bin 2>/dev/null
 

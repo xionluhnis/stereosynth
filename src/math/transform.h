@@ -26,7 +26,7 @@ namespace pm {
         typedef typename T1::scalar scalar;
         
         T1 transform(const T2 &p) const {
-            return T1(p) + *this;
+            return *this + p;
         }
         explicit Translation(scalar x = 0, scalar y = 0) : T1(x, y){}
         Translation(const T1 &t) : T1(t){}

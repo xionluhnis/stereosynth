@@ -38,17 +38,17 @@ namespace pm {
         
         //! discrete access
         template <typename T, typename S>
-        inline std::enable_if<std::is_integral<S>, T>::value &at(const IndexedPoint<S> &i) {
+        inline typename std::enable_if<std::is_integral<S>::value, T>::type &at(const IndexedPoint<S> &i) {
             return at<T>(i.x, i.y, i.index);
         }
         template <typename T, typename S>
-        inline const std::enable_if<std::is_integral<S>, T>::value &at(const IndexedPoint<S> &i) const {
+        inline const typename std::enable_if<std::is_integral<S>::value, T>::type &at(const IndexedPoint<S> &i) const {
             return at<T>(i.x, i.y, i.index);
         }
         
         //! continuous access
 		template <typename T, typename S>
-        inline std::enable_if<std::is_floating_point<S>, T>::value at(const IndexedPoint<S> &ip) const {
+        inline typename std::enable_if<std::is_floating_point<S>::value, T>::type at(const IndexedPoint<S> &ip) const {
             typedef typename IndexedPoint<S>::base BasePoint;
             BasePoint p(ip); // without index
 			Point2i i(p); // integer version

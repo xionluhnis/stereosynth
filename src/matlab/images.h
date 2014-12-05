@@ -10,6 +10,7 @@
 
 #include "defs.h"
 #include "../math/mat.h"
+#include "../math/imageset.h"
 
 namespace pm {
     
@@ -146,6 +147,23 @@ namespace pm {
                 mexErrMsgIdAndTxt("MATLAB:mex:mxArrayToImage", "Class type not supported!");
                 return Image();
         }
+    }
+    
+    inline ImageSet mxArrayToImageSet(const mxArray *arr, const char *err = "Invalid image set") {
+        if(!mxIsCell(arr)){
+            mexErrMsgIdAndTxt("MATLAB:mex:mxArrayToImageSet", "Image set should be of cell type.");
+        }
+        size_t N = mxGetNumberOfElements(arr);
+        ImageSet set(N);
+        for(unsigned int i = 0; i < N; ++i){
+            const mxArray *cell = mxGetCell(arr, i);
+            if(cell){
+                set[i] = mxArrayToImage(cell, "Invalid cell image for image set");
+            } else {
+                mexErrMsgIdAndTxt("MATLAB:mex:mxArrayToImageSet", "Cell image was empty for image set!");
+            }
+        }
+        return set;
     }
     
 }
