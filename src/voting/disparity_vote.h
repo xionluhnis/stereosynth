@@ -104,6 +104,12 @@ namespace pm {
         }
         voting::CDF cdf(disp, 200);
         float maxDisparity = cdf.percentile(noisePercentile);
+        std::cout << "maxDisparity = " << maxDisparity << "\n";
+        std::cout << "percentiles:";
+        for(int i = 0; i < 100; i += 5){
+            std::cout << i << "%=" << cdf.percentile(i / 100.0f) << ", ";
+        }
+        std::cout << "\n";
         
         // TODO use distance for the weight
 
@@ -118,8 +124,8 @@ namespace pm {
                 Disparity patchDisp = voting::disparity(p, patch);
                 float d = std::sqrt(patchDisp.dot(patchDisp));
                 if(d > maxDisparity){
-                    patchDisp[0] == std::max(-maxDisparity, std::min(maxDisparity, patchDisp[0]));
-                    patchDisp[1] == std::max(-maxDisparity, std::min(maxDisparity, patchDisp[1]));
+                    patchDisp[0] = std::max(-maxDisparity, std::min(maxDisparity, patchDisp[0]));
+                    patchDisp[1] = std::max(-maxDisparity, std::min(maxDisparity, patchDisp[1]));
                 }
                 disparity += patchDisp * filter[b.y][b.x];
                 weight += filter[b.y][b.x];
@@ -130,8 +136,8 @@ namespace pm {
             // clamp it if it is above what we tolerate
             float d = std::sqrt(disparity.dot(disparity));
             if(d > maxDisparity){
-                disparity[0] == std::max(-maxDisparity, std::min(maxDisparity, disparity[0]));
-                disparity[1] == std::max(-maxDisparity, std::min(maxDisparity, disparity[1]));
+                disparity[0] = std::max(-maxDisparity, std::min(maxDisparity, disparity[0]));
+                disparity[1] = std::max(-maxDisparity, std::min(maxDisparity, disparity[1]));
             }
         }
 		return vote;

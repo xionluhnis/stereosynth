@@ -18,7 +18,7 @@ mex_nnf: clean create
 	$(MEX) src/int_k_nnf.cpp -output bin/iknnf -output bin/iknnf
 	$(MEX) src/auto_k_nnf.cpp -output bin/autoknnf -output bin/autoknnf
 
-mex_disp: clean create
+mex_disp: clean_disp create
 	$(MEX) src/int_k_disp.cpp -output bin/ikdisp -output bin/ikdisp
 	$(MEX) src/float_k_disp.cpp -output bin/fkdisp -output bin/fkdisp
 
@@ -35,6 +35,8 @@ old_mex:
 
 clean:
 	rm -rf bin
+clean_disp:
+	rm -rf bin/*disp.mex*
 clean_test:
 	rm -rf bin/test_*
 clean_top:
