@@ -46,7 +46,7 @@ namespace pm {
 		}
         
         inline operator vec() const {
-            return vec(x, y, z);
+            return vec(base::x, base::y, z);
         }
 		
         union {

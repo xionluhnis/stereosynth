@@ -65,6 +65,7 @@ namespace pm {
     struct BasicIndexedPatch : public Translation< IndexedPoint<S>, Point2i > {
         typedef BasicPatch<int> SourcePatch;
         typedef IndexedPoint<S> point;
+        typedef typename IndexedPoint<S>::base base;
         typedef Translation< IndexedPoint<S>, Point2i > translation;
         
         static int width(int newSize = 0);
@@ -73,9 +74,10 @@ namespace pm {
             return p.x == this->x && p.y == this->y && p.z == this->z;
         }
         
-        BasicPatch(const translation &t) : translation(t){}
-        BasicPatch(const point &p) : translation(p){}
-        BasicPatch() : translation() {}
+        BasicIndexedPatch(const translation &t) : translation(t){}
+        BasicIndexedPatch(const point &p) : translation(p){}
+        BasicIndexedPatch(const base &p, int z) : translation(point(p, z)){}
+        BasicIndexedPatch() : translation() {}
     };
     template <>
     inline int BasicIndexedPatch<int>::width(int newSize) {

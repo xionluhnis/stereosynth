@@ -44,6 +44,27 @@ namespace pm {
         bool filter(const Point2i &pos, const TargetPatch &q) const;
     };
     
+    template < typename S, typename DistValue, int K >
+    struct NearestNeighborField<BasicIndexedPatch<S>, DistValue, K> : Field2D<true> {
+
+        typedef BasicIndexedPatch<S> TargetPatch;
+        typedef DistValue DistanceValue;
+        typedef typename BasicIndexedPatch<S>::point point;
+        typedef typename point::vec vec;
+        
+        // --- provide a common RNG instance -----------------------------------
+        RNG rng() const;
+        // --- provide the target space dimensions -----------------------------
+        size_t targetCount() const;
+        FrameSize targetSize(size_t n) const;
+        // --- provide patch and distance storage ------------------------------
+        const TargetPatch &patch(const Point2i &i, int k) const;
+        const DistValue &distance(const Point2i &i, int k) const;
+        bool store(const Point2i &i, const TargetPatch &p, const DistValue &d);
+        // --- provide a distance computation ----------------------------------
+        DistanceValue dist(const Point2i &pos, const TargetPatch &q);
+    };
+    
 #if !ONLY_K_NNF
     
     template < typename Patch, typename DistValue>
@@ -76,6 +97,16 @@ namespace pm {
         // a patch is valid if the target contains its top-left and bottom-right pixels
         typedef typename Patch::point point;
         return f.contains(point(p)) && f.contains(point(p.transform(farPixel)));
+    }
+    
+    template < typename S, typename DistValue, int K >
+    inline bool isValid(const NearestNeighborField<BasicIndexedPatch<S>, DistValue, K> *nnf, const BasicIndexedPatch<S> &p) {
+        typedef BasicIndexedPatch<S> TargetPatch;
+        const FrameSize &f = nnf->targetSize(p.index);
+        Point2i farPixel(TargetPatch::width() - 1, TargetPatch::width() - 1);
+        // a patch is valid if the target contains its top-left and bottom-right pixels
+        typedef typename TargetPatch::base BasePoint;
+        return f.contains(BasePoint(p)) && f.contains(BasePoint(p.transform(farPixel)));
     }
     
 }

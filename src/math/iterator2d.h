@@ -10,7 +10,6 @@
 
 #include "point.h"
 
-
 namespace pm {
 
 	/**

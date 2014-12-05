@@ -16,7 +16,7 @@
 namespace pm {
     
     template <typename TargetPatch, typename Scalar, typename Img = Image>
-    using Distance = Scalar(*)(const Img &, const Img &, const typename TargetPatch::SourcePatch &, const TargetPatch &);
+    using Distance = Scalar(*)(const Image &, const Img &, const typename TargetPatch::SourcePatch &, const TargetPatch &);
     
     namespace dist { 
         
@@ -24,7 +24,7 @@ namespace pm {
 		 * \brief Simple sum of squared differences
 		 */
         template <typename TargetPatch, typename Scalar, typename Img, int numChannels>
-		Scalar SumSquaredDiff(const Img &source, const Img &target,
+		Scalar SumSquaredDiff(const Image &source, const Img &target,
 				const typename TargetPatch::SourcePatch &p1, const TargetPatch &p2) {
             typedef typename TargetPatch::SourcePatch SourcePatch;
             typedef Vec<Scalar, numChannels> Pixel;
@@ -33,7 +33,7 @@ namespace pm {
 			Scalar sum = 0;
 			
 			for (const auto &i : pixels(p1)) {
-				Pixel diff = source.template at<Pixel>(p1.transform(i)) - target.template at<Pixel>(p2.transform(i));
+				Pixel diff = source.at<Pixel>(p1.transform(i)) - target.template at<Pixel>(p2.transform(i));
 				Scalar d = diff.dot(diff);
 				sum += d * invArea;
 				if (!std::isfinite(sum)) return sum;
