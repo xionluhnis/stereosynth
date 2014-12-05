@@ -38,49 +38,6 @@ namespace pm {
 		Bilinear = 1
 	};
 
-	template< typename T>
-	struct IndexedPoint : public Point<T> {
-		typedef T scalar;
-		typedef Vec<T, 3> vec;
-		typedef Point<T> base;
-		typedef IndexedPoint<T> point;
-
-		enum {
-			typeDepth = DataDepth<scalar>::value,
-			channels = 3,
-			type = IM_MAKETYPE(typeDepth, channels)
-		};
-
-		IndexedPoint() : Point<T>(), depth(0) {}
-		IndexedPoint(T a, T b, int d) : Point<T>(a, b), depth(d) {}
-		IndexedPoint(base p, int d) : Point<T>(p.x, p.y), depth(d) {}
-		
-		inline point operator +(const point &p) const {
-			return point(base::x + p.x, base::y + p.y, depth);
-		}
-		inline point operator -(const point &p) const {
-			return point(base::x - p.x, base::y - p.y, depth);
-		}
-		inline point operator *(T f) const {
-			return point(base::x * f, base::y * f, depth);
-		}
-		inline point operator -() const {
-			return point(-base::x, -base::y, depth);
-		}
-		inline operator base() const {
-			return base(base::x, base::y);
-		}
-        
-        inline operator vec() const {
-            return vec(x, y, depth);
-        }
-		
-        union {
-            int depth;
-            int index;
-        };
-	};
-
 	struct Texture : public Mat {
 
 		Texture() : Mat(), model(Same), interp(Bilinear) {}

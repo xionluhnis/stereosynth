@@ -1,6 +1,6 @@
 /* 
  * File:   BilinearImage.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on December 3, 2014, 3:56 PM
  */

@@ -11,7 +11,7 @@
 #include "nnf.h"
 #include "searchradius.h"
 #include "trypatch.h"
-#include "../im/patch.h"
+#include "../nnf/patch.h"
 #include "../math/bounds.h"
 
 namespace pm {

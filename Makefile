@@ -13,7 +13,7 @@ MEX := mex -v CXXOPTIMFLAGS='$$CXXOPTIMFLAGS $(OPTI_FLAGS)' CXXFLAGS='$$CXXFLAGS
 
 mex: clean create mex_nnf mex_disp mex_top mex_vote
 
-mex_nnf: clean create
+mex_nnf: clean_nnf create
 	$(MEX) src/int_single_nnf.cpp -output bin/isnnf -output bin/isnnf
 	$(MEX) src/int_k_nnf.cpp -output bin/iknnf -output bin/iknnf
 	$(MEX) src/auto_k_nnf.cpp -output bin/autoknnf -output bin/autoknnf
@@ -37,6 +37,8 @@ clean:
 	rm -rf bin
 clean_disp:
 	rm -rf bin/*disp.mex*
+clean_nnf:
+	rm -rf bin/*nnf.mex*
 clean_test:
 	rm -rf bin/test_*
 clean_top:

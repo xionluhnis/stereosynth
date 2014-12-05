@@ -8,7 +8,7 @@
 #ifndef IM_MASK_H
 #define	IM_MASK_H
 
-#include "../math/mat.h"
+#include "mat.h"
 
 namespace pm {
     
@@ -20,11 +20,11 @@ namespace pm {
         /**
          * Filter index
          */
-        bool operator()(const T &p, bool) const {
+        unsigned int operator()(const T &p, bool) const {
             if(!mask.empty()){
-                return mask.at<float>(p.y, p.x);
+                return mask.at<float>(p.y, p.x) != 0.0f;
             }
-            return false;
+            return 0.0f;
         }
         
         explicit MaskFilter(const Mat &m) : mask(m) {}

@@ -9,7 +9,6 @@
 #define	TRYPATCH_H
 
 #include "nnf.h"
-#include "../im/patch.h"
 
 namespace pm {
     

@@ -1,6 +1,6 @@
 /* 
  * File:   int_k_disp.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on December 2, 2014, 10:15 AM
  */
@@ -17,7 +17,7 @@
 #include "../algebra.h"
 #include "../data/heap.h"
 #include "../im/bilinear.h"
-#include "../im/patch.h"
+#include "../nnf/patch.h"
 #include "../nnf/distance.h"
 #include "../nnf/field.h"
 #include "../nnf/nnf.h"

@@ -1,6 +1,6 @@
 /* 
  * File:   k_disp_container.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on December 4, 2014, 10:41 PM
  */
@@ -9,7 +9,7 @@
 #define	K_DISP_CONTAINER_H
 
 #include "k_disp.h" // we base ourself on 1-NNF since this is for voting
-#include "../im/patch.h"
+#include "../nnf/patch.h"
 #include "../math/bounds.h"
 #include "../nnf/nnf.h"
 #include "../voting/defs.h"

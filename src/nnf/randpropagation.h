@@ -1,6 +1,6 @@
 /* 
  * File:   randpropagation.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on December 4, 2014, 11:10 AM
  */
@@ -10,7 +10,7 @@
 
 #include "field.h"
 #include "trydelta.h"
-#include "../im/patch.h"
+#include "../nnf/patch.h"
 #include "../sampling/uniform.h"
 #include "nnf.h"
 

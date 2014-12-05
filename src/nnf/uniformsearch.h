@@ -9,7 +9,7 @@
 #define	UNIFORMSEARCH_H
 
 #include "trypatch.h"
-#include "../im/patch.h"
+#include "../nnf/patch.h"
 #include "../sampling/uniform.h"
 
 namespace pm {

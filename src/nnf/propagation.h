@@ -10,7 +10,7 @@
 
 #include "trypatch.h"
 #include "trydelta.h"
-#include "../im/patch.h"
+#include "../nnf/patch.h"
 
 namespace pm {
     

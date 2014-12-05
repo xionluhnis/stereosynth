@@ -9,7 +9,7 @@
 #define	INT_NNF_CONTAINER_H
 
 #include "int_single_nnf.h" // we base ourself on 1-NNF since this is for voting
-#include "../im/patch.h"
+#include "../nnf/patch.h"
 #include "../math/bounds.h"
 #include "../nnf/nnf.h"
 #include "../voting/defs.h"

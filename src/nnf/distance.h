@@ -8,7 +8,7 @@
 #ifndef NNF_DISTANCE_H
 #define	NNF_DISTANCE_H
 
-#include "../im/patch.h"
+#include "patch.h"
 #include "../math/mat.h"
 
 #include <iostream>

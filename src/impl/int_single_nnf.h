@@ -13,7 +13,7 @@
 #endif
 
 #include "../algebra.h"
-#include "../im/patch.h"
+#include "../nnf/patch.h"
 #include "../nnf/distance.h"
 #include "../nnf/field.h"
 #include "../nnf/nnf.h"

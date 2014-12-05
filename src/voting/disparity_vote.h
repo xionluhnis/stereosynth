@@ -1,6 +1,6 @@
 /* 
  * File:   disparity_vote.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on December 3, 2014, 5:52 PM
  */

@@ -10,7 +10,7 @@
 
 #include "distance.h"
 #include "field.h"
-#include "../im/patch.h"
+#include "patch.h"
 #include "../sampling/uniform.h"
 
 namespace pm {

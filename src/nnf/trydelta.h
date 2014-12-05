@@ -1,6 +1,6 @@
 /* 
  * File:   trydelta.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on December 4, 2014, 11:13 AM
  */
@@ -9,7 +9,7 @@
 #define	TRYDELTA_H
 
 #include "trypatch.h"
-#include "../im/patch.h"
+#include "../nnf/patch.h"
 
 namespace pm {
     

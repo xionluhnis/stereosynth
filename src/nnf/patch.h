@@ -14,6 +14,7 @@
 
 #include "../math/iterator2d.h"
 #include "../math/point.h"
+#include "../math/pointx.h"
 #include "../math/transform.h"
 
 namespace pm {
@@ -55,6 +56,44 @@ namespace pm {
     typedef BasicPatch<int> Patch2ti;
     typedef BasicPatch<float> Patch2tf;
     typedef BasicPatch<double> Patch2td;
+    
+    ////////////////////////////////////////////////////////////////////////////
+    ///// Basic Translation Patch //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    template < typename S >
+    struct BasicIndexedPatch : public Translation< IndexedPoint<S>, Point2i > {
+        typedef BasicPatch<int> SourcePatch;
+        typedef IndexedPoint<S> point;
+        typedef Translation< IndexedPoint<S>, Point2i > translation;
+        
+        static int width(int newSize = 0);
+        
+        bool operator==(const BasicIndexedPatch<S> &p) const {
+            return p.x == this->x && p.y == this->y && p.z == this->z;
+        }
+        
+        BasicPatch(const translation &t) : translation(t){}
+        BasicPatch(const point &p) : translation(p){}
+        BasicPatch() : translation() {}
+    };
+    template <>
+    inline int BasicIndexedPatch<int>::width(int newSize) {
+        static int size = DEFAULT_PATCH_SIZE;
+        if(newSize > 0){
+            size = newSize;
+        }
+        return size;
+    }
+    template <>
+    inline int BasicIndexedPatch<float>::width(int newSize) {
+        return SourcePatch::width(newSize); // delegate to SourcePatch type
+    }
+    
+    // type names
+    typedef BasicIndexedPatch<int> Patch2tix;
+    typedef BasicIndexedPatch<float> Patch2tfx;
+    typedef BasicIndexedPatch<double> Patch2tdx;
     
     ////////////////////////////////////////////////////////////////////////////
     ///// Affine Patch /////////////////////////////////////////////////////////

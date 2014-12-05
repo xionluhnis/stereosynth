@@ -1,6 +1,6 @@
 /* 
  * File:   searchradius.h
- * Author: akaspar
+ * Author: Alexandre Kaspar <akaspar@mit.edu>
  *
  * Created on December 2, 2014, 9:49 AM
  */

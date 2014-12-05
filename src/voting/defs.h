@@ -8,7 +8,7 @@
 #ifndef VOTING_DEFS_H
 #define	VOTING_DEFS_H
 
-#include "../im/patch.h"
+#include "../nnf/patch.h"
 #include "../math/mat.h"
 
 #include <iostream>
