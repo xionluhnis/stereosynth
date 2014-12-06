@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="teaser.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="431.63949"
+     inkscape:cy="668.05831"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1024"
+     inkscape:window-height="973"
+     inkscape:window-x="98"
+     inkscape:window-y="24"
+     inkscape:window-maximized="0">
+    <sodipodi:guide
+       orientation="0,1"
+       position="-205.71429,862.85714"
+       id="guide3033" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="-4.2857143,701.42857"
+       id="guide3035" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="195.71429,1002.8571"
+       id="guide3037" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="591.78572,701.42857"
+       id="guide3039" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="360,783.57143"
+       id="guide3098" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <image
+       y="63.839138"
+       x="62.061016"
+       id="image2993"
+       xlink:href="file:///afs/csail.mit.edu/u/a/akaspar/Projects/stereosynth/report/figures/output.jpg"
+       height="204.22835"
+       width="306.34253" />
+    <image
+       y="281.9021"
+       x="111.06924"
+       id="image3004"
+       xlink:href="file:///afs/csail.mit.edu/u/a/akaspar/Projects/stereosynth/report/figures/teaser_left.jpg"
+       height="118.12501"
+       width="210" />
+    <text
+       xml:space="preserve"
+       style="font-size:246.00971985px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:URW Palladio L;-inkscape-font-specification:URW Palladio L Medium"
+       x="596.14423"
+       y="212.12305"
+       id="text3007"
+       sodipodi:linespacing="125%"
+       transform="scale(0.67175782,1.4886317)"><tspan
+         sodipodi:role="line"
+         id="tspan3009"
+         x="596.14423"
+         y="212.12305"
+         style="font-size:115.38691711px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:URW Palladio L;-inkscape-font-specification:URW Palladio L Medium">}</tspan></text>
+    <image
+       y="137.48915"
+       x="462.53842"
+       id="image3019"
+       xlink:href="file:///afs/csail.mit.edu/u/a/akaspar/Projects/stereosynth/report/figures/teaser_right.jpg"
+       height="118.125"
+       width="210" />
+    <image
+       y="281.9021"
+       x="462.53842"
+       id="image3030"
+       xlink:href="file:///afs/csail.mit.edu/u/a/akaspar/Projects/stereosynth/report/figures/teaser_disparity.png"
+       height="118.125"
+       width="210" />
+  </g>
+</svg>

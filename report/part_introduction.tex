@@ -2,41 +2,46 @@
 
 \section{Introduction}
 
-Topic: stereo synthesis.
+The emergence of novel 3D displays, the advances in 3d modeling as well as computer vision all call for cheap and user-friendly methods to produce stereoscopic images and videos.
+Still, capturing stereoscopic videos remains expensive as it requires specific material, a more complicated camera setting, and it cannot be done for already existing monocular videos
+Therefore many efforts have been put in synthesizing stereo data from monocular video streams.
+However, this process requires tedious work which casual individuals are likely to not undertake.
+We therefore propose to leverage the increasing amount of virtual and real stereoscopic data to automatically synthesize stereoscopic images from monocular images.
 
-Related:
-\begin{itemize}
-	\item stereo disparity (even optical flow != motion flow)
-	\item scene synthesis
-	\item texture / style transfer
-	\item nearest neighbor computation $\to$ patch match
-	\item scene recognition $\to$ find patches in multiple images
-\end{itemize}
+\subsection{Related work}
 
+The motivation for this experimental work derives from the recent progress in multiple related domains which we present now.
+
+\paragraph{Texture Synthesis}
 Texture is important for photorealistic depiction as it provides a succinct description of surface properties and details which can be hard to specify otherwise.
+\ignore{
 It is extensively used in computer graphics for augmenting coarse geometric models with fine surface details, while imaging softwares such as Photoshop have been using it to provide hole filling, seamless blending and other tools where the impression of detail matters.
+}
+It was already extensively used in computer graphics for augmenting coarse geometric models with fine surface details, and now imaging softwares such as Photoshop use it to provide hole filling, seamless blending and other tools related to image-based rendering.
 
-%-------------------------------------------------------------------------
-\subsection{Texture Synthesis}
+Recent non-parametric exemplar-based texture synthesis algorithms have been very successful, enabling many interesting novel image rendering applications.
 
-As it can be difficult to acquire textures that fit the resolution and boundary constraints of a specific modeling task, one might be interested in automatically synthesizing texture.
-Algorithms for texture synthesis include parametric approaches such as \textbf{procedural texture} models \cite{Ebert02, Musgrave93, Worley96} based on particular texture models (e.g.\;wood, cloud, ground, fire), as well as exemplar-based methods that have been very popular recently.
-While many texture models have been explored for exemplar-based synthesis \cite{Heeger95}, we focus on the Markov Random Field methods that have produced the most impressive results so far (which we briefly present here, see \cite{Wei09} for more details).
+From Pixel-based~\cite{Efros99, Wei00, Tong02} and Patch-based~\cite{Praun00, Efros01, Liang01, Kwatra03} methods that grow textures using exemplar pixels or patches, to new optimization-based~\cite{Kwatra05, Darabi12} methods, synthesis has become more reliable, controllable and fast~\cite{Ashikhmin01, Matusik05, Lefebvre06, Lu07}.
 
-\textbf{Pixel-based} methods \cite{Efros99} grow textures one pixel at a time by selecting exemplar patches that match the window around the newly synthesized pixel.
-Different accelerations have been proposed such as fixed neighborhoods and scanline processing \cite{Wei00}, $k$-coherence \cite{Tong02} and eventually led to \textbf{patch-based} methods \cite{Praun00, Efros01, Liang01, Kwatra03} that directly copy full patches.
+It has been used in several fields outside of simple image synthesis \cite{Wei09} such as video textures \cite{Schodl00, Schodl02, Agarwala05} and spatio-temporal video texture synthesis \cite{Kwatra03, Wexler07}.
 
-Then came \textbf{optimization-based} methods \cite{Kwatra05} that grow the texture as a whole by minimizing a patch energy
-\begin{equation}
-	\sum_i d(\ti, \si)
-	\label{eq:patch_energy}
-\end{equation}
-where $\ti$ are patches of our synthesized target, $\si$ are the corresponding patches in the exemplar and $d(\cdot)$ is a patch distance such as the sum of squared differences.
+\paragraph{Image Analogies}
+One particular domain where synthesis has brought interesting applications is that of texture / style transfer~\cite{Efros01, Hertzmann01}. By using constrained texture synthesis, one can take a reference image mapping and apply it to a new image to produce an \emph{image analogy}. 
 
-Further controllability has been introduced with the use of extra feature channels \cite{Ashikhmin01, Matusik05, Lefebvre06, Lu07}.
+\begin{figure}[ht]
+	\center
+	\includegraphics[width=0.45\textwidth]{figures/analogies}
+	\caption{Example of image analogy: on the left is the example pair, the top right image is the input, the bottom right one is the analogy output, that transfer the style from the left pair to the image input.}
+\end{figure}
 
-\subsection{Applications}
+\paragraph{Image Querying}
+The increasing amount of available images has brought new algorithms for querying and processing it such as GIST and bag-of-features~\cite{Oliva01, Torralba08, Douze09}.
+Likewise, synthesis algorithms have led to new patch querying data structures (locality sensitive hashing~\cite{Gionis99}, coherency sensitive hashing~\cite{Korman11} and propagation-assisted kd-trees~\cite{He12}) and algorithms such as Patch Match~\cite{Barnes09}.
+We build upon a distributed multi-exemplar of the last one called PatchWeb~\cite{Barnes11}.
+Such databases have been used for scene detection and completion \cite{Hays07}.
 
-Many of the aforementioned methods have applications outside of simple texture synthesis.
-For example, 2D patches have been extended into 3D patches for solid texture synthesis \cite{Wei02, Kopf07, Dong08} or extended with a temporal dimension for video textures \cite{Schodl00, Schodl02, Agarwala05} and spatio-temporal video texture synthesis \cite{Kwatra03, Wexler07}.
-Editing tools have been developed using texture-based methods such as style transfer \cite{Efros01, Hertzmann01} and image completion \cite{Bertalmio00, Drori03, Hays07} that have then been used for geometry \cite{Bhat04, Zhou06} and shape synthesis \cite{Rosenberger09}.
+\paragraph{Synthesizing Stereo}
+While stereoscopic data is still sparse~\cite{Corrigan10, Smolic10}, new large free rendered movies have appeared such as Elephant Dreams, Big Buck Bunny and Sintel.
+There have been attempts at synthesizing stereo data from monocular streams but they rely on temporal coherence to either deduce motion~\cite{Moustakas05}, use parallax cues~\cite{Zhang07} or require user assistance \cite{Wang11} without leveraging external data sources.
+
+In this work, we explore the idea of image analogies applied to stereoscopic image rendering and provide a framework to work with future new stereoscopic databases in this context.

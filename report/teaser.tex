@@ -1,0 +1,22 @@
+
+% @see http://tex.stackexchange.com/questions/44330/side-brace-around-image-with-underbrace
+\newcommand{\bracedincludegraphics}[2][]{%
+  \sbox0{$\vcenter{\hbox{\includegraphics[#1]{#2}}}$}%
+  \left\lbrace
+    \vphantom{\copy0}
+  \right.\kern-\nulldelimiterspace
+}
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.4\textwidth}
+		\includegraphics[width=\textwidth]{figures/teaser_montage}\\
+		\includegraphics[width=\textwidth]{figures/teaser_left}
+	\end{minipage}
+	\quad
+	\Large\}
+	\quad
+	\includegraphics[width=0.4\textwidth]{figures/teaser_right}
+	\caption{Automatic synthesis of stereoscopic frames from monocular images using a large set of reference stereo frames.}
+	\label{fig:teaser}
+\end{figure}
