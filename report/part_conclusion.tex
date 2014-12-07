@@ -2,4 +2,24 @@
 
 \section{Conclusion}
 
-The recent synthesis methods we presented produce impressive results from simple and elegant algorithms that require minimum user interaction. The multitude of applications that these methods have brought, as well as the many new potential research problems they generated hopefully show how interesting texture synthesis can be.
+\TODO{Give nice conclusion given results, hopefully good.}
+
+\paragraph{Occlusions} produce artifacts at the boundary of object in each of the stereoscopic transfer strategies we devised.
+In the case of patch and difference transfer, element boundaries are sometimes well matched in the left frame but don't fit in the right frame, leading to artifacts.
+
+\TODO{show boundary artifacts}
+
+In the case of disparity, occlusions usually skipped and regions get stretched (because we have no data to interpolate it a priori).
+
+\TODO{show stretching artifacts}
+
+While complicated heuristics could be devised to solve this, we envision to use a different approach that consists of working with a half-way domain between the left and right frames instead of deliberately choosing to work on the left side.
+Indeed, why should we work with one side and not the other? How should we merge both results if we were to work with both sides in parallel?
+The nicer solution is to work with the half-way domain of~\cite{} which nicely interpolates occluded data.
+The implementation might be harder than it seems since occluded areas have different sampling rates in this half-way domain, but it is worth trying in the future.
+
+\paragraph{Convergence} is still an issue and while patch propagation is the most effective patch update with uniform search, the most logical search strategy is that of binning which selects patches whose features are close to that of the considered patches, i.e. naturally good patches with low distances.
+We mentioned that this is a complicated part to implement for memory reasons, but using the WHT bases might be the solution to memory implementation, similarly to what \cite{He12} have done instead of using PCA.
+
+Finally, we conclude...
+\TODO{Really conclude, in fact.}
