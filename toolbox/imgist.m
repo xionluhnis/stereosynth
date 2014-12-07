@@ -1,6 +1,5 @@
 function [ G, params ] = imgist( im )
-%IMGIST Summary of this function goes here
-%   Detailed explanation goes here
+%IMGIST Compute gist descriptor of an image (color images get 3 of them)
 
     gist_path = fullfile('libs', 'gist');
     addpath(gist_path);
@@ -12,7 +11,15 @@ function [ G, params ] = imgist( im )
 
     % Computing gist requires 1) prefilter image, 2) filter image and collect
     % output energies
-    [G, params] = LMgist(im, '', param);
+    num_ch = size(im, 3);
+    if num_ch == 1
+        [G, params] = LMgist(im, '', param);
+    else
+        [G, params] = LMgist(im(:, :, 1), '', param);
+        for ch = 2:num_ch
+            G(ch, :) = LMgist(im(:, :, ch), '', param);
+        end
+    end
 
     rmpath(gist_path);
 end
