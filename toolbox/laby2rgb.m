@@ -7,6 +7,9 @@ function im_rgb = laby2rgb( im, lambda )
         assert(lambda > 0, 'Invalid lambda, should be positive!');
     end
     cform = makecform('lab2srgb');
+    if isa(im, 'single')
+        im = double(im);
+    end
     im_lab = cat(3, ...
         100 * im(:, :, 1), ...
         160 * im(:, :, 2) - 80, ...

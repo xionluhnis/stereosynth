@@ -11,6 +11,12 @@ function [ im_laby ] = rgb2laby( im, lambda )
     if ~isfloat(im)
         im = im2double(im);
     end
+    if isa(im, 'single')
+        im = double(im);
+        is_single = 1;
+    else
+        is_single = 0;
+    end
     if nargin < 2
         lambda = 1;
     else
@@ -26,5 +32,8 @@ function [ im_laby ] = rgb2laby( im, lambda )
         (80 + im_lab(:, :, 3)) / 160, ...   % b in [-80;+80]
          y ...
     );
+    if is_single
+        im_laby = single(im_laby);
+    end
 end
 
