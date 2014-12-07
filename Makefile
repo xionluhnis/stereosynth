@@ -29,6 +29,7 @@ mex_top: clean_top create
 mex_vote: clean_vote create
 	$(MEX) src/int_vote.cpp -output bin/ivote -output bin/ivote
 	$(MEX) src/float_k_disp_vote.cpp -output bin/fkdispvote -output bin/fkdispvote
+	$(MEX) src/ix_vote.cpp -output bin/ixvote -output bin/ixvote
 
 mex_web: clean_web create
 	$(MEX) src/ix_k_nnf.cpp -output bin/ixknnf -output bin/ixknnf

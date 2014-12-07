@@ -27,7 +27,7 @@ namespace pm {
 
 		IndexedPoint() : Point<T>(), depth(0) {}
 		IndexedPoint(T a, T b, int d = 0) : Point<T>(a, b), depth(d) {}
-		IndexedPoint(base p, int d) : Point<T>(p.x, p.y), depth(d) {}
+		IndexedPoint(base p, int d = -1) : Point<T>(p.x, p.y), depth(d) {}
         IndexedPoint(vec v) : Point<T>(v[0], v[1]), depth(v[2]) {}
 		
         inline point operator +(const base &p) const {
