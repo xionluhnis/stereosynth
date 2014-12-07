@@ -22,13 +22,14 @@ typedef unsigned int uint;
 using namespace pm;
 
 typedef Patch2tix TargetPatch;
-typedef NearestNeighborField<TargetPatch, float, KNNF_K> NNF;
+typedef NearestNeighborField<TargetPatch, float, 1> NNF;
+typedef NearestNeighborField<TargetPatch, float, KNNF_K> kNNF;
 typedef Distance<TargetPatch, float, ImageSet> DistanceFunc;
 
 /**
  * Usage:
  * 
- * [newNNF, conv] = ixknnf( source, {targets}, prevNNF, options )
+ * nnf = ixknnf_top( source, {targets}, knnf, options )
  */
 void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     // checking the input
@@ -58,26 +59,35 @@ void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     // create distance instance
     DistanceFunc d = DistanceFactory<TargetPatch, float, ImageSet>::get(dist::SSD, source.channels());
     
-    // create nnf (load maybe)
-    NNF nnf(source, targets, d);
-    nnf.load(nin >= 3 ? in[2] : mxCreateNothing());
+    // create nnf (load it)
+    kNNF knnf(source, targets, d);
+    knnf.load(in[2]);
     
     // update distance (for external nnf changes)
     if(options.boolean("compute_dist", false)){
-        nnf.update();
+        knnf.update();
     }
     
-    // create algorithm sequence
-    auto seq = Algorithm()  << UniformSearch<TargetPatch, float, KNNF_K>(&nnf)
-                            << Propagation<TargetPatch, float, KNNF_K>(&nnf);
-    
-    // scanline with the sequence of algorithm
-    scanline(nnf, numIter, seq);
+    // transfer data to 1-nnf
+    NNF nnf(source, targets, d);
+    for(const Point2i &i : knnf){
+        typename kNNF::PatchData (&p)[KNNF_K] = knnf.data.at(i);
+        int bestK = 0;
+        float bestDist = p[0].distance;
+        for(int k = 1; k < KNNF_K; ++k){
+            if(p[k].distance < bestDist){
+                bestDist = p[k].distance;
+                bestK = k;
+            }
+        }
+        nnf.store(i, p[bestK].patch, bestDist);
+    }
     
     // save nnf and output it
     if(nout > 0){
         out[0] = nnf.save();
     }
 }
+
 
 

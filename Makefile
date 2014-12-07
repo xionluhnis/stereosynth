@@ -25,6 +25,7 @@ mex_disp: clean_disp create
 mex_top: clean_top create
 	$(MEX) src/int_k_nnf_top.cpp -output bin/iknnf_top -output bin/iknnf_top
 	$(MEX) src/float_k_nnf_top.cpp -output bin/fknnf_top -output bin/fknnf_top
+	$(MEX) src/ix_k_nnf_top.cpp -output bin/ixknnf_top -output bin/ixknnf_top
 
 mex_vote: clean_vote create
 	$(MEX) src/int_vote.cpp -output bin/ivote -output bin/ivote

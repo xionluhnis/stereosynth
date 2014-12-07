@@ -43,7 +43,7 @@ namespace pm {
 /**
  * Usage:
  * 
- * img = ivote( source, target, knnf, options )
+ * img = ixvote( source, targets, nnf, options )
  */
 void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     // checking the input
