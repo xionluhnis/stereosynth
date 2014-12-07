@@ -1,64 +1,53 @@
 
-\section{Overview}
-\texttt{Texture Synthesis using Patch Match}
+\section{Framework}
 
-We present here the recent work of Darabi \cite{Darabi12} - Image Melding - that builds upon Texture Optimization \cite{Kwatra05} with the addition of two new components: the Patch Match algorithm \cite{Barnes09} for fast nearest neighbor search, and the integration of gradient blending to propagate boundary constraints for more efficient image editing \cite{Agarwala04}.
+The general idea is to apply image analogies using stereoscopic data to generate new stereoscopic data.
+We simply present the ideas here and implementation details are provided in the following section.
 
-The minimization of Equation \ref{eq:patch_energy} is done by alternating between the two following steps:
-\begin{itemize}
-	\setlength{\itemsep}{4pt}
-  \setlength{\parskip}{0pt}
-  \setlength{\parsep}{0pt}
-	\item \textbf{Nearest Neighbor Search}: optimize for $\si$ with $\ti$ fixed, which corresponds to finding the nearest neighbors $\si$ of patches $\ti$ ($\ti$ in result, $\si$ in exemplar)
-	\item \textbf{Vote}: given the fixed nearest neighbors $\si$, optimize for the patches $\ti$ in the target result, which corresponds to averaging overlapping patches to get the desired pixels
-\end{itemize}
-
-This is done iteratively, using a scale pyramid from coarse to fine scale, until convergence or a given number of steps at each level of the pyramid.
-Image Melding also generates gradient information during the voting process and blends it in a third step using the work of \cite{Bhat08}:
-\begin{itemize}
-	\item \textbf{Screened Poisson Equation}: for the best pixel intensity given current pixel intensities and gradients
-\[
-	T^*=\argmin_{T} \sum (T - \overline{T})^2 + \lambda \| \nabla T - \overline{\nabla T}\|^2
-\]
-where $\overline{T}$ and $\overline{\nabla T}$ are the averaged pixel intensities and gradients from the voting step, and $\nabla T$ is the gradient operator applied to the unknown best pixel intensities.
-\end{itemize}
-
-%-------------------------------------------------------------------------
-\texttt{Project Proposal}
-
-Given the plethora of applications using texture synthesis and the many variations we presented, we propose a new target for exemplar-based texture synthesis: synthesizing stereo-view video from a single-view video stream (for example to view it in 3D).
-
-\subsection{Traditional stereo methods}
-
-The traditional multi-view approach consist in partially modeling the 3D environment such as with Hyper-lapse videos \cite{Kopf14} or stereo reconstruction \cite{Seitz06}. A naive approach for stereo synthesis would therefore be to use video frame correspondences to register the camera path and content geometry, which would provide a way to synthesize stereo-view video.
-
-\subsection{Our approach}
-
-Since the many steps required by multi-view reconstruction do not always work well and accumulate errors, we propose a much simpler approach based on texture synthesis to generate the second stream of a stereo-view video stream using patch correspondences.
-
-The basic idea consists of having a set of true stereo videos (seemingly available \cite{Corrigan10, Smolic10}) as exemplar frames.
-Given the pair of true streams $L$ and $R$ (left and right image streams) and a new single-view stream $L'$, we can synthesize its corresponding part $R'$ by
+The general steps are:
 \begin{enumerate}
-	\setlength{\itemsep}{4pt}
-  \setlength{\parskip}{0pt}
-  \setlength{\parsep}{0pt}
-	\item Finding the nearest neighbor patches of $L'$ in $L$
-	\item Using the corresponding patches in $R$ for $R'$
+	\item Select patches in stereo database that match our monocular image patches
+	\item Transfer the corresponding stereoscopic data to synthesize the output frame from our input frame
+	\item Process it on a scale pyramid to work at different level of details
 \end{enumerate}
-which corresponds to image analogies \cite{Efros01, Hertzmann01} applied to stereo video streams.
 
-The potential new problems to deal with include
-\begin{itemize}
-	\setlength{\itemsep}{4pt}
-  \setlength{\parskip}{0pt}
-  \setlength{\parsep}{0pt}
-	\item Dealing with time coherence efficiently (either using 3D spatio-temporal patches or per-frame 2D patches with some extra coherence constraint)
-	\item Retrieving patches from multiple exemplars \cite{Barnes11, Hu13} (i.e. multiple frames and a collection of video streams)
-\end{itemize}
+\begin{figure}
+	\centering
+	\TODO{have a nice $L \to R, L' \to R'$ figure here.}
+	\caption{Stereo analogy principle: (i) we compute the Nearest patches in our database, (ii) we transfer stereoscopic data, (iii) and do it at multiple levels of detail}
+\end{figure}
 
-Framework:
-\begin{itemize}
-	\item NNF from A' to A
-	\item Stereo transfer (style, difference, disparity, etc.)
-	\item Multi-scale pyramid / Laplacian pyramid
-\end{itemize}
+\subsection{Selecting patches}
+The selection of pixels or patches from the database corresponds to finding the Nearest Neighbor Field (NNF) between the patches of our new image and those of our database.
+
+Brute-force computation is not tractable given the quantity of data we are facing.
+We chose to implement the PatchWeb algorithm~\cite{Barnes11} that extends Patch Match~\cite{Barnes09} to multiple exemplar NNF computation.
+
+\subsection{Transfering the stereoscopic data}
+Having a candidate patch in our database (with its corresponding right/left frame patch\footnote{Without loss of generality, we assume that our input corresponds to a left frame in our database.}), we propose different transfer strategies, namely transferring: the \emph{whole patch}, the \emph{patch difference}, or the \emph{patch disparity} as illustrated in Figure~\ref{fig:transfers}.
+
+\begin{figure*}[ht!]
+	\centering
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+		$L' \to R'=R$
+		\caption{Transferring the whole patch: can only work in the case of a sufficiently large database that would contain the style of our input with a valid disparity.}
+	\end{subfigure}\hfill
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+		$L' \to R'=L'+(R-L)$
+		\caption{Transferring the patch difference: reduces dependency on the exact patch style (similarly, one could reconstruct the patch from the gradient information).}
+	\end{subfigure}\hfill
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+		$L' \to R'=\textrm{warp}_{L\to R}(L')$
+		\caption{Transferring the disparity: could suffer from occlusions where warping is ill-defined.}
+	\end{subfigure}
+	\caption{Three tentative strategies for stereoscopic data transfer}
+	\label{fig:transfers}
+\end{figure*}
+
+\subsection{Pyramidal processing}
+Since different objects and features appear at different scales, we apply the aforementioned selection and transfer both at multiple scales and independently (having found a patch at a given scale doesn't constrain the patch at the other scales).
+The pyramid representation is a key component for texture transfer to work.
+
