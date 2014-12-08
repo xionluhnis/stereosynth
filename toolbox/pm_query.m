@@ -40,9 +40,6 @@ function [knnf, data] = pm_query( query, images, options )
     else
         error('Unsupported image database');
     end
-    if ~exist(gist_dir, 'dir')
-        mkdir(gist_dir);
-    end
     
     % replacing data from options
     if isfield(options, 'gist_dir')
@@ -61,7 +58,7 @@ function [knnf, data] = pm_query( query, images, options )
         if ischar(img)
             [~, name, ~] = fileparts(img);
             gist_file = fullfile(gist_dir, [name '.mat']);
-            img = im2double(imread(img));
+            img = load_img(img);
         else
             assert(isnumeric(img), 'Invalid image type');
             gist_file = [tempname(gist_dir) '.mat'];
@@ -80,7 +77,7 @@ function [knnf, data] = pm_query( query, images, options )
         else
             g = imgist(img);
             % and store it
-            save(gist_file, 'g');
+            save_mat(g, gist_file);
         end
         G(i, :) = g(:);
     end
@@ -120,17 +117,19 @@ function [knnf, data] = pm_query( query, images, options )
         idx = group(k);
         img = images{idx};
         if ischar(img)
-            img = single(im2double(imread(img)));
+            img = single(load_img(img));
         elseif ~isfloat(img)
             img = single(im2double(img));
         elseif ~isa(img, 'float')
             img = single(img);
         end
-        data.left{k} = left;
-        [left, right] = get_frames(img);
-        data.left{k} = left;
+        
         if leftright
+            [left, right] = get_frames(img);
+            data.left{k} = left;
             data.right{k} = right;
+        else
+            data.left{k} = img; % because onlyleft
         end
         if ~isempty(files)
             data.files{k} = files{idx};
@@ -139,4 +138,23 @@ function [knnf, data] = pm_query( query, images, options )
     
     % k-nnf computation from query to best set
     knnf = ixknnf(query, data.left, [], options);
+end
+
+function res = ends_with(str, pat)
+    S = length(str);
+    P = length(pat);
+    if S < P
+        res = 0;
+    else
+        res = strcmp(str(end-P+1:end), pat);
+    end
+end
+
+
+function img = load_img(file)
+    if ends_with(file, '.mat')
+        img = load_mat(file); 
+    else
+        img = im2double(imread(file));
+    end
 end
