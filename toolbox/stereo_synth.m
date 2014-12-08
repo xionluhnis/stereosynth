@@ -11,19 +11,24 @@
 %
 function [result, data] = stereo_synth( query, images, varargin )
     addpath('bin');
-    switch length(varargin)
-        case 0
-            options.patch_size = 7;
-            options.iterations = 6;
-            options.transfer_type = 'patch'; % or 'diff' or 'disparity' 
-        case 1
-            options = varargin{1};
-            assert(isstruct(options), 'Single argument must be an option struct!');
-        otherwise
-            assert(mod(length(varargin), 2) == 0, 'Multiple arguments must be even!');
-            for i = 1:2:length(varargin)
-                options.(varargin{i}) = varargin{i+1};
-            end
+    % load options (and default)
+    options.patch_size = 7;
+    options.iterations = 6;
+    options.transfer_type = 'patch'; % or 'diff' or 'disparity'
+    options.vote_filter = fspecial('gaussian', [7, 7], 1);
+    if length(varargin) == 1
+        user_opt = varargin{1};
+        assert(isstruct(user_opt), 'Single argument must be an option struct!');
+        % transfer user options
+        field_names = fieldnames(user_opt);
+        for f=1:length(field_names)
+            options.(field_names{f}) = user_opt.(field_names{f});
+        end
+    elseif length(varargin) > 1
+        assert(mod(length(varargin), 2) == 0, 'Multiple arguments must be even!');
+        for i = 1:2:length(varargin)
+            options.(varargin{i}) = varargin{i+1};
+        end
     end
     pyr_type = get_option(options, 'pyr_type', 'laplacian');
     pyr_depth = get_option(options, 'pyr_levels', []);
@@ -101,6 +106,7 @@ function [result, data] = stereo_synth( query, images, varargin )
         nnf = ixknnf_top(pyr{l}, pyr_data.left, knnf, options);
         
         % store pyramid data
+        pyr_data.query = pyr{l};
         pyr_data.knnf = knnf;
         pyr_data.nnf = nnf;
         pyr_data.right = get_right_images(...
@@ -199,12 +205,13 @@ function rights = get_right_images(cache_dir, level, images, pyr_type, pyr_depth
             % - get right pyramid
             pyr = get_pyramid(right, pyr_type, pyr_depth);
             for l=1:length(pyr)
-                pyr_file = get_pyr_file(right_cache, level, name, pyr_type);
+                pyr_file = get_pyr_file(right_cache, l, name, pyr_type);
                 save_mat(pyr{l}, pyr_file);
             end
             % finally we have the right pyramid slice
             rights{i} = single(pyr{level});
         end
+        1;
     end
 end
 
