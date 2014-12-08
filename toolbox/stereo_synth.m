@@ -217,7 +217,7 @@ end
 
 function diffs = get_diffs(lefts, rights)
     K = length(lefts);
-    assert(length(right) == K, 'Left and rights with different lenghts');
+    assert(length(rights) == K, 'Left and rights with different lenghts');
     diffs = cell(1, K);
     for i = 1:K
         diffs{i} = rights{i} - lefts{i};
