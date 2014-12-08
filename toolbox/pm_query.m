@@ -18,6 +18,7 @@ function [knnf, data] = pm_query( query, images, options )
         options.patch_size = 7;
         options.iterations = 6;
     end
+    leftright = ~get_option(options, 'only_left', 0);
     % by default, no files
     files = {};
 
@@ -33,12 +34,22 @@ function [knnf, data] = pm_query( query, images, options )
         end
         if ischar(images{1})
             files = images; % we also have the files!
+        elseif isnumeric(images{1})
+            
         end
     else
         error('Unsupported image database');
     end
     if ~exist(gist_dir, 'dir')
         mkdir(gist_dir);
+    end
+    
+    % replacing data from options
+    if isfield(options, 'gist_dir')
+        gist_dir = options.gist_dir;
+    end
+    if isfield(options, 'files')
+        files = options.files;
     end
 
     % compute the gists if not already computed
@@ -51,14 +62,17 @@ function [knnf, data] = pm_query( query, images, options )
             [~, name, ~] = fileparts(img);
             gist_file = fullfile(gist_dir, [name '.mat']);
             img = im2double(imread(img));
-            img = img(1:end/2, :, :);
         else
             assert(isnumeric(img), 'Invalid image type');
             gist_file = [tempname(gist_dir) '.mat'];
             if ~isfloat(img)
                 img = im2double(img);
             end
+            if leftright
+                img = get_frames(img);
+            end
         end
+        img = get_frames(img); % we keep only the left frame for the gist
         [h, w, ~] = size(img);
         num_pixels = num_pixels + h * w;
         if exist(gist_file, 'file')
@@ -92,10 +106,13 @@ function [knnf, data] = pm_query( query, images, options )
     
     % sort targets to nothave correlation in indices
     group = group(randperm(K));
+    data.group = group;
     
     % load targets
     data.left = cell(K, 1);
-    data.right = cell(K, 1);
+    if leftright
+        data.right = cell(K, 1);
+    end
     if ~isempty(files)
         data.files = cell(K, 1);
     end
@@ -109,8 +126,12 @@ function [knnf, data] = pm_query( query, images, options )
         elseif ~isa(img, 'float')
             img = single(img);
         end
-        data.left{k} = img(1:end/2, :, :);
-        data.right{k} = img(end/2+1:end, :, :);
+        data.left{k} = left;
+        [left, right] = get_frames(img);
+        data.left{k} = left;
+        if leftright
+            data.right{k} = right;
+        end
         if ~isempty(files)
             data.files{k} = files{idx};
         end
@@ -118,12 +139,4 @@ function [knnf, data] = pm_query( query, images, options )
     
     % k-nnf computation from query to best set
     knnf = ixknnf(query, data.left, [], options);
-end
-
-function o = get_option(options, fname, def)
-	if isfield(options, fname)
-		o = options.(fname);
-	else
-		o = def;
-	end
 end
