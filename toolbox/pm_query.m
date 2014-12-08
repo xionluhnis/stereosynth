@@ -1,16 +1,39 @@
-function knnf = pm_query( query, images, options )
 %PM_QUERY Compute a knnf query on a set of images
+%
+% INPUT
+%   - query     the image query
+%   - images    either the image directory or a list of images (str or img)
+%   - options   query options
+%
+% OUTPUT
+%   - knnf      the resulting knnf
+%   - data      struct with fields:
+%                   - left: the left images
+%                   - right: the right images
+%                   - files: the image files (if available)
+%
+function [knnf, data] = pm_query( query, images, options )
 
     if nargin < 3
         options.patch_size = 7;
         options.iterations = 6;
     end
+    % by default, no files
+    files = {};
 
+    % get image list at least
     if ischar(images)
         gist_dir = fullfile(images, '.gist');
         images = find_images(images);
+        files = images; % we have the files!
     elseif iscell(images)
         gist_dir = tempname;
+        if isempty(images)
+            error('Empty images database');
+        end
+        if ischar(images{1})
+            files = images; % we also have the files!
+        end
     else
         error('Unsupported image database');
     end
@@ -51,19 +74,31 @@ function knnf = pm_query( query, images, options )
     % query gist
     g = imgist(query);
     
-    % select best images to compute k-nnf with
+    % choose group size
     if ~isfield(options, 'target_number')
-        options.target_number = ceil(...
-            get_option(options, 'memory', 50e6) ...
-                           / (8 * num_pixels / N)); % 4d image + 4d nnf
+        max_mem = get_option(options, 'memory', 50e6); % in bytes
+        avg_pixels = num_pixels / N;
+        avg_mem = 8 * avg_pixels; % 4D image + 4D nnf
+        options.target_number = ceil( max_mem / avg_mem );
     end
-    K = min(N, max(get_option(options, 'min_targets', 5), options.target_number));
+    min_targets = get_option(options, 'min_targets', 5); % minimum in knnf
+    K = min( N, max(min_targets, options.target_number) );
+    
+    % select K best images to compute k-nnf with
     group = knnsearch(G, g(:)', 'K', K);
+    
+    % clear that memory
+    clear G; clear g;
+    
     % sort targets to nothave correlation in indices
     group = group(randperm(K));
     
     % load targets
-    targets = cell(K, 1);
+    data.left = cell(K, 1);
+    data.right = cell(K, 1);
+    if ~isempty(files)
+        data.files = cell(K, 1);
+    end
     for k = 1:K
         idx = group(k);
         img = images{idx};
@@ -74,10 +109,15 @@ function knnf = pm_query( query, images, options )
         elseif ~isa(img, 'float')
             img = single(img);
         end
-        targets{k} = img;
+        data.left{k} = img(1:end/2, :, :);
+        data.right{k} = img(end/2+1:end, :, :);
+        if ~isempty(files)
+            data.files{k} = files{idx};
+        end
     end
     
-    knnf = ixknnf(query, targets, [], options);
+    % k-nnf computation from query to best set
+    knnf = ixknnf(query, data.left, [], options);
 end
 
 function o = get_option(options, fname, def)

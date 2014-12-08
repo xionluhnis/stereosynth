@@ -33,19 +33,18 @@ typedef Distance<TargetPatch, float, ImageSet> DistanceFunc;
  */
 void mexFunction(int nout, mxArray *out[], int nin, const mxArray *in[]) {
     // checking the input
-	if (nin < 2 || nin > 4) {
+	if (nin < 3 || nin > 4) {
 		mexErrMsgIdAndTxt("MATLAB:nnf:invalidNumInputs",
 				"Requires 4 arguments! (#in = %d)", nin);
 	}
 	// checking the output
-	if (nout > 2) {
+	if (nout > 1) {
 		mexErrMsgIdAndTxt("MATLAB:nnf:maxlhs",
 				"Too many output arguments.");
 	}
 	
 	// options parameter
 	mxOptions options(nin >= 4 ? in[3] : mxCreateNothing());
-    int numIter = options.integer("iterations", 6);
     int patchSize = options.integer("patch_size", 7);
     uint algo_seed = options.scalar<uint>("rand_seed", timeSeed());
     

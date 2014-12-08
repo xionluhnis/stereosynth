@@ -95,7 +95,9 @@ namespace pm {
     public:
         typedef BasicIndexedPatch<S> TargetPatch;
         typedef typename BasicIndexedPatch<S>::point point;
-        typedef typename point::vec vec;
+        typedef typename point::base base;
+        typedef typename point::vec vec3; // this is not Vec2x !!!
+        typedef Vec<S, 2> vec2; // real vector to use for points
         typedef NearestNeighborField<TargetPatch, DistValue, K> NNF;
 
         uint operator()(const Point2i &i, bool){
@@ -103,16 +105,17 @@ namespace pm {
             uint success = 0;
             for(int k = 0; k < K; ++k){
                 // uniformly sample image from set
-                int idx = uniform<int>(nnf->rng(), 0, nnf->targetCount());
+                int idx = uniform<int>(nnf->rng(), 0, nnf->targetCount() - 1);
+                assert(idx < nnf->targetCount() && "Invalid target index");
                 // frame bounds
                 const FrameSize &target = nnf->targetSize(idx).shrink(TargetPatch::width());
                 // uniformly sample a position within that target image
-                const point &q = uniform(
+                const base &q = uniform(
                     nnf->rng(),
-                    vec(0, 0),
-                    vec(target.width, target.height)
+                    vec2(0, 0), // not vec3 !
+                    vec2(target.width, target.height)
                 );
-                success += kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q));
+                success += kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q, idx));
             }
             return success;
         }

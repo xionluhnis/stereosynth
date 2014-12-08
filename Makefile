@@ -6,10 +6,16 @@ PNG_LIBS := $(shell pkg-config --libs libpng)
 TEST := -g -DDEBUG_STRICT_TEST=1 -o bin/test_target tests/target.cpp && bin/test_target && $(RESULT)
 TEST_WITH_PNG := -g -DDEBUG_STRICT_TEST=1 $(PNG_INCL) -o bin/test_target tests/target.cpp $(PNG_LIBS) && bin/test_target && $(RESULT)
 
-OPTI_FLAGS := -O6 -w -s -ffast-math -fomit-frame-pointer -fstrength-reduce -msse2 -funroll-loops -fPIC
-BASE_FLAGS := -std=c++11 -DNDEBUG -DUNIX_MODE -DMEXMODE -fPIC -ftls-model=global-dynamic
+ifeq ($(DEBUG), 1)
+	BASE_FLAGS := -std=c++11 -DUNIX_MODE -DMEXMODE -fPIC -ftls-model=global-dynamic
+	MEX_FLAGS  := -g
+else
+	OPTI_FLAGS := -O6 -w -s -ffast-math -fomit-frame-pointer -fstrength-reduce -msse2 -funroll-loops -fPIC
+	BASE_FLAGS := -std=c++11 -DNDEBUG -DUNIX_MODE -DMEXMODE -fPIC -ftls-model=global-dynamic
+endif
+
 LIBS_FLAGS := -Wl,--export-dynamic -Wl,-e,mexFunction -shared
-MEX := mex -v CXXOPTIMFLAGS='$$CXXOPTIMFLAGS $(OPTI_FLAGS)' CXXFLAGS='$$CXXFLAGS $(BASE_FLAGS)' CXXLIBS='$$CXXLIBS ${LIBS_FLAGS}' ${INCL}
+MEX := mex -v CXXOPTIMFLAGS='$$CXXOPTIMFLAGS $(OPTI_FLAGS)' CXXFLAGS='$$CXXFLAGS $(BASE_FLAGS)' CXXLIBS='$$CXXLIBS ${LIBS_FLAGS}' ${MEX_FLAGS} ${INCL}
 
 mex: clean create mex_nnf mex_disp mex_top mex_vote mex_web
 
@@ -33,7 +39,7 @@ mex_vote: clean_vote create
 	$(MEX) src/ix_vote.cpp -output bin/ixvote -output bin/ixvote
 
 mex_web: clean_web create
-	$(MEX) src/ix_k_nnf.cpp -output bin/ixknnf -output bin/ixknnf
+	$(MEX) -g src/ix_k_nnf.cpp -output bin/ixknnf -output bin/ixknnf
 
 old_mex:
 	bash build.sh
