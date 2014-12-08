@@ -102,8 +102,9 @@ function [knnf, data] = pm_query( query, images, options )
     clear G; clear g;
     
     % sort targets to nothave correlation in indices
-    group = group(randperm(K));
-    data.group = group;
+    data.perm = randperm(K);
+    data.group = group(data.perm); % permuted order
+    data.rank(data.perm) = 1:K; % reverse permutation
     
     % load targets
     data.left = cell(K, 1);
@@ -114,7 +115,7 @@ function [knnf, data] = pm_query( query, images, options )
         data.files = cell(K, 1);
     end
     for k = 1:K
-        idx = group(k);
+        idx = data.group(k);
         img = images{idx};
         if ischar(img)
             img = single(load_img(img));

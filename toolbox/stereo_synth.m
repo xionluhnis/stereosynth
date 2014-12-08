@@ -15,7 +15,6 @@ function [result, data] = stereo_synth( query, images, varargin )
         case 0
             options.patch_size = 7;
             options.iterations = 6;
-            options.pyramid_type = 'laplacian'; % or 'gaussian'
             options.transfer_type = 'patch'; % or 'diff' or 'disparity' 
         case 1
             options = varargin{1};
@@ -26,6 +25,8 @@ function [result, data] = stereo_synth( query, images, varargin )
                 options.(varargin{i}) = varargin{i+1};
             end
     end
+    pyr_type = get_option(options, 'pyr_type', 'laplacian');
+    pyr_depth = get_option(options, 'pyr_levels', []);
     files = {};
     
     %% get image list and set base caching directory
@@ -60,25 +61,26 @@ function [result, data] = stereo_synth( query, images, varargin )
     
     %% build left frame pyramid
     N = length(images);
-    for i=1:N
+    gcp;
+    parfor i=1:N
         fname = images{i};
         [~, name, ~] = fileparts(fname);
         % check if not alraedy computed
-        fname = get_pyr_file(cache_dir, 1, name);
-        if exist(fname, 'file')
+        pyr_file = get_pyr_file(cache_dir, 1, name, pyr_type);
+        if exist(pyr_file, 'file')
             continue
         end
         img = im2double(imread(fname));
         left = get_frames(img);
-        pyr = get_pyramid(left, options);
+        pyr = get_pyramid(left, pyr_type, pyr_depth);
         levels = length(pyr);
         % cache pyramid levels
         for l=1:levels
-            fname = get_pyr_file(cache_dir, l, name);
+            fname = get_pyr_file(cache_dir, l, name, pyr_type);
             save_mat(pyr{l}, fname);
         end
     end
-    pyr = get_pyramid(query, options);
+    pyr = get_pyramid(query, pyr_type, pyr_depth);
     
     %% 1 = over the scales (from 1 to N), query with PM
     L = length(pyr);
@@ -90,7 +92,7 @@ function [result, data] = stereo_synth( query, images, varargin )
         %% 2 = query with PM
         options.gist_dir = fullfile(cache_dir, 'gist', num2str(l));
         options.only_left = 1;
-        pyr_images = get_pyr_images(cache_dir, l, images);
+        pyr_images = get_pyr_images(cache_dir, l, images, pyr_type);
         
         % get knnf + pyramid data
         [knnf, pyr_data] = pm_query(pyr{l}, pyr_images, options);
@@ -101,7 +103,11 @@ function [result, data] = stereo_synth( query, images, varargin )
         % store pyramid data
         pyr_data.knnf = knnf;
         pyr_data.nnf = nnf;
-        pyr_data.right = get_right_images(cache_dir, l, images(pyr_data.group), options);
+        pyr_data.right = get_right_images(...
+            cache_dir, l, images(pyr_data.group), pyr_type, pyr_depth ...
+        );
+        assert(all(size(pyr_data.left{1}) == size(pyr_data.right{1})), ...
+            'The left and right data have different sizes');
         
         %% 3 = transfer
         left = pyr{l};
@@ -114,7 +120,7 @@ function [result, data] = stereo_synth( query, images, varargin )
                 right = left + diff;
                 pyr_data.diff = diff;
             case 'uv'
-                uvs = get_uv_data(cache_dir, l, images(pyr_data.group));
+                uvs = get_uv_data(cache_dir, l, images(pyr_data.group), pyr_type, pyr_depth);
                 uv = ixvote(left, uvs, nnf, options);
                 right = warpFLColor(left, left, -uv(:, :, 1), -uv(:, :, 2)); % direction?
                 pyr_data.uv = uv;
@@ -128,7 +134,7 @@ function [result, data] = stereo_synth( query, images, varargin )
     end
     
     % collapse pyramid
-    switch options.pyramid_type
+    switch pyr_type
         case 'laplacian'
             result = pyr_collapse(pyr_result);
         otherwise
@@ -138,54 +144,66 @@ function [result, data] = stereo_synth( query, images, varargin )
 end
 
 %% Helper functions
-function pyr = get_pyramid(img, options)
-    levels = get_option(options, 'pyr_levels', pyr_levels(img));
-    G = gaussian_pyr(img, levels);
-    switch options.pyramid_type
+function pyr = get_pyramid(img, pyr_type, pyr_depth)
+    if nargin < 3 || isempty(pyr_depth)
+        pyr_depth = pyr_levels(img);
+    end
+    G = gaussian_pyr(img, pyr_depth);
+    switch pyr_type
         case 'gaussian'
             pyr = G;
         case 'laplacian'
             pyr = laplacian_pyr(G);
         otherwise
-            error('Unsupported type of pyramid: %s', options.pyramid_type);
+            error('Unsupported type of pyramid: %s', pyr_type);
     end
 end
 
-function file = get_pyr_file(cache_dir, level, name)
-    file = fullfile(cache_dir, 'pyr', num2str(level), [name '.mat']);
+function file = get_pyr_file(cache_dir, level, name, pyr_type)
+    switch pyr_type
+        case 'gaussian'
+            pyr_dir = 'gpyr';
+        case 'laplacian'
+            pyr_dir = 'lpyr';
+        otherwise
+            error('Unsupported pyramid type: %s', pyr_type);
+    end
+    file = fullfile(cache_dir, pyr_dir, num2str(level), [name '.mat']);
 end
 
-function pyr_images = get_pyr_images(cache_dir, level, images)
+function pyr_images = get_pyr_images(cache_dir, level, images, pyr_type)
     N = length(images);
     pyr_images = cell(1, N);
     for i = 1:N
         [~, name, ~] = fileparts(images{i});
-        pyr_images{i} = get_pyr_file(cache_dir, level, name);
+        pyr_images{i} = get_pyr_file(cache_dir, level, name, pyr_type);
     end
 end
 
-function rights = get_right_images(cache_dir, level, images, options)
+function rights = get_right_images(cache_dir, level, images, pyr_type, pyr_depth)
     N = length(images);
     rights = cell(1, N);
     right_cache = fullfile(cache_dir, 'right');
+    gcp;
     for i = 1:N
         [~, name, ~] = fileparts(images{i});
-        pyr_file = get_pyr_file(right_cache, level, name);
+        pyr_file = get_pyr_file(right_cache, level, name, pyr_type);
         if exist(pyr_file, 'file')
             % simply load it
-            rights{i} = load_mat(pyr_file);
+            rights{i} = single(load_mat(pyr_file));
         else
             % we compute the pyramid and cache it
             % - get right frame
             frames = im2double(imread(images{i}));
             [~, right] = get_frames(frames);
             % - get right pyramid
-            pyr = get_pyramid(right, options);
+            pyr = get_pyramid(right, pyr_type, pyr_depth);
             for l=1:length(pyr)
+                pyr_file = get_pyr_file(right_cache, level, name, pyr_type);
                 save_mat(pyr{l}, pyr_file);
             end
             % finally we have the right pyramid slice
-            rights{i} = pyr{l};
+            rights{i} = single(pyr{level});
         end
     end
 end
@@ -199,14 +217,14 @@ function diffs = get_diffs(lefts, rights)
     end
 end
 
-function uv = get_uv_data(cache_dir, level, images, options)
+function uv = get_uv_data(cache_dir, level, images, pyr_type, pyr_depth)
     N = length(images);
     uv = cell(1, N);
     uv_cache = fullfile(cache_dir, 'uv');
     gcp;
     parfor i = 1:N
         [~, name, ~] = fileparts(images{i});
-        pyr_file = get_pyr_file(uv_cache, level, name);
+        pyr_file = get_pyr_file(uv_cache, level, name, pyr_type);
         if exist(pyr_file, 'file')
             % simply load it
             uv{i} = load_mat(pyr_file);
@@ -216,7 +234,7 @@ function uv = get_uv_data(cache_dir, level, images, options)
             frames = im2double(imread(images{i}));
             [~, right] = get_frames(frames);
             % - get right pyramid
-            pyr = get_pyramid(right, options);
+            pyr = get_pyramid(right, pyr_type, pyr_depth);
             for l=1:length(pyr)
                 save_mat(pyr{l}, pyr_file);
             end
