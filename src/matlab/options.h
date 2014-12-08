@@ -127,7 +127,7 @@ namespace pm {
     class mxOptions {
     public:
         
-        typedef char* FieldName;
+        typedef const char* FieldName;
         
         mxOptions(const mxArray *arr) : options(arr){
             if(!mxIsStruct(arr) && mxGetNumberOfElements(arr) > 0){
@@ -135,28 +135,28 @@ namespace pm {
             }
         }
         
-        bool has(const FieldName name) const {
+        bool has(FieldName name) const {
             return mxHasField(options, 0, name);
         }
         
         template <typename S = double>
-        S scalar(const FieldName name, S defaultValue) const {
+        S scalar(FieldName name, S defaultValue) const {
             if(const mxArray *field = mxGetField(options, 0, name)){
                 return mxCheckedScalar(field, name);
             }
             return defaultValue;
         }
         
-        int integer(const FieldName name, int defaultValue) const {
+        int integer(FieldName name, int defaultValue) const {
             return scalar<int>(name, defaultValue);
         }
         
-        bool boolean(const FieldName name, bool defaultValue) const {
+        bool boolean(FieldName name, bool defaultValue) const {
             return scalar<bool>(name, defaultValue);
         }
         
         template <typename S = double>
-        std::vector<S> vector(const FieldName name) const {
+        std::vector<S> vector(FieldName name) const {
             std::vector<S> v;
             if(const mxArray *field = mxGetField(options, 0, name)){
                 mxLoadVector<S>(&v, field, name);
@@ -165,7 +165,7 @@ namespace pm {
         }
         
         template <typename S = double>
-        std::vector<S> vector(const FieldName name, S defaultValue, int minSize) const {
+        std::vector<S> vector(FieldName name, S defaultValue, int minSize) const {
             std::vector<S> v = vector<S>(name);
             if(v.size() >= minSize) return v;
             // single element => fill with it
@@ -177,7 +177,7 @@ namespace pm {
             return v;
         }
         
-        Image image(const FieldName name) const {
+        Image image(FieldName name) const {
             Image img;
             if(const mxArray *field = mxGetField(options, 0, name)){
                 img = mxArrayToImage(field, name);

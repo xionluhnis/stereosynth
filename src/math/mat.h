@@ -116,23 +116,13 @@ namespace pm {
 		//! Pointer access
 		template <typename T>
 		inline const T *ptr(int y, int x) const {
-#if SAFE_MAT
-			if(x < 0 || x >= width || y < 0 || y >= height) {
-				std::cout << y << "/" << x << "\n";
-				mexErrMsgIdAndTxt("MATLAB:img:ptr", "Out of image bounds!");
-			}
-#endif
+            assert(x >= 0 && y >= 0 && x < width && y < height && "Pixel pointer out of bounds!");
 			const byte *ref = data.get();
 			return reinterpret_cast<const T*>(ref + y * step[1] + x * step[0]);
 		}
 		template <typename T>
 		inline T *ptr(int y, int x) {
-#if SAFE_MAT
-			if(x < 0 || x >= width || y < 0 || y >= height) {
-				std::cout << y << "/" << x << "\n";
-				mexErrMsgIdAndTxt("MATLAB:img:ptr", "Ref out of image bounds!");
-			}
-#endif
+            assert(x >= 0 && y >= 0 && x < width && y < height && "Pixel pointer out of bounds!");
 			byte *ref = data.get();
 			return reinterpret_cast<T*>(ref + y * step[1] + x * step[0]);
 		}
@@ -140,10 +130,12 @@ namespace pm {
 		//! Element access
 		template <typename T>
 		inline const T &at(int y, int x) const {
+            assert(x >= 0 && y >= 0 && x < width && y < height && "Pixel out of bounds!");
 			return *ptr<T>(y, x);
 		}
 		template <typename T>
 		inline T &at(int y, int x) {
+            assert(x >= 0 && y >= 0 && x < width && y < height && "Pixel out of bounds!");
 			return *ptr<T>(y, x);
 		}
         

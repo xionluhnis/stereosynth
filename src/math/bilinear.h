@@ -17,8 +17,8 @@ namespace pm {
         // simple bilinear interpolation
         // @see http://en.wikipedia.org/wiki/Bilinear_interpolation
         // the pixel on the left
-        int x0 = std::floor(p.x);
-        int y0 = std::floor(p.y);
+        int x0 = std::floor(p.x); int x1 = std::ceil(p.x);
+        int y0 = std::floor(p.y); int y1 = std::ceil(p.y);
         // the ratios for the subpixel location
         // /!\ x - floor(x) => ratio of ceiling sidehe
         S rightRatio	= p.x - x0;
@@ -26,10 +26,10 @@ namespace pm {
         S bottomRatio	= p.y - y0;
         S topRatio		= S(1.0) - bottomRatio;
         // neighboring pixels
-        const T &topLeft		= img.at<T>(y0,		x0	  );
-        const T &bottomLeft		= img.at<T>(y0 + 1,	x0	  );
-        const T &topRight		= img.at<T>(y0,		x0 + 1);
-        const T &bottomRight	= img.at<T>(y0 + 1, x0 + 1);
+        const T &topLeft		= img.at<T>(y0, x0);
+        const T &bottomLeft		= y1 == y0 ? topLeft : img.at<T>(y1, x0);
+        const T &topRight		= x1 == x0 ? topLeft : img.at<T>(y0, x1);
+        const T &bottomRight	= img.at<T>(y1, x1);
         return		topLeft		* leftRatio		* topRatio
                 +	bottomLeft	* leftRatio		* bottomRatio
                 +	topRight	* rightRatio	* topRatio

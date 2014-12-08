@@ -34,6 +34,7 @@ namespace pm {
         static T get(RNG rand, T a, T b);
     };
     
+    /// the real entry point
     template <typename T>
     inline T uniform(RNG rand, T a, T b) {
         return uniform_impl<T, uniform_type<T>::type>::get(rand, a, b);

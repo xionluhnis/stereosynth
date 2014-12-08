@@ -29,21 +29,23 @@ namespace pm {
 		//! Element access
 		template <typename T>
         inline const T & at(int y, int x, int index) const {
+            assert(index >= 0 && index < N && "Image index out of bounds");
             return stack[index].at<T>(y, x);
 		}
 		template <typename T>
         inline T & at(int y, int x, int index) {
+            assert(index >= 0 && index < N && "Image index out of bounds");
             return stack[index].at<T>(y, x);
 		}
         
         //! discrete access
         template <typename T, typename S>
         inline typename std::enable_if<std::is_integral<S>::value, T>::type &at(const IndexedPoint<S> &i) {
-            return at<T>(i.x, i.y, i.index);
+            return at<T>(i.y, i.x, i.index);
         }
         template <typename T, typename S>
         inline const typename std::enable_if<std::is_integral<S>::value, T>::type &at(const IndexedPoint<S> &i) const {
-            return at<T>(i.x, i.y, i.index);
+            return at<T>(i.y, i.x, i.index);
         }
         
         //! continuous access
@@ -61,9 +63,11 @@ namespace pm {
 		}
         
         inline Mat &operator[](size_t i){
+            assert(i >= 0 && i < N && "Image index out of bounds!");
             return stack[i];
         }
         inline const Mat &operator[](size_t i) const {
+            assert(i >= 0 && i < N && "Image index out of bounds!");
             return stack[i];
         }
         inline size_t size() const {

@@ -8,7 +8,7 @@ TEST_WITH_PNG := -g -DDEBUG_STRICT_TEST=1 $(PNG_INCL) -o bin/test_target tests/t
 
 ifeq ($(DEBUG), 1)
 	BASE_FLAGS := -std=c++11 -DUNIX_MODE -DMEXMODE -fPIC -ftls-model=global-dynamic
-	MEX_FLAGS  := -g
+	MEX_FLAGS  := -g -DDEBUG=1
 else
 	OPTI_FLAGS := -O6 -w -s -ffast-math -fomit-frame-pointer -fstrength-reduce -msse2 -funroll-loops -fPIC
 	BASE_FLAGS := -std=c++11 -DNDEBUG -DUNIX_MODE -DMEXMODE -fPIC -ftls-model=global-dynamic
