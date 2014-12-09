@@ -52,8 +52,8 @@ function [knnf, data] = pm_query( query, images, options )
     % compute the gists if not already computed
     N = length(images);
     num_pixels = 0;
+    fprintf('* Loading %d gists ', N); t = tic;
     for i = 1:N
-        fprintf('Loading gist %d of %d\n', i, N);
         img = images{i};
         if ischar(img)
             [~, name, ~] = fileparts(img);
@@ -81,30 +81,45 @@ function [knnf, data] = pm_query( query, images, options )
         end
         G(i, :) = g(:);
     end
+    fprintf('in %f sec.\n', toc(t));
     
     % query gist
     g = imgist(query);
     
-    % choose group size
-    if ~isfield(options, 'target_number')
-        max_mem = get_option(options, 'memory', 50e6); % in bytes
-        avg_pixels = num_pixels / N;
-        avg_mem = 8 * avg_pixels; % 4D image + 4D nnf
-        options.target_number = ceil( max_mem / avg_mem );
+    % group selection
+    if isfield(options, 'group')
+        data.group = options.group;
+        if isfield(options, 'rank')
+            data.rank = options.rank;
+        end
+        if isfield(options, 'perm')
+            data.perm = options.perm;
+        end
+        K = length(data.group);
+    else
+        % choose group size
+        if ~isfield(options, 'target_number')
+            max_mem = get_option(options, 'memory', 50e6); % in bytes
+            avg_pixels = num_pixels / N;
+            avg_mem = 8 * avg_pixels; % 4D image + 4D nnf
+            options.target_number = ceil( max_mem / avg_mem );
+        end
+        min_targets = get_option(options, 'min_targets', 5); % minimum in knnf
+        K = min( N, max(min_targets, options.target_number) );
+
+        % select K best images to compute k-nnf with
+        fprintf('* Selection '); t = tic;
+        group = knnsearch(G, g(:)', 'K', K);
+        fprintf('in %f sec.\n', toc(t));
+
+        % clear that memory
+        clear G; clear g;
+
+        % sort targets to nothave correlation in indices
+        data.perm = randperm(K);
+        data.group = group(data.perm); % permuted order
+        data.rank(data.perm) = 1:K; % reverse permutation
     end
-    min_targets = get_option(options, 'min_targets', 5); % minimum in knnf
-    K = min( N, max(min_targets, options.target_number) );
-    
-    % select K best images to compute k-nnf with
-    group = knnsearch(G, g(:)', 'K', K);
-    
-    % clear that memory
-    clear G; clear g;
-    
-    % sort targets to nothave correlation in indices
-    data.perm = randperm(K);
-    data.group = group(data.perm); % permuted order
-    data.rank(data.perm) = 1:K; % reverse permutation
     
     % load targets
     data.left = cell(K, 1);
@@ -138,7 +153,10 @@ function [knnf, data] = pm_query( query, images, options )
     end
     
     % k-nnf computation from query to best set
-    knnf = ixknnf(query, data.left, [], options);
+    t = tic;
+    start_nnf = get_option(options, 'start_nnf', []);
+    knnf = ixknnf(query, data.left, start_nnf, options);
+    fprintf('* k-NNF computed in %f sec.\n', toc(t));
 end
 
 function res = ends_with(str, pat)

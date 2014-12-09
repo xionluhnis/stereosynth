@@ -27,6 +27,7 @@ for i = 1:length(images)
             continue
         end
         options = params{p};
+        options.precomputed_uv = 'results/web/images/.uv';
         [synth, data] = stereo_synth(query, 'results/web/images', options);
         if ~exist(result_dir, 'dir')
             mkdir(result_dir);

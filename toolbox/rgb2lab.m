@@ -20,8 +20,8 @@ function [ im_lab ] = rgb2lab( im )
     im_lab = applycform(im, cform);
     im_lab = cat(3, ... 
         im_lab(:, :, 1) / 100, ...          % L in [0;100]
-        (80 + im_lab(:, :, 2)) / 160, ...   % a in [-80;+80]
-        (80 + im_lab(:, :, 3)) / 160  ...   % b in [-80;+80]
+        (100 + im_lab(:, :, 2)) / 200, ...   % a in [-80;+80]
+        (100 + im_lab(:, :, 3)) / 200  ...   % b in [-80;+80]
     );
     if is_single
         im_lab = single(im_lab);
