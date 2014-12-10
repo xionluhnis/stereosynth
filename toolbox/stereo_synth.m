@@ -92,7 +92,8 @@ function [result, data] = stereo_synth( query, images, varargin )
     L = length(pyr);
     pyr_result = cell(1, L);
     transfer_type = get_option(options, 'transfer_type', 'patch');
-    for l = 1:L
+    l = 1;
+    while l <= L
         fprintf('-----------------------------------------\n');
         fprintf('--- PM Query at scale %d of %d\n', l, L);
         fprintf('-----------------------------------------\n');
@@ -101,23 +102,49 @@ function [result, data] = stereo_synth( query, images, varargin )
         % /!\ FIXME this only works if the same exemplars are in memory in the
         % upper level. We should constrain it! (or have all exemplars in
         % memory, but that's a bit unreasonable in real life)
-        if l > 1 && get_option(options, 'incremental', 1)
-            prevNNF = data(l-1).knnf;
-            assert(check_all(prevNNF(:, :, 3:4:end) < length(data(l-1).group)), 'Indices were corrupted');
-            [h, w, ~] = size(pyr{l});
-            P = get_option(options, 'patch_size');
-            % TODO use a correct resizing (pad and then unpad) like images
-            % x+y channels
-            newNNF = imresize(prevNNF, [h, w] - P + 1, 'nearest');
-            newNNF(:, :, 1:4:end) = newNNF(:, :, 1:4:end) * 2; % x
-            newNNF(:, :, 2:4:end) = newNNF(:, :, 2:4:end) * 2; % y
-            assert(check_all(newNNF(:, :, 3:4:end) < length(data(l-1).group)), 'Indices got corrupted');
-            options.start_nnf = newNNF;
-            % we must update the distance that has certainly changed
-            options.update_dist = 1;
-            options.perm = data(l-1).perm;
-            options.group = data(l-1).group;
-            options.rank = data(l-1).rank;
+        if get_option(options, 'incremental', 1)
+            if l > 1
+                prevNNF = data(l-1).knnf;
+                assert(check_all(prevNNF(:, :, 3:4:end) < length(data(l-1).group)), 'Indices were corrupted');
+                [h, w, ~] = size(pyr{l});
+                P = get_option(options, 'patch_size');
+                % TODO use a correct resizing (pad and then unpad) like images
+                % x+y channels
+                newNNF = imresize(prevNNF, [h, w] - P + 1, 'nearest');
+                newNNF(:, :, 1:4:end) = newNNF(:, :, 1:4:end) * 2; % x
+                newNNF(:, :, 2:4:end) = newNNF(:, :, 2:4:end) * 2; % y
+                assert(check_all(newNNF(:, :, 3:4:end) < length(data(l-1).group)), 'Indices got corrupted');
+                assert(check_all(newNNF(:, :, 4:4:end) >= 0), 'Distances got corrupted');
+                if l == L
+                    % TODO compact group at last level by keeping only indices
+                     %      that have found a good value in the last level
+                    past_groups = unique_set(data(l-1).knnf(:, :, 3:4:end));
+                    if length(past_groups) < length(options.group)
+                        fprintf('* Keeping %d images of %d\n', length(past_groups), length(options.group));
+                        % remap group and NNF indices
+                        idx_map(past_groups+1) = (1:length(past_groups))-1; % for C++ 0-based indexing
+                        newNNF(:, :, 3:4:end) = bsxfun(@(x, z)idx_map(x+1), newNNF(:, :, 3:4:end), 0);
+                        options.group = options.group(past_groups+1);
+                    end
+                else
+                    options.perm = data(l-1).perm;
+                    options.group = data(l-1).group;
+                    options.rank = data(l-1).rank;
+                end
+                options.start_nnf = newNNF;
+                % we must update the distance that has certainly changed
+                options.update_dist = 1;
+            else
+                % let's get the group from the top level since we want that
+                % level
+                pyr_images = get_pyr_images(cache_dir, L, images, pyr_type);
+                options.gist_dir = fullfile(cache_dir, 'gist', num2str(L));
+                group = pm_select(pyr{L}, pyr_images, options);
+                options.group = group;
+            end
+        elseif strcmp(pyr_type, 'gaussian')
+            l = L; % no need to do the preliminary levels here
+            fprintf('* Jump to last level\n');
         end
         
         %% 2 = query with PM
@@ -164,7 +191,7 @@ function [result, data] = stereo_synth( query, images, varargin )
                 end
                 assert(all(size(uvs{1}) == size(left{1})), 'UV map has invalid size');
                 uv = ixvote(left, uvs, nnf, options);
-                right = warpFLColor(left, left, -uv(:, :, 1), -uv(:, :, 2)); % direction?
+                right = warpFLColor(left, left, uv(:, :, 1), uv(:, :, 2)); % direction?
                 pyr_data.uv = uv;
             otherwise
                 error('Unsupported transfer type: %s', transfer_type);
@@ -174,6 +201,9 @@ function [result, data] = stereo_synth( query, images, varargin )
         pyr_result{l} = right;
         pyr_data.result = right;
         data(l) = pyr_data;
+        
+        % next level
+        l = l + 1;
     end
     
     % collapse pyramid
@@ -290,7 +320,7 @@ function uv = get_uv_data(cache_dir, level, images, pyr_type, pyr_depth)
                 left = load_mat(left_file);
                 right = pyr{l};
                 % compute uv map
-                flow = estimate_flow_interface(left, right);
+                flow = estimate_flow_interface(right, left);
                 pyr{l} = single(flow); % we replace the pyramid with the flow
                 save_mat(pyr{l}, pyr_file);
             end
@@ -328,4 +358,8 @@ function uv = fast_uv_data(cache_dir, level, images, precomp_dir)
         end
     end
     fprintf('* Flows retrieved in %f sec.\n', toc(t));
+end
+
+function s = unique_set(x)
+    s = unique(x(:));
 end
