@@ -24,7 +24,7 @@ function [ ] = cache_flow( basedir )
         end
         frames = single(im2double(imread(fname)));
         [left, right] = get_frames(frames);
-        uv = estimate_flow_interface(left, right);
+        uv = estimate_flow_interface(right, left);
         % save flow and a representative image
         save_mat(uv_file, 'uv');
         imwrite(flowToColor(uv), fullfile(uv_dir, [name '.png']));
