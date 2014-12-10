@@ -76,7 +76,9 @@ namespace pm {
             return rand;
         }
         inline const TargetPatch &patch(const Point2i &i, int k) const {
-            return data.at(i)[k].patch;
+            const PatchData (& p)[K] = data.at(i);
+            assert(p[k].patch.index < targets.size() && "Patch out of image index bounds");
+            return p[k].patch;
         }
         inline const float &distance(const Point2i &i, int k) const {
             // provide the worst distance of all (top)
@@ -130,10 +132,10 @@ namespace pm {
                 for(const Point2i &i : *this){
 					PatchData (&p)[K] = data.at(i);
 					for (int k = 0; k < K; ++k){
-						p[k].patch.x = m.read<float>(i.y, i.x, 3 * k + 0);
-						p[k].patch.y = m.read<float>(i.y, i.x, 3 * k + 1);
-						p[k].patch.z = m.read<float>(i.y, i.x, 3 * k + 2);
-						p[k].distance = m.read<float>(i.y, i.x, 3 * k + 3);
+						p[k].patch.x = m.read<float>(i.y, i.x, 4 * k + 0);
+						p[k].patch.y = m.read<float>(i.y, i.x, 4 * k + 1);
+						p[k].patch.z = m.read<float>(i.y, i.x, 4 * k + 2);
+						p[k].distance = m.read<float>(i.y, i.x, 4 * k + 3);
 					}
                 }
             } else {
@@ -150,6 +152,7 @@ namespace pm {
             for(const Point2i &i : *this){
                 PatchData (&p)[K] = data.at(i);
                 for (int k = 0; k < K; ++k){
+                    assert(p[k].patch.index >= 0 && p[k].patch.index < targets.size() && "Update with patch out of image set bounds");
                     p[k].distance = dist(i, p[k].patch);
                 }
                 // reorder heap
@@ -163,10 +166,10 @@ namespace pm {
             for(const Point2i &i : *this){
                 const PatchData (&p)[K] = data.at(i);
 				for(int k = 0; k < K; ++k){
-					m.update(i.y, i.x, 3 * k + 0, float(p[k].patch.x));
-					m.update(i.y, i.x, 3 * k + 1, float(p[k].patch.y));
-                    m.update(i.y, i.x, 3 * k + 2, float(p[k].patch.z));
-					m.update(i.y, i.x, 3 * k + 3, p[k].distance);
+					m.update(i.y, i.x, 4 * k + 0, float(p[k].patch.x));
+					m.update(i.y, i.x, 4 * k + 1, float(p[k].patch.y));
+                    m.update(i.y, i.x, 4 * k + 2, float(p[k].patch.z));
+					m.update(i.y, i.x, 4 * k + 3, p[k].distance);
 				}
             }
             return d;

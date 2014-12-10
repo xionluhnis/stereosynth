@@ -40,7 +40,7 @@ namespace pm {
             Point2f q(0, 0);
             for(int j = 0; j < N; ++j){
                 int k = uniform<int>(nnf->rng(), 0, K-1);
-                const Point2i &n = sampleNeighbor(nnf->frameSize(), nnf->rng(), i, radius);
+                const Point2i n = sampleNeighbor(nnf->frameSize(), nnf->rng(), i, radius);
                 q = q + Point2f(nnf->patch(n, k));
             }
             point p(q * (1.0f / N));
@@ -65,7 +65,7 @@ namespace pm {
         uint operator()(const Point2i &i, bool rev) {
             Point2f q(0, 0);
             for(int j = 0; j < N; ++j){
-                const Point2i &n = sampleNeighbor(nnf->frameSize(), nnf->rng(), i, radius);
+                const Point2i n = sampleNeighbor(nnf->frameSize(), nnf->rng(), i, radius);
                 q = q + Point2f(nnf->patch(n));
             }
             point p(q * (1.0f / N));

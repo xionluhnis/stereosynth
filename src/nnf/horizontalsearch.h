@@ -39,7 +39,7 @@ namespace pm {
         uint operator()(const Point2i &i, bool){
             
             // maximum
-            const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
+            const FrameSize target = nnf->targetSize().shrink(TargetPatch::width());
             
             // uniformly sample a position for the new patch
             point q(uniform<S>(nnf->rng(), 0, target.width), i.y);
@@ -64,7 +64,7 @@ namespace pm {
         uint operator()(const Point2i &i, bool){
             
             // maximum
-            const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
+            const FrameSize target = nnf->targetSize().shrink(TargetPatch::width());
             
             // uniformly sample a position for the new patch
             uint success = 0;

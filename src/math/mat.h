@@ -117,12 +117,14 @@ namespace pm {
 		template <typename T>
 		inline const T *ptr(int y, int x) const {
             assert(x >= 0 && y >= 0 && x < width && y < height && "Pixel pointer out of bounds!");
+            assert((sizeof(T) % elemSize() == 0 || elemSize() % sizeof(T) == 0) && "Pointer to data overlapping multiple elements, but misaligned!");
 			const byte *ref = data.get();
 			return reinterpret_cast<const T*>(ref + y * step[1] + x * step[0]);
 		}
 		template <typename T>
 		inline T *ptr(int y, int x) {
             assert(x >= 0 && y >= 0 && x < width && y < height && "Pixel pointer out of bounds!");
+            assert((sizeof(T) % elemSize() == 0 || elemSize() % sizeof(T) == 0) && "Pointer to data overlapping multiple elements, but misaligned!");
 			byte *ref = data.get();
 			return reinterpret_cast<T*>(ref + y * step[1] + x * step[0]);
 		}

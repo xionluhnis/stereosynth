@@ -39,10 +39,10 @@ namespace pm {
         uint operator()(const Point2i &i, bool){
             
             // maximum
-            const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
+            const FrameSize target = nnf->targetSize().shrink(TargetPatch::width());
             
             // uniformly sample a position for the new patch
-            const point &q = uniform(
+            const point q = uniform(
                 nnf->rng(),
                 vec(0, 0),
                 vec(target.width, target.height)
@@ -68,12 +68,12 @@ namespace pm {
         uint operator()(const Point2i &i, bool){
             
             // maximum
-            const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
+            const FrameSize target = nnf->targetSize().shrink(TargetPatch::width());
             
             // uniformly sample a position for the new patch
             uint success = 0;
             for(int k = 0; k < K; ++k){
-                const point &q = uniform(
+                const point q = uniform(
                     nnf->rng(),
                     vec(0, 0),
                     vec(target.width, target.height)
@@ -108,9 +108,9 @@ namespace pm {
                 int idx = uniform<int>(nnf->rng(), 0, nnf->targetCount() - 1);
                 assert(idx < nnf->targetCount() && "Invalid target index");
                 // frame bounds
-                const FrameSize &target = nnf->targetSize(idx).shrink(TargetPatch::width());
+                const FrameSize target = nnf->targetSize(idx).shrink(TargetPatch::width());
                 // uniformly sample a position within that target image
-                const base &q = uniform(
+                const base q = uniform(
                     nnf->rng(),
                     vec2(0, 0), // not vec3 !
                     vec2(target.width, target.height)

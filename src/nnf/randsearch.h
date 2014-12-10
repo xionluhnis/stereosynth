@@ -41,11 +41,11 @@ namespace pm {
             const TargetPatch &p = nnf->patch(i);
             
             // search bounds
-            const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
+            const FrameSize target = nnf->targetSize().shrink(TargetPatch::width());
             bounds b = bounds(vec(0, 0), vec(target.width, target.height)) & bounds(p, search->radius);
             
             // uniformly sample a position for the new patch
-            const point &q = uniform(nnf->rng(), b.min, b.max);
+            const point q = uniform(nnf->rng(), b.min, b.max);
             return tryPatch<TargetPatch, DistValue>(nnf, i, TargetPatch(q));
         }
 
@@ -75,14 +75,14 @@ namespace pm {
             }
             
             // bounds
-            const FrameSize &target = nnf->targetSize().shrink(TargetPatch::width());
+            const FrameSize target = nnf->targetSize().shrink(TargetPatch::width());
             bounds frame(vec(0, 0), vec(target.width, target.height));
             
             // sample in window defined by the current patch and the given radius
             uint success = 0;
             for(int k = 0; k < K; ++k){
                 bounds b = frame & bounds(p[k], search->radius);
-                const point &q = uniform(nnf->rng(), b.min, b.max);
+                const point q = uniform(nnf->rng(), b.min, b.max);
                 success += kTryPatch<K, TargetPatch, DistValue>(nnf, i, TargetPatch(q));
             }
             return success;
