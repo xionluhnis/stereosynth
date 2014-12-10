@@ -12,14 +12,14 @@
 #include "iterator2d.h"
 #include "point.h"
 
-#include <boost/shared_ptr.hpp>
+#include <boost/shared_array.hpp>
 
 namespace pm {
 	
 	/**
 	 * Matrix data pointer
 	 */
-	typedef boost::shared_ptr<byte> DataPtr;
+	typedef boost::shared_array<byte> DataPtr;
 	
 #ifndef SAFE_MAT
 #define SAFE_MAT 0

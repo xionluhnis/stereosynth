@@ -16,7 +16,6 @@ function [result, data] = stereo_synth( query, images, varargin )
     options.iterations = 6;
     options.transfer_type = 'patch'; % or 'diff' or 'disparity'
     options.vote_filter = fspecial('gaussian', [7, 7], 1);
-    options.upscale_nnf = 0; % whether to build upper levels on bottom ones
     if length(varargin) == 1
         user_opt = varargin{1};
         assert(isstruct(user_opt), 'Single argument must be an option struct!');
@@ -102,7 +101,7 @@ function [result, data] = stereo_synth( query, images, varargin )
         % /!\ FIXME this only works if the same exemplars are in memory in the
         % upper level. We should constrain it! (or have all exemplars in
         % memory, but that's a bit unreasonable in real life)
-        if l > 1 && get_option(options, 'upscale_nnf')
+        if l > 1 && get_option(options, 'incremental', 1)
             prevNNF = data(l-1).knnf;
             assert(check_all(prevNNF(:, :, 3:4:end) < length(data(l-1).group)), 'Indices were corrupted');
             [h, w, ~] = size(pyr{l});
