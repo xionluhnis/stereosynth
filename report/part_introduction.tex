@@ -29,15 +29,15 @@ It has been used in several fields outside of simple image synthesis \cite{Wei09
 One particular domain where synthesis has brought interesting applications is that of texture / style transfer~\cite{Efros01, Hertzmann01}. By using constrained texture synthesis, one can take a reference image mapping and apply it to a new image to produce an \emph{image analogy} (see Figure~\ref{fig:analogies}). This can be used to recover data from incomplete images such as transforming grayscale images into color images (see Figure~\ref{fig:colorize}).
 
 \begin{figure}[ht]
-	\center
+	\centering
 	\includegraphics[width=0.45\textwidth]{figures/analogies}
 	\caption{Example of image analogy: on the left is the example pair, the top right image is the input, the bottom right one is the analogy output, that transfers the style from the left pair to the image input.}
 	\label{fig:analogies}
 \end{figure}
 
 \begin{figure}[ht]
-	\center
-	\includegraphics[width=0.45\textwidth]{figures/colorization}
+	\centering
+	\includegraphics[width=0.48\textwidth]{figures/colorization}
 	\caption{Data recovery with image analogy: given a gray-to-color mapping (on the left), a new grayscale input is colorized (on the right). Copying directly the patches produces a blurry result (middle) whereas copying the difference of the left mapping on top of the grayscale patch produces a sharp result (bottom right).}
 	\label{fig:colorize}
 \end{figure}

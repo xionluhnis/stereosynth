@@ -1,8 +1,8 @@
 
 \section{Implementation}
 
-We provide details about the nearest neighbor computation with Patch Match~\cite{Barnes09} and its multiple exemplar version Patch Web~\cite{Barnes11}.
-Finally, we mention details about the different transfer strategies and especially how we got the frame disparity.
+We provide details about the nearest neighbor computation with Patch Match~\cite{Barnes09} and its multiple exemplar version, borrowing ideas from Patch Web~\cite{Barnes11}. We present our patch selection using GIST.
+Finally, we mention details about the different transfer strategies and discuss the frame disparity computation.
 
 Along this section, we assume that the input frame $L'$ is the left frame and we find a k-NNF from its patches to patches within the left images $L$ of our database.
 The database also contains the corresponding right frames $R$ and our goal is to eventually synthesize $R'$ from $L'$.

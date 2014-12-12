@@ -3,27 +3,22 @@
 \label{sec:transfer}
 Armed with an effective multiple exemplar $k$-NNF computation, there remains to transfer the stereoscopic information and synthesize our right frame.
 
-\paragraph{Patch and difference transfer:} in these cases, we try two versions:
-\begin{itemize}
-	\item a weighted average of the $N^2$ overlapping pixels of the top layer of the $k$-NNF
-	\item a weighted average of the $kN^2$ overlapping pixels
-\end{itemize}
-We use a Gaussian mask with $N=7$, $\sigma=1$ to avoid excessive blurring.
+\paragraph{Patch and difference transfer:} we first reduce the $k$-NNF into a single best-layer NNF, and we then use a simple voting strategy with a $7\times 7$ Gaussian mask ($\sigma=1$) for the weight of each overlapping patch so as to reduce blurring.
 
-\paragraph{Disparity transfer:} we transfer it by simply warping our left image $L'$ according to the disparity between $L$ and $R$ computed from the $k$-NNF.
+\paragraph{Disparity transfer:} we transfer it by simply warping our left image $L'$ according to the disparity between $L$ and $R$..
 
 To compute the disparity of each database pair, we used Classic-NL~\cite{Deqing10} for which a fast and simple Matlab/C++ implementation exists.
-We also tried to implement our own disparity computation using Patch Match and it turned out to be have a higher resolution (with unwanted extra noise).
+We also tried to implement our own disparity computation using Patch Match and it turned out to have a higher resolution. However some results were too noisy to be useful.
 
-\paragraph{Disparity computation with Patch Match} several Patch Match-based methods have appeared in the Middlebury evaluations~\cite{Scharstein02}, with a generally faster runtime and good error evaluations~\cite{Bleyer11, Heise13, Jiangbo13, Besse14}.
+\paragraph{Disparity computation with Patch Match} several Patch Match-based methods have appeared in the Middlebury evaluations~\cite{Scharstein02}, with a generally fast runtime and good error evaluations~\cite{Bleyer11, Heise13, Jiangbo13, Besse14}.
 Extending our Patch Match implementation to compute disparity is simple, we simply modified our set of candidate proposals with:
 \begin{itemize}
 	\item \emph{Uniform Horizontal Sampling}: uniform sampling with a horizontal constraint
 	\item \emph{Random Horizontal Sampling}: random sampling with a decreasing window, and a horizontal constraint
-	\item \emph{Propagation}: as usual (we allow vertical deviation by a few pixels)
+	\item \emph{Propagation}: as usual (we allow vertical deviation by only a few pixels)
 	\item \emph{Random Propagation}: propagates the disparity from a uniformly sampled patch
 	\item \emph{Local Mean}: uses the weighted average of samples around the current patch (considering only the one-ring neighborhood gives the best results)
 \end{itemize}
 
-Furthermore, we vote the disparity by constraining the maximum motion to the 97.5 percentile of disparities within the resulting image (to remove spurrious noise).
-While such method is not as smooth and doesn't compare to state-of-the-art disparity computations, it produces higher resolution disparity maps than Classic-NL, for a much faster runtime than the current state-of-the-art methods (only a few tens of seconds for 4M pixel images using a $k$-NNF with $k=7$).
+Furthermore, we vote the disparity by constraining the maximum motion to the 97.5 percentile of disparities within the resulting image (to remove spurious noise).
+While such method is not as smooth and doesn't compare to state-of-the-art disparity computations, it produces higher resolution disparity maps than Classic-NL, for an acceptable running time (only a few tens of seconds for mega-pixel images using a $k$-NNF with $k=7$).

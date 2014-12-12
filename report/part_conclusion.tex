@@ -19,7 +19,9 @@ The nicer solution is to work with the half-way domain of~\cite{} which nicely i
 The implementation might be harder than it seems since occluded areas have different sampling rates in this half-way domain, but it is worth trying in the future.
 
 \paragraph{Convergence} is still an issue and while patch propagation is the most effective patch update with uniform search, the most logical search strategy is that of binning which selects patches whose features are close to that of the considered patches, i.e. naturally good patches with low distances.
-We mentioned that this is a complicated part to implement for memory reasons, but using the WHT bases might be the solution to memory implementation, similarly to what \cite{He12} have done instead of using PCA.
+We mentioned that this is a complicated part to implement for memory reasons.
+While the usual dimension reduction involves PCA, recent alternatives~\cite{He12} use Walsh-Hadamard Transform bases~\cite{Hel05} to produce the subspace much more efficiently.
+We could then compute the subspace in a round-robin manner, keeping only the subspace of one image at a time, or sections of the subspace, etc.
 
 Finally, we conclude...
 \TODO{Really conclude, in fact.}

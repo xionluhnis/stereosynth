@@ -22,32 +22,31 @@ Having a candidate patch in our database (with its corresponding right/left fram
 
 \begin{figure*}[ht!]
 	\centering
-	\begin{subfigure}[t]{0.29\textwidth}
+	\begin{subfigure}[b]{0.29\textwidth}
 	\centering
 		\includegraphics[height=3.6cm]{figures/transfers-A}
 		\\
-		$L' \to R'=R$
-		\caption{Transferring the whole patch: requires a large database with the same image style.}
-	\end{subfigure}\hfill
-	\begin{subfigure}[t]{0.29\textwidth}
+		$L' \to R'=R\phantom{)}$
+		\caption{Transferring the whole patch}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.29\textwidth}
 	\centering
 		\includegraphics[height=3.6cm]{figures/transfers-B}
 		\\
 		$L' \to R'=L'+(R-L)$
-		\caption{Transferring the patch difference: reduces dependency on the exact patch style.}
-	\end{subfigure}\hfill
-	\begin{subfigure}[t]{0.4\textwidth}
+		\caption{Transferring the patch difference}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.4\textwidth}
 	\centering
 		\includegraphics[height=3.6cm]{figures/transfers-C}
 		\\
 		$L' \to R'=\textrm{warp}_{L\to R}(L')$
-		\caption{Transferring the disparity: could suffer from occlusions where warping is ill-defined.}
+		\caption{Transferring the disparity}
 	\end{subfigure}
 	\caption{Three strategies for stereoscopic data transfer: we synthesize $R'$ from $L'$ given a corresponding mapping $L\to R$}
 	\label{fig:transfers}
 \end{figure*}
 
 \subsection{Pyramidal processing}
-Since different objects and features appear at different scales, we apply the aforementioned selection and transfer both at multiple scales and independently (having found a patch at a given scale doesn't constrain the patch at the other scales).
-The pyramid representation is a key component for texture transfer to work.
+Since different objects and features appear at different scales, we apply the aforementioned selection and transfer on a scale pyramid, in a coarse to fine manner.
 

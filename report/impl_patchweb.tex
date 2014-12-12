@@ -2,47 +2,18 @@
 \subsection{Patch Web}
 Extending the algorithm to multiple exemplars can seem straightforward: patches now also contain new variable index which represents the exemplar they come from.
 However, in practice, dealing with multiple images (and potentially many of them) involves dealing with caching and distributing the computation wisely.
-
-\subsubsection{Additional sampling strategies}
-To improve performance, the original algorithm~\cite{Barnes11} makes use of three additional sampling strategies:
-
-\paragraph{Uniform sampling} searches over all patches of all exemplars (this is very similar to random search, with a new exemplar dimension to search through).
-
-\paragraph{Enrichment} finds new candidates by looking at what patches we are mapped to, are mapped to (forward enrichment $f$) or to use the reverse mapping (backward enrichment $f^{-1}$) similarly.
-Variants consider multiple hops such as $f^2$, $f^3$, $\dots$ or $f^{-2}$, etc.
-
-Given a $k$-NNF, one can use enrichment with the $k$ candidates or a subset, leading to many potential variants.
-
-\paragraph{Binning} divides the patches into bins similarly as with a histogram, and samples patches from the bin corresponding to the patch we sample for.
-To bin patches, usually a lower-dimension space is used ($N\times N$ patches with $C$ channels have $CN^2$ dimensions) by computing PCA.
-
-Recent alternatives~\cite{He12} use Walsh-Hadamard Transform bases~\cite{Hel05} instead of PCA.
+To improve performance, the original multi-exemplar Patch Match (named Patch Web~\cite{Barnes11}) makes use of three additional sampling strategies:
+\textbf{uniform sampling} that searches over all patches of all exemplars in memory,
+\textbf{enrichment} that finds new candidates by looking at the mapping of the patches we are mapped to (or similarily following the reverse mapping, for a specific amount of hops), as well as
+\textbf{binning} that literally divides patches into bins in a lower dimensional space to then randomly sample from similar patches.
 
 Our implementation contains all the aforementioned candidate lookups but binning because of the high memory requirement that makes it harder to implement wisely (other strategies require basically no additional memory storage).
-Note that WHT is a better candidate than PCA because it can be computed with much fewer operations (and thus a cache-friendly strategy using it can be envisioned).
 
-\subsubsection{Computing the web}
-The general idea is to computer the $k$-NNF from one image in the web to a group of other images and repeat until the web is good enough.
-In an ideal world, all images could be loaded at the same time, but given the context of large high resolution images we target, this is not possible.
-Instead, we must iteratively do in parallel (for different instances $i$):
-\begin{enumerate}
-	\item Compute the $k$-NNF from $A_i$ to a subset $\mathbf{A}_i$
-	\[ 
-		\mathbf{A}_i \subset \bigcup_{j\neq i}{A_j}
-	\]
-	\item Potentially merge the resulting $k$-NNF with other parallel $k$-NNFs (use minimum distance mappings)
-	\item Store/load data on/from disk
-	\item Have data caching to compute distances to patches which are not in our current image set\footnote{Otherwise, one must constrain the individual NNFs to always have patches from images in their current lookup set $\mathbf{A}_i$ which is a strong restriction}
-\end{enumerate}
+\subsection{Selecting Images}
+While Patch Web provides an attractive image graph framework, it is complicated to implement because of caching: we cannot keep all the images in memory at the same time, and the $k$-NNF may be referring to a large subset of them.
 
-\paragraph{Image Subset} we have to eventually process each image once, and to maximize mixing, we start by grouping patches into similar batches, which we compute using GIST features.
-Given an image $A_i$ and a budget of $M$ images, for a heterogeneous dataset (not successive similar images), we group $A_i$ with images that have similar GIST descriptors.
-We keep a table of the groups and don't process a same group twice since the distance can only get smaller over time.
-
-\paragraph{Convergence} is determined by looking at the number of effective updates done within a $k$-NNF computation.
-If no better patch is found for $A_i$, we can short-circuit its scanline processing and go on with other groups.
-
-For a given image, we declare that its $k$-NNF has converged if its best layer (out of the $k$) has distances below some threshold, or a fixed number of iterations has been reached.
-The whole algorithm has converged when each individual $k$-NNF has converged.
-
-Since everything is saved to disk, the process can be stopped and resumed later.
+Instead of creating the image graph, we select a subset of images to work with by using GIST features \cite{Torralba08b}.
+We compute these features for each image at its highest scale and cache them.
+Given a new query, we find the $K$ nearest images in GIST feature space using a $kd$-tree.
+We choose $M$ to be as large as we can fit images in our memory for the lower scale of the pyramid.
+Finally, we reduce the set of images by removing images that don't get involved during the successive iterations of patch selection.
