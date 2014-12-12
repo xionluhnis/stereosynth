@@ -6,16 +6,10 @@ We simply present the ideas here and implementation details are provided in the 
 
 The general steps are:
 \begin{enumerate}
-	\item Select patches in stereo database that match our monocular image patches
-	\item Transfer the corresponding stereoscopic data to synthesize the output frame from our input frame
-	\item Process it on a scale pyramid to work at different levels of detail
+	\item \textbf{Select} patches in stereo database that match our monocular image patches
+	\item \textbf{Transfer} the corresponding stereoscopic data to synthesize the output frame from our input frame
+	\item On a \textbf{scale pyramid} to work at different levels of detail
 \end{enumerate}
-
-\begin{figure}
-	\centering
-	\TODO{have a nice $L \to R, L' \to R'$ figure here.}
-	\caption{Stereo analogy principle: (i) we compute the Nearest patches in our database, (ii) we transfer stereoscopic data, (iii) and do it at multiple levels of detail}
-\end{figure}
 
 \subsection{Selecting patches}
 The selection of pixels or patches from the database corresponds to finding the Nearest Neighbor Field (NNF) between the patches of our new image and those of our database.
