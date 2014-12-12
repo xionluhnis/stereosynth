@@ -1,5 +1,5 @@
 
-\section{Framework}
+\section{Our Approach}
 
 The general idea is to apply image analogies using stereoscopic data to generate new stereoscopic data.
 We simply present the ideas here and implementation details are provided in the following section.
@@ -8,7 +8,7 @@ The general steps are:
 \begin{enumerate}
 	\item Select patches in stereo database that match our monocular image patches
 	\item Transfer the corresponding stereoscopic data to synthesize the output frame from our input frame
-	\item Process it on a scale pyramid to work at different level of details
+	\item Process it on a scale pyramid to work at different levels of detail
 \end{enumerate}
 
 \begin{figure}
@@ -28,22 +28,28 @@ Having a candidate patch in our database (with its corresponding right/left fram
 
 \begin{figure*}[ht!]
 	\centering
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}[t]{0.29\textwidth}
 	\centering
+		\includegraphics[height=3.6cm]{figures/transfers-A}
+		\\
 		$L' \to R'=R$
-		\caption{Transferring the whole patch: can only work in the case of a sufficiently large database that would contain the style of our input with a valid disparity.}
+		\caption{Transferring the whole patch: requires a large database with the same image style.}
 	\end{subfigure}\hfill
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}[t]{0.29\textwidth}
 	\centering
+		\includegraphics[height=3.6cm]{figures/transfers-B}
+		\\
 		$L' \to R'=L'+(R-L)$
-		\caption{Transferring the patch difference: reduces dependency on the exact patch style (similarly, one could reconstruct the patch from the gradient information).}
+		\caption{Transferring the patch difference: reduces dependency on the exact patch style.}
 	\end{subfigure}\hfill
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}[t]{0.4\textwidth}
 	\centering
+		\includegraphics[height=3.6cm]{figures/transfers-C}
+		\\
 		$L' \to R'=\textrm{warp}_{L\to R}(L')$
 		\caption{Transferring the disparity: could suffer from occlusions where warping is ill-defined.}
 	\end{subfigure}
-	\caption{Three tentative strategies for stereoscopic data transfer}
+	\caption{Three strategies for stereoscopic data transfer: we synthesize $R'$ from $L'$ given a corresponding mapping $L\to R$}
 	\label{fig:transfers}
 \end{figure*}
 

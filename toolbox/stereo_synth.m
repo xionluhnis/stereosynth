@@ -189,8 +189,8 @@ function [result, data] = stereo_synth( query, images, varargin )
                 else
                     uvs = get_uv_data(cache_dir, l, images(pyr_data.group), pyr_type, pyr_depth);
                 end
-                assert(all(size(uvs{1}) == size(left{1})), 'UV map has invalid size');
-                uv = ixvote(left, uvs, nnf, options);
+                assert(all(size(uvs{1}(:, :, 1)) == size(pyr_data.right{1}(:, :, 1))), 'UV map has invalid size');
+                uv = ixvote(left(:, :, 1:2), uvs, nnf, options);
                 right = warpFLColor(left, left, uv(:, :, 1), uv(:, :, 2)); % direction?
                 pyr_data.uv = uv;
             otherwise
@@ -322,6 +322,7 @@ function uv = get_uv_data(cache_dir, level, images, pyr_type, pyr_depth)
                 % compute uv map
                 flow = estimate_flow_interface(right, left);
                 pyr{l} = single(flow); % we replace the pyramid with the flow
+                pyr_file = get_pyr_file(uv_cache, l, name, 'gaussian');
                 save_mat(pyr{l}, pyr_file);
             end
             % finally we have the right pyramid slice
@@ -336,7 +337,7 @@ function uv = fast_uv_data(cache_dir, level, images, precomp_dir)
     uv = cell(1, N);
     uv_cache = fullfile(cache_dir, 'uv');
     fprintf('* Retrieving precomputed flow fields\n'); t = tic;
-    parfor i = 1:N
+    for i = 1:N
         [~, name, ~] = fileparts(images{i});
         pyr_file = get_pyr_file(uv_cache, level, name, 'gaussian');
         if exist(pyr_file, 'file')
@@ -350,7 +351,8 @@ function uv = fast_uv_data(cache_dir, level, images, precomp_dir)
             for l=1:length(pyr)
                 depth = length(pyr) - l;
                 factor = 2^depth;
-                pyr{l} = single(flow / factor);
+                pyr{l} = single(pyr{l} / factor);
+                pyr_file = get_pyr_file(uv_cache, l, name, 'gaussian');
                 save_mat(pyr{l}, pyr_file);
             end
             % finally we have the right pyramid slice

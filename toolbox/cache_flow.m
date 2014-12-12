@@ -14,6 +14,7 @@ function [ ] = cache_flow( basedir )
     end
     
     gcp;
+    t = tic;
     N = length(images);
     parfor i = 1:N
         fname = images{i};
@@ -26,9 +27,10 @@ function [ ] = cache_flow( basedir )
         [left, right] = get_frames(frames);
         uv = estimate_flow_interface(right, left);
         % save flow and a representative image
-        save_mat(uv_file, 'uv');
+        save_mat(uv, uv_file);
         imwrite(flowToColor(uv), fullfile(uv_dir, [name '.png']));
     end
+    fprintf('Cached flow in %f sec.\n', toc(t));
     
     rmpath(flow_dir, genpath(util_dir));
 end
@@ -38,8 +40,4 @@ function [left, right] = get_frames(img)
     h1 = ceil(size(img, 1) * 0.5);
     left = img(1:h0, :, :);
     right = img(h1+1:end, :, :);
-end
-
-function [] = save_mat(fname, uv)
-    save(fname, uv);
 end

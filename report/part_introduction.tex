@@ -26,19 +26,26 @@ From Pixel-based~\cite{Efros99, Wei00, Tong02} and Patch-based~\cite{Praun00, Ef
 It has been used in several fields outside of simple image synthesis \cite{Wei09} such as video textures \cite{Schodl00, Schodl02, Agarwala05} and spatio-temporal video texture synthesis \cite{Kwatra03, Wexler07}.
 
 \paragraph{Image Analogies}
-One particular domain where synthesis has brought interesting applications is that of texture / style transfer~\cite{Efros01, Hertzmann01}. By using constrained texture synthesis, one can take a reference image mapping and apply it to a new image to produce an \emph{image analogy}. 
+One particular domain where synthesis has brought interesting applications is that of texture / style transfer~\cite{Efros01, Hertzmann01}. By using constrained texture synthesis, one can take a reference image mapping and apply it to a new image to produce an \emph{image analogy} (see Figure~\ref{fig:analogies}). This can be used to recover data from incomplete images such as transforming grayscale images into color images (see Figure~\ref{fig:colorize}).
 
 \begin{figure}[ht]
 	\center
 	\includegraphics[width=0.45\textwidth]{figures/analogies}
-	\caption{Example of image analogy: on the left is the example pair, the top right image is the input, the bottom right one is the analogy output, that transfer the style from the left pair to the image input.}
+	\caption{Example of image analogy: on the left is the example pair, the top right image is the input, the bottom right one is the analogy output, that transfers the style from the left pair to the image input.}
+	\label{fig:analogies}
+\end{figure}
+
+\begin{figure}[ht]
+	\center
+	\includegraphics[width=0.45\textwidth]{figures/colorization}
+	\caption{Data recovery with image analogy: given a gray-to-color mapping (on the left), a new grayscale input is colorized (on the right). Copying directly the patches produces a blurry result (middle) whereas copying the difference of the left mapping on top of the grayscale patch produces a sharp result (bottom right).}
+	\label{fig:colorize}
 \end{figure}
 
 \paragraph{Image Querying}
-The increasing amount of available images has brought new algorithms for querying and processing it such as GIST and bag-of-features~\cite{Oliva01, Torralba08, Douze09}.
+The increasing amount of available images has brought new algorithms for querying and processing it such as GIST and bag-of-features~\cite{Oliva01, Torralba08, Douze09}, leading to better scene detection and completion \cite{Hays07}.
 Likewise, synthesis algorithms have led to new patch querying data structures (locality sensitive hashing~\cite{Gionis99}, coherency sensitive hashing~\cite{Korman11} and propagation-assisted kd-trees~\cite{He12}) and algorithms such as Patch Match~\cite{Barnes09}.
-We build upon a distributed multi-exemplar of the last one called PatchWeb~\cite{Barnes11}.
-Such databases have been used for scene detection and completion \cite{Hays07}.
+We build upon the ideas of a distributed multi-exemplar variant called PatchWeb~\cite{Barnes11}.
 
 \paragraph{Synthesizing Stereo}
 While stereoscopic data is not yet abundant~\cite{Corrigan10, Smolic10}, 
@@ -46,6 +53,6 @@ new large free rendered movies have appeared such as Elephants Dream\footnote{\u
 Big Buck Bunny\footnote{\url{http://bbb3d.renderfarming.net/download.html}} or 
 Sintel\footnote{\url{https://durian.blender.org/}}, and efforts have been made to produce true stereo data from these for research purposes.
 There have been attempts at synthesizing stereo data from monocular streams but they rely on temporal coherence to either deduce motion~\cite{Moustakas05}, use parallax cues~\cite{Zhang07} or eventually require user assistance \cite{Wang11} without leveraging external data sources.
-They follow the traditional multi-view image rendering approach that consists in partially modeling the scene such as with Hyper-lapse videos \cite{Kopf14} or stereo reconstruction \cite{Seitz06}.
+They follow the traditional multi-view image rendering approach that consists in partially modeling the scene \cite{Seitz06, Kopf14}.
 
-In this work, we explore the idea of image analogies applied to stereoscopic image rendering and provide a framework to work with future new stereoscopic databases in this context.
+In this work, we explore the idea of image analogies applied to stereoscopic image rendering to leverage future stereoscopic image databases.
