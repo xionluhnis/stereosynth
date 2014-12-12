@@ -2,26 +2,27 @@
 
 \section{Conclusion}
 
-\TODO{Give nice conclusion given results, hopefully good.}
+The results in Table~\ref{tbl:results} surprinsingly show that incrementally building the NNF is usually detrimental.
+This might be because of the poor convergence of PatchMatch using multiple exemplars and the algorithm getting stuck in local energy minima at the lower scales (although one should expect pyramidal computation to help against these).
+
+For \emph{smooth frames}, whole patch and patch difference transfer both tend to perform better than disparity transfer in our results.
+For \emph{high variation frames} (especially the ones from Elephant Dreams, prefixed \texttt{ed\_}), disparity transfer appears more effective.
 
 \paragraph{Occlusions} produce artifacts at the boundary of object in each of the stereoscopic transfer strategies we devised.
-In the case of patch and difference transfer, element boundaries are sometimes well matched in the left frame but don't fit in the right frame, leading to artifacts.
+High variation images might not suffer so much from this because of the high visual clutter.
 
-\TODO{show boundary artifacts}
-
-In the case of disparity, occlusions usually skipped and regions get stretched (because we have no data to interpolate it a priori).
-
-\TODO{show stretching artifacts}
-
-While complicated heuristics could be devised to solve this, we envision to use a different approach that consists of working with a half-way domain between the left and right frames instead of deliberately choosing to work on the left side.
+In general, complicated heuristics could be devised to solve this.
+However we envision to use a different approach that consists of working with a half-way domain between the left and right frames instead of deliberately choosing to work on the left side.
 Indeed, why should we work with one side and not the other? How should we merge both results if we were to work with both sides in parallel?
-The nicer solution is to work with the half-way domain of~\cite{} which nicely interpolates occluded data.
-The implementation might be harder than it seems since occluded areas have different sampling rates in this half-way domain, but it is worth trying in the future.
+The nicer solution is to work with the half-way domain of~\cite{Liao14} which nicely interpolates occluded data.
+
+\paragraph{Disparity} maps we computed with Classic-NL-Fast might be too low-resolution for our database and queries (see comparisons in Figure~\ref{fig:disp_results}).
+We expect that the general poor results we achieved with disparity transfer are due to the bad quality of our disparity mappings.
 
 \paragraph{Convergence} is still an issue and while patch propagation is the most effective patch update with uniform search, the most logical search strategy is that of binning which selects patches whose features are close to that of the considered patches, i.e. naturally good patches with low distances.
 We mentioned that this is a complicated part to implement for memory reasons.
 While the usual dimension reduction involves PCA, recent alternatives~\cite{He12} use Walsh-Hadamard Transform bases~\cite{Hel05} to produce the subspace much more efficiently.
 We could then compute the subspace in a round-robin manner, keeping only the subspace of one image at a time, or sections of the subspace, etc.
 
-Finally, we conclude...
-\TODO{Really conclude, in fact.}
+Finally, these results are encouraging.
+They hopefully tend to show that large sources of stereoscopic data might be leveraged for stereo image synthesis.

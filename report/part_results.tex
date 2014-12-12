@@ -29,29 +29,29 @@ As for our own patch-based disparity computation, we show comparisons with Class
 \begin{table*}
 	\centering
 	\begin{tabular}{lc|c|cc|cc|cc}
-Query & Incr & Left & PG & PL & DG & DL & FG & FL\\\hline
-bbb0004 & yes & \best{448.47} & 508.39 & 909.09 & 544.70 & 448.60 & 953.18 & 1167.54 \\
+\bfseries Query & \bfseries Incr & \bfseries Left & \bfseries PG & \bfseries PL & \bfseries DG & \bfseries DL & \bfseries FG & \bfseries FL\\\hline
+\texttt{bbb0004} & yes & \best{448.47} & 508.39 & 909.09 & 544.70 & 448.60 & 953.18 & 1167.54 \\
  & no & 448.47 & \good \best{330.71} & 783.08 & \good 473.32 & \good 396.22 & 1001.61 & 1068.16 \\\hline
-bbb0058 & yes & 426.54 & \good \best{374.43} & 924.03 & 463.75 & 434.48 & 547.73 & 1316.34 \\
+\texttt{bbb0058} & yes & 426.54 & \good \best{374.43} & 924.03 & 463.75 & 434.48 & 547.73 & 1316.34 \\
  & no & 426.54 & \good \best{330.07} & 782.21 & \good 416.11 & \good 385.33 & 552.99 & 942.46 \\\hline
-bbb0092 & yes & 234.75 & 1493.95 & 509.31 & 305.32 & \good \best{183.69} & 324.44 & 660.46 \\
+\texttt{bbb0092} & yes & 234.75 & 1493.95 & 509.31 & 305.32 & \good \best{183.69} & 324.44 & 660.46 \\
  & no & 234.75 & \good \best{34.34} & \good 182.56 & \good 47.63 & \good 39.52 & 355.77 & 565.25 \\\hline
-bbb0124 & yes & 274.84 & 723.79 & 513.06 & 336.91 & \good  \best{236.69} & 308.30 & 616.81 \\
+\texttt{bbb0124} & yes & 274.84 & 723.79 & 513.06 & 336.91 & \good  \best{236.69} & 308.30 & 616.81 \\
  & no & 274.84 & \good 67.53 & 448.19 & \good 58.64 & \good \best{51.76} & 294.03 & 568.68 \\\hline
-bbb0244 & yes & 858.75 & \good \best{795.20} & 1361.74 & 889.92 & 847.25 & 872.70 & 864.40 \\
+\texttt{bbb0244} & yes & 858.75 & \good \best{795.20} & 1361.74 & 889.92 & 847.25 & 872.70 & 864.40 \\
  & no & 858.75 & \good \best{703.07} & 1212.19 & \good 845.80 & \good 771.82 & 889.23 & 861.11 \\\hline
-bbb0353 & yes & \best{250.49} & 584.98 & 834.15 & 326.76 & 266.40 & 563.66 & 451.24 \\
+\texttt{bbb0353} & yes & \best{250.49} & 584.98 & 834.15 & 326.76 & 266.40 & 563.66 & 451.24 \\
  & no & \best{250.49} & 314.41 & 677.53 & 313.59 & 254.26 & 542.74 & 423.58 \\\hline
-ed0097 & yes & 1649.53 & \good 1130.75 & \good 1132.67 & \good 1646.63 & \good 1565.03 & \good \best{997.70} & \good 1166.23 \\
+\texttt{ed0097} & yes & 1649.53 & \good 1130.75 & \good 1132.67 & \good 1646.63 & \good 1565.03 & \good \best{997.70} & \good 1166.23 \\
  & no & 1649.53 & \good \best{1000.37} & \good 1068.22 & \good 1323.11 & \good 1276.36 & \good 1189.43 & \good 1185.89 \\\hline
-ed0282 & yes & 175.00 & \good 167.14 & 337.87 & 181.94 & \good 151.15 & \good 156.09 & \good \best{133.29} \\
+\texttt{ed0282} & yes & 175.00 & \good 167.14 & 337.87 & 181.94 & \good 151.15 & \good 156.09 & \good \best{133.29} \\
  & no & 175.00 & \good 165.30 & 306.47 & \good 173.29 & \good 148.44 & 182.94 & \good \best{123.91} \\\hline
-ed0438 & yes & 530.54 & \good 347.67 & \good 508.14 & \good 452.37 & \good 410.18 & \good \best{328.59} & \good 349.03 \\
+\texttt{ed0438} & yes & 530.54 & \good 347.67 & \good 508.14 & \good 452.37 & \good 410.18 & \good \best{328.59} & \good 349.03 \\
  & no & 530.54 & \good 375.45 & 540.88 & \good 415.17 & \good 358.42 & \good \best{263.60} & \good 324.05 \\\hline
-ed0528 & yes & 773.82 & \good 741.03 & \good 681.75 & \good 754.21 & \good 684.74 & \good \best{405.25} & \good 468.93 \\
+\texttt{ed0528} & yes & 773.82 & \good 741.03 & \good 681.75 & \good 754.21 & \good 684.74 & \good \best{405.25} & \good 468.93 \\
  & no & 773.82 & \good 513.52 & \good 645.62 & \good 644.25 & \good 579.40 & \good 536.45 & \good \best{449.51} \\\hline
 	\end{tabular}
-	\caption{Quantitative evaluation of our synthesized frames with the various strategies, the values corresponds to average pixel squared error in $RGB \in [0;255]^3$ space. The first value column includes the error using the left frame as right frame for reference.}
+	\caption{Quantitative evaluation of our synthesized frames with the various strategies, the values corresponds to average pixel squared error in $RGB \in [0;255]^3$ space. The first value column includes the error using the left frame as right frame for reference. The columns refer to the algorithm variation: $\textrm{Transfer}\in\{\mbox{\textbf{P}atch}, \mbox{\textbf{D}iff}, \mbox{\textbf{F}low}\}$, $\textrm{Pyramid}\in\{\mbox{\textbf{G}aussian}, \mbox{\textbf{L}aplacian}\}$}
 	\label{tbl:results}
 \end{table*}
 
