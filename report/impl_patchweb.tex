@@ -1,6 +1,6 @@
 
 \subsection{Patch Web}
-Extending the algorithm to multiple exemplars can seem straightforward: patches now also contain new variable index which represents the exemplar they come from.
+Extending the algorithm to multiple exemplars can seem straightforward: patches now also contain a new variable index which represents the exemplar they come from.
 However, in practice, dealing with multiple images (and potentially many of them) involves dealing with caching and distributing the computation wisely.
 To improve performance, the original multi-exemplar Patch Match (named Patch Web~\cite{Barnes11}) makes use of three additional sampling strategies:
 \textbf{uniform sampling} that searches over all patches of all exemplars in memory,

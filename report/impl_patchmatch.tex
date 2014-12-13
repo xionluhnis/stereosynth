@@ -7,9 +7,6 @@ Given an input image $A$ made of overlapping $N\times N$ patches $\{\ti\}$, we w
 \end{equation}
 for some distance $d(\cdot)$, usually the sum of squared differences or a L2 norm.
 
-A naive brute-force computation would enumerate all possible patch assignments and find the best one.
-However, this is computationally unreasonnable given the context of our large high resolution image database.
-
 Patch Match~\cite{Barnes09} is a fast approximate nearest neighbor algorithm specifically tuned for image patches and thus our problem.
 It is based on the \emph{coherence assumption}, namely that, while patches mapped from $A$ to $B$ can be mapped everywhere in $B$, nearby patches in $A$ are usually mapped together in $B$.
 
