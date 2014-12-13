@@ -27,7 +27,7 @@ It is based on the \emph{coherence assumption}, namely that, while patches mappe
 		\includegraphics[width=\textwidth]{figures/voting_text}
 		\caption{Voting}
 	\end{subfigure}
-   \caption{The main components of texture synthesis using Patch Match.}
+   \caption{The main components of image synthesis using Patch Match: propagating neighboring results, random sampling, and weighted average voting.}
 \label{fig:texsynth_patchmatch}
 \end{figure}
 
@@ -41,6 +41,6 @@ All of them are forms of \emph{voting} since by having $N\times N$ patches, each
 The usual voting consist of averaging the overlapping pixels which minimizes the average L2 distance.
 
 \paragraph{Extensions}
-The Patch Match algorithm has been extended in several ways \cite{Barnes10} including the sampling of rotations, scales and mirrored patch spaces, the use of gain and bias adjustment, a $k$-NN version of the algorithm as well as extra operations (uniform sampling, enrichment and binning).
+The Patch Match algorithm has been extended in several ways \cite{Barnes10} including the sampling of rotations, scales and mirrored patch spaces, the use of gain and bias adjustment, a $k$-NN version of the algorithm as well as extra patch proposal strategies (uniform sampling, enrichment and binning).
 
-Application-specific variants of voting have been explored such as Meanshift \cite{Wexler07}, Histogram weighting \cite{Kopf07} as well as Bidirectional Similarity \cite{Simakov08}.
+Furthermore, we note that application-specific variants of voting have been explored such as Meanshift \cite{Wexler07}, Histogram weighting \cite{Kopf07} as well as Bidirectional Similarity~\cite{Simakov08}.

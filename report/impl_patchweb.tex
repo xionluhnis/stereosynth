@@ -7,13 +7,13 @@ To improve performance, the original multi-exemplar Patch Match (named Patch Web
 \textbf{enrichment} that finds new candidates by looking at the mapping of the patches we are mapped to (or similarily following the reverse mapping, for a specific amount of hops), as well as
 \textbf{binning} that literally divides patches into bins in a lower dimensional space to then randomly sample from similar patches.
 
-Our implementation contains all the aforementioned candidate lookups but binning because of the high memory requirement that makes it harder to implement wisely (other strategies require basically no additional memory storage).
+Our implementation contains all the aforementioned candidate proposals but binning because of the high memory requirement that makes it harder to implement wisely (other strategies require no additional memory storage).
 
 \subsection{Selecting Images}
 While Patch Web provides an attractive image graph framework, it is complicated to implement because of caching: we cannot keep all the images in memory at the same time, and the $k$-NNF may be referring to a large subset of them.
 
 Instead of creating the image graph, we select a subset of images to work with by using GIST features \cite{Torralba08b}.
 We compute these features for each image at its highest scale and cache them.
-Given a new query, we find the $K$ nearest images in GIST feature space using a $kd$-tree.
+Given a new query, we find the $M$ nearest images in GIST feature space using a $kd$-tree.
 We choose $M$ to be as large as we can fit images in our memory for the lower scale of the pyramid.
 Finally, we reduce the set of images by removing images that don't get involved during the successive iterations of patch selection.
