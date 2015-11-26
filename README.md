@@ -19,9 +19,9 @@ Given exemplar stereo streams `(L,R)` and a new mono stream `L'` (assumed to be 
 TODO
 ----
 
-  1. Implement the basic method with 2D patches
-  2. Test basic method by synthesizing a stereo stream from the left part of a stereo stream and comparing with the true right part
-  3. Experiment with multiple patch sizes and image scales
+  1. Add tests!
+  2. Experiment with multiple patch sizes and image scales
+  3. Fix meanshift voting
 
 Unknowns
 --------
